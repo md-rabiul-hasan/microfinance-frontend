@@ -1,0 +1,32 @@
+.root {
+  height: 100vh;
+  background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(0, 0, 0, 0.5) 100%
+    ),
+    url(/images/auth-bg.jpg);
+  background-size: cover;
+  background-position: center;
+}
+
+.container {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.paper {
+  background: linear-gradient(360deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.75) 100%);
+  backdrop-filter: blur(10px);
+}
+
+.credits {
+  position: absolute;
+  bottom: var(--mantine-spacing-xs);
+  left: 50%;
+  transform: translateX(-50%);
+}
