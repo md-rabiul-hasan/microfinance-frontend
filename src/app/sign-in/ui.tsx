@@ -32,6 +32,7 @@ const SignInUI = () => {
     setIsLoading(true)
 
     const response: SignInResponse | undefined = await signIn('credentials', { ...values, redirect: false })
+    console.log('SignIn Response:', response)
 
     if (response?.error) {
       showNotification({

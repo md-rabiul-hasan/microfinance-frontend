@@ -6,6 +6,7 @@ import {
   Menu,
   Skeleton,
   Text,
+  Title,
   useComputedColorScheme,
   useMantineColorScheme
 } from '@mantine/core'
@@ -27,14 +28,18 @@ const AppHeader = () => {
 
   return (
     <Group justify="space-between" align="center" px="md" h="100%">
-      <Link href="/">
-        <Image
-          src={`/images/logo${computedColorScheme === 'light' ? '' : '-white'}.png`}
-          alt=""
-          width="auto"
-          height={32}
-        />
-      </Link>
+
+      <Group justify="center" gap="xs">
+        <Link href="/">
+          <Image
+            src={`/images/logo-white.png`}
+            alt=""
+            width="auto"
+            height={32}
+          />
+        </Link>
+        <Title order={3} color="dark">KARZBOOK</Title>
+      </Group>
 
       <Group justify="space-between" gap="xs">
         <ActionIcon variant={pathname === '/help' ? 'gradient' : 'light'} component={Link} href="/help">
@@ -56,9 +61,9 @@ const AppHeader = () => {
                 <Avatar src={session.user.avatar} alt={session.user.fullname} />
 
                 <div>
-                  <Text>{session.user.full_name}</Text>
+                  <Text>{session.user.fullname}</Text>
                   <Text c="dimmed" size="xs">
-                    {`${session.user.branch_name} (${session.user.role})`}
+                    {`${session.user.branch_name} (${session.user.user_type})`}
                   </Text>
                 </div>
 

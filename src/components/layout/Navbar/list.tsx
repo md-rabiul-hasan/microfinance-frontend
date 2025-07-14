@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai';
-import { FaProductHunt } from "react-icons/fa";
-import { TbCoinTakaFilled } from "react-icons/tb";
+import { CiSettings } from "react-icons/ci";
 
 type MenuItem = {
   link: string
@@ -25,20 +24,12 @@ type MenuItems = MenuItem | MenuWithLinks
 export const menuItems = (roles: string[]) => [
   { link: '/', label: 'Dashboard', icon: <DashboardIcon /> },
   {
-    label: 'Miscellaneous Charges',
-    icon: <TbCoinTakaFilled />,
+    label: 'Settings',
+    icon: <CiSettings />,
     links: [
-      { link: '/charges/entry', label: 'Charge Entry' },
-      { link: '/charges/authorize', label: 'Charge Authorize' },
+      { link: '/charges/entry', label: 'Service Area Setup' },
     ]
-  },
-  {
-    label: 'Product',
-    icon: <FaProductHunt />,
-    links: [
-      { link: '/products/list', label: 'List' },
-    ]
-  },
+  }
 ]
 
 export const isActiveLink = (path: string, link: string = ''): boolean => {

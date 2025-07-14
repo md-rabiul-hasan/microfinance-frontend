@@ -22,11 +22,11 @@ export const authOptions: NextAuthOptions = {
           if (!success) throw new Error('Invalid credentials')
 
           return {
-            id: data.user.id,
-            username: data.user.username,
-            full_name: data.user.full_name,
-            branch_code: data.user.branch_code,
-            role: data.user.role,
+            user_key: data.user.user_key,
+            fullname: data.user.fullname,
+            user_id: data.user.user_id,
+            user_type: data.user.user_type,
+            assignedBr: data.user.assignedBr,
             branch_name: data.user.branch_name,
             accessToken: data.access_token.token,
             refreshToken: data.refresh_token.token,
@@ -46,11 +46,11 @@ export const authOptions: NextAuthOptions = {
         // First-time login: Store tokens in JWT
         return {
           ...token,
-          id: user.id,
-          username: user.username,
-          full_name: user.full_name,
-          branch_code: user.branch_code,
-          role: user.role,
+          user_key: user.user_key,
+          fullname: user.fullname,
+          user_id: user.user_id,
+          user_type: user.user_type,
+          assignedBr: user.assignedBr,
           branch_name: user.branch_name,
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
@@ -103,11 +103,11 @@ async function refreshToken(token: any) {
 
     return {
       ...token,
-      id: data.user.id,
-      username: data.user.username,
-      full_name: data.user.full_name,
-      branch_code: data.user.branch_code,
-      role: data.user.role,
+      user_key: data.user.user_key,
+      fullname: data.user.fullname,
+      user_id: data.user.user_id,
+      user_type: data.user.user_type,
+      assignedBr: data.user.assignedBr,
       branch_name: data.user.branch_name,
       accessToken: data.access_token.token,
       accessTokenExpires: Date.now() + data.access_token.expires_in * 1000, // New expiry time
