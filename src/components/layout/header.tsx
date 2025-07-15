@@ -6,7 +6,6 @@ import {
   Menu,
   Skeleton,
   Text,
-  Title,
   useComputedColorScheme,
   useMantineColorScheme
 } from '@mantine/core'
@@ -32,13 +31,13 @@ const AppHeader = () => {
       <Group justify="center" gap="xs">
         <Link href="/">
           <Image
-            src={`/images/logo-white.png`}
+            src={`/images/logo.png`}
             alt=""
             width="auto"
             height={32}
           />
         </Link>
-        <Title order={3} color="dark">KARZBOOK</Title>
+        {/* <Title order={3} color="dark">KARZBOOK</Title> */}
       </Group>
 
       <Group justify="space-between" gap="xs">
