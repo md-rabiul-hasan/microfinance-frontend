@@ -27,7 +27,7 @@ export const menuItems = (roles: string[]) => [
     label: 'Settings',
     icon: <CiSettings />,
     links: [
-      { link: '/charges/entry', label: 'Service Area Setup' },
+      { link: '/settings/service-area-setup', label: 'Service Area Setup' },
     ]
   }
 ]
