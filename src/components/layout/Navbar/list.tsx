@@ -28,7 +28,8 @@ export const menuItems = (roles: string[]) => [
     icon: <CiSettings />,
     links: [
       { link: '/settings/service-area-setup', label: 'Service Area Setup' },
-      { link: '/settings/employee-list', label: 'Employee Setup' }
+      { link: '/settings/employee-setup', label: 'Employee Setup' },
+      { link: '/settings/branch-setup', label: 'Branch Setup' }
     ]
   }
 ]

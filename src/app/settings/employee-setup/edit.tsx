@@ -48,7 +48,7 @@ const EditModal = ({ employee }: any) => {
   return (
     <form onSubmit={onSubmit(submitHandler)}>
       <Title order={4} mb="md">
-        Add Service Area
+        Update Branch
       </Title>
       <TextInput
         label="Employee ID"

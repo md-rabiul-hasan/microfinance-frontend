@@ -1,4 +1,5 @@
-export * from './product';
-export * from './service-area';
-export * from './utilities';
-
+export * from './product'
+export * from './service-area'
+export * from './employee'
+export * from './branch'
+export * from './utilities'
