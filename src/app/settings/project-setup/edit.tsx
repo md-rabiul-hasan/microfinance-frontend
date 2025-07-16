@@ -1,30 +1,25 @@
-import { updateServiceArea } from '@actions/service-area-config'
-import { Button, Select, TextInput, Title } from '@mantine/core'
+import { updateProject } from '@actions/project-config'
+import { Button, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+import { projectValidationSchema } from '@schemas/project.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
-import { MdUpdate as UpdateIcon } from 'react-icons/md'
-import { FaIdCardAlt } from 'react-icons/fa'
-import { MdPerson } from 'react-icons/md'
-import { PiCertificateFill } from 'react-icons/pi'
-import { FaSquarePhone } from 'react-icons/fa6'
-import { FaLocationDot } from 'react-icons/fa6'
-import { updateEmployee } from '@actions/employee-config'
-import { branchValidationSchema } from '@schemas/branch.schema'
-import { updateBranch } from '@actions/branch-config'
 import { BiSolidBank } from 'react-icons/bi'
+import { FaLocationDot } from 'react-icons/fa6'
+import { MdUpdate as UpdateIcon } from 'react-icons/md'
+import { PiNoteFill } from "react-icons/pi"
 
-const EditModal = ({ branch }: any) => {
+const EditModal = ({ project }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps, values, reset } = useForm({
-    validate: yupResolver(branchValidationSchema),
+    validate: yupResolver(projectValidationSchema),
     initialValues: {
-      name: branch.name,
-      contact: branch.contact,
-      addr: branch.addr
+      project_name: project.project_name,
+      project_location: project.project_location,
+      project_details: project.project_details,
     }
   })
 
@@ -34,7 +29,7 @@ const EditModal = ({ branch }: any) => {
    */
   const submitHandler = (formData: any) =>
     startTransition(async () => {
-      const res = await updateBranch(branch.keyCode!, formData)
+      const res = await updateProject(project.keyCode!, formData)
       if (res.success) {
         showNotification(getSuccessMessage(res?.message)) // Show success notification
         closeAllModals() // Close the modal upon success
@@ -46,31 +41,31 @@ const EditModal = ({ branch }: any) => {
   return (
     <form onSubmit={onSubmit(submitHandler)}>
       <Title order={4} mb="md">
-        Update Branch
+        Update Project Investment
       </Title>
 
       <TextInput
-        label="Branch Name"
+        label="Project Name"
         mb="xs"
         withAsterisk // Marks the field as required
-        {...getInputProps('name')}
+        {...getInputProps('project_name')}
         leftSection={<BiSolidBank />} // Adds an icon
       />
 
       <TextInput
-        label="Contact"
+        label="Location"
         mb="xs"
         withAsterisk // Marks the field as required
-        {...getInputProps('contact')}
-        leftSection={<FaSquarePhone />} // Adds an icon
+        {...getInputProps('project_location')}
+        leftSection={<FaLocationDot />} // Adds an icon
       />
 
       <TextInput
-        label="Address"
+        label="Details"
         mb="xs"
         withAsterisk // Marks the field as required
-        {...getInputProps('addr')}
-        leftSection={<FaLocationDot />} // Adds an icon
+        {...getInputProps('project_details')}
+        leftSection={<PiNoteFill />} // Adds an icon
       />
 
       {/* Submit Button */}

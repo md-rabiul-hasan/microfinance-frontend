@@ -42,7 +42,6 @@ const EditProduct = ({ initialData }: Props) => {
   const submitHandler = (formData: Partial<ProductType>) =>
     startTransition(async () => {
       const res = await editProduct(initialData.id!, formData)
-      console.log(res) // Log the response for debugging
 
       if (res.success) {
         showNotification(getSuccessMessage(res?.message)); // Show success notification

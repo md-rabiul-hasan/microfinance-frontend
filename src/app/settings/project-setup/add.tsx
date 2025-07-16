@@ -1,26 +1,20 @@
-import { createEmployee } from '@actions/employee-config'
-import { Button, Select, TextInput, Title } from '@mantine/core'
+import { createProject } from '@actions/project-config'
+import { Button, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+import { projectValidationSchema } from '@schemas/project.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
-import { CiLocationOn } from 'react-icons/ci'
-import { BiSave } from 'react-icons/bi'
-import { FaIdCardAlt } from 'react-icons/fa'
-import { MdPerson } from 'react-icons/md'
-import { PiCertificateFill } from 'react-icons/pi'
-import { FaSquarePhone } from 'react-icons/fa6'
+import { BiSave, BiSolidBank } from 'react-icons/bi'
 import { FaLocationDot } from 'react-icons/fa6'
-import { branchValidationSchema } from '@schemas/branch.schema'
-import { createBranch } from '@actions/branch-config'
-import { BiSolidBank } from 'react-icons/bi'
+import { PiNoteFill } from "react-icons/pi"
 
 const AddModal = ({ locations }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps, values, reset } = useForm({
-    validate: yupResolver(branchValidationSchema),
+    validate: yupResolver(projectValidationSchema),
     initialValues: {
       project_name: '',
       project_location: '',
@@ -34,7 +28,7 @@ const AddModal = ({ locations }: any) => {
    */
   const submitHandler = (formData: any) =>
     startTransition(async () => {
-      const res = await createBranch(formData)
+      const res = await createProject(formData)
       if (res.success) {
         showNotification(getSuccessMessage(res?.message)) // Show success notification
         closeAllModals() // Close the modal upon success
@@ -70,7 +64,7 @@ const AddModal = ({ locations }: any) => {
         mb="xs"
         withAsterisk // Marks the field as required
         {...getInputProps('project_details')}
-        leftSection={<FaSquarePhone />} // Adds an icon
+        leftSection={<PiNoteFill />} // Adds an icon
       />
 
       {/* Submit Button */}

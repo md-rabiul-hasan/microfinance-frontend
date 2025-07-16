@@ -20,7 +20,6 @@ import { MdLogout as LogoutIcon } from 'react-icons/md'
 
 const AppHeader = () => {
   const { status, data: session } = useSession()
-  console.log(session);
   const pathname = usePathname()
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true })
   const { setColorScheme } = useMantineColorScheme()

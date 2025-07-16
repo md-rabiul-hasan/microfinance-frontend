@@ -33,7 +33,7 @@ export const createProject = async (formData: ProjectSetupType, path?: string) =
   }
 }
 
-export const updateBranch = async (id: number, formData: ProjectSetupType) => {
+export const updateProject = async (id: number, formData: ProjectSetupType) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.put(`/settings/project-investment-setup/${id}`, formData)
@@ -44,7 +44,7 @@ export const updateBranch = async (id: number, formData: ProjectSetupType) => {
   }
 }
 
-export const deleteBranch = async (id: number) => {
+export const deleteProject = async (id: number) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.delete(`/settings/project-investment-setup/${id}`)

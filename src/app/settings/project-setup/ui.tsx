@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteServiceArea } from '@actions/service-area-config'
+import { deleteProject } from '@actions/project-config'
 import TableNav from '@components/common/table-nav'
 import TitleBar from '@components/common/title-bar'
 import useNavigation from '@hooks/useNavigation'
@@ -15,8 +15,6 @@ import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import AddModal from './add'
 import EditModal from './edit'
-import { deleteEmployee } from '@actions/employee-config'
-import { deleteBranch } from '@actions/branch-config'
 
 // Define the props type
 
@@ -45,9 +43,9 @@ const ProjectListPageUi = ({ data: { data, pagination } }: any) => {
       withCloseButton: false
     })
 
-  const editHandler = (branch: any) =>
+  const editHandler = (project: any) =>
     openModal({
-      children: <EditModal branch={branch} />,
+      children: <EditModal project={project} />,
       centered: true,
       withCloseButton: false
     })
@@ -55,11 +53,11 @@ const ProjectListPageUi = ({ data: { data, pagination } }: any) => {
   const deleteHandler = (id: number) => {
     modals.openConfirmModal({
       title: 'Please confirm your action',
-      children: <Text size="sm">Are you sure you want to delete this branch?</Text>,
+      children: <Text size="sm">Are you sure you want to delete this project?</Text>,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: () => {
         startTransition(async () => {
-          const res = await deleteBranch(id)
+          const res = await deleteProject(id)
           if (res.success) {
             showNotification({ ...getSuccessMessage(res.message), autoClose: 10000 })
           } else {
