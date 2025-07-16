@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai';
-import { CiSettings } from "react-icons/ci";
+import { ReactNode } from 'react'
+import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
+import { CiSettings } from 'react-icons/ci'
 
 type MenuItem = {
   link: string
@@ -28,6 +28,7 @@ export const menuItems = (roles: string[]) => [
     icon: <CiSettings />,
     links: [
       { link: '/settings/service-area-setup', label: 'Service Area Setup' },
+      { link: '/settings/employee-list', label: 'Employee Setup' }
     ]
   }
 ]

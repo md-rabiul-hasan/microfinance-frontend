@@ -1,0 +1,101 @@
+import { updateServiceArea } from '@actions/service-area-config'
+import { Button, Select, TextInput, Title } from '@mantine/core'
+import { useForm, yupResolver } from '@mantine/form'
+import { closeAllModals } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
+import { employeeValidationSchema } from '@schemas/employee.schema'
+import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { useTransition } from 'react'
+import { BiCategoryAlt } from 'react-icons/bi'
+import { CiLocationOn } from 'react-icons/ci'
+import { MdUpdate as UpdateIcon } from 'react-icons/md'
+import { FaIdCardAlt } from 'react-icons/fa'
+import { MdPerson } from 'react-icons/md'
+import { PiCertificateFill } from 'react-icons/pi'
+import { FaSquarePhone } from 'react-icons/fa6'
+import { FaLocationDot } from 'react-icons/fa6'
+import { updateEmployee } from '@actions/employee-config'
+
+const EditModal = ({ employee }: any) => {
+  const [isLoading, startTransition] = useTransition()
+
+  const { onSubmit, getInputProps, values, reset } = useForm({
+    validate: yupResolver(employeeValidationSchema),
+    initialValues: {
+      emp_id: employee.emp_id,
+      name: employee.name,
+      designation: employee.designation,
+      contact: employee.contact,
+      addr: employee.addr
+    }
+  })
+
+  /**
+   * Handles the form submission.
+   * Sends an API request to update the product details.
+   */
+  const submitHandler = (formData: any) =>
+    startTransition(async () => {
+      const res = await updateEmployee(employee.keyCode!, formData)
+      if (res.success) {
+        showNotification(getSuccessMessage(res?.message)) // Show success notification
+        closeAllModals() // Close the modal upon success
+      } else {
+        showNotification(getErrorMessage(res?.message)) // Show error notification
+      }
+    })
+
+  return (
+    <form onSubmit={onSubmit(submitHandler)}>
+      <Title order={4} mb="md">
+        Add Service Area
+      </Title>
+      <TextInput
+        label="Employee ID"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('emp_id')}
+        leftSection={<FaIdCardAlt />} // Adds an icon
+      />
+
+      <TextInput
+        label="Employee Name"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('name')}
+        leftSection={<MdPerson />} // Adds an icon
+      />
+
+      <TextInput
+        label="Designation"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('designation')}
+        leftSection={<PiCertificateFill />} // Adds an icon
+      />
+
+      <TextInput
+        label="Contact"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('contact')}
+        leftSection={<FaSquarePhone />} // Adds an icon
+      />
+
+      <TextInput
+        label="Address"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('addr')}
+        leftSection={<FaLocationDot />} // Adds an icon
+      />
+
+      {/* Submit Button */}
+      <Button type="submit" leftSection={<UpdateIcon />} loading={isLoading}>
+        Update
+      </Button>
+    </form>
+  )
+}
+
+export default EditModal

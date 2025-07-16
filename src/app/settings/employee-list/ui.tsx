@@ -15,10 +15,11 @@ import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import AddModal from './add'
 import EditModal from './edit'
+import { deleteEmployee } from '@actions/employee-config'
 
 // Define the props type
 
-const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) => {
+const EmployeeListPageUi = ({ data: { data, pagination } }: any) => {
   const router = useRouter() // Use Next.js router for navigation
   // Get search parameters and navigation function
   const searchParams = useSearchParams()
@@ -38,14 +39,14 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
 
   const addHandler = () =>
     openModal({
-      children: <AddModal locations={locations} />,
+      children: <AddModal />,
       centered: true,
       withCloseButton: false
     })
 
-  const editHandler = (area: any) =>
+  const editHandler = (employee: any) =>
     openModal({
-      children: <EditModal area={area} locations={locations} />,
+      children: <EditModal employee={employee} />,
       centered: true,
       withCloseButton: false
     })
@@ -53,11 +54,11 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
   const deleteHandler = (id: number) => {
     modals.openConfirmModal({
       title: 'Please confirm your action',
-      children: <Text size="sm">Are you sure you want to delete this service area?</Text>,
+      children: <Text size="sm">Are you sure you want to delete this employee?</Text>,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: () => {
         startTransition(async () => {
-          const res = await deleteServiceArea(id)
+          const res = await deleteEmployee(id)
           if (res.success) {
             showNotification({ ...getSuccessMessage(res.message), autoClose: 10000 })
           } else {
@@ -77,15 +78,15 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
     <Container fluid>
       {/* Page title and search input */}
       <Group justify="space-between" mb="xs">
-        <TitleBar title="Service Area List" url="/" />
+        <TitleBar title="Employee List" url="/" />
         <Group gap="xs">
           <TextInput
-            placeholder="Search Service Area"
+            placeholder="Search Employee List"
             miw={400}
             value={interSearch}
             onChange={(event) => setInterSearch(event.currentTarget.value)}
           />
-          <Tooltip label="Add New Area" withArrow position="bottom">
+          <Tooltip label="Add New Employee" withArrow position="bottom">
             <ActionIcon onClick={addHandler}>
               <FaPlusCircle />
             </ActionIcon>
@@ -99,22 +100,24 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
           <Table.Thead>
             <Table.Tr>
               <Table.Th>SL</Table.Th>
-              <Table.Th>Area Name</Table.Th>
-              <Table.Th>Division</Table.Th>
-              <Table.Th>District</Table.Th>
-              <Table.Th>Post Office</Table.Th>
+              <Table.Th>Employee ID</Table.Th>
+              <Table.Th>Name</Table.Th>
+              <Table.Th>Designation</Table.Th>
+              <Table.Th>Contact</Table.Th>
+              <Table.Th>Address</Table.Th>
               <Table.Th>Action</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {data?.length > 0 ? (
-              data.map((area: any, index: number) => (
+              data.map((employee: any, index: number) => (
                 <Table.Tr key={index}>
                   <Table.Td>{index + 1}</Table.Td>
-                  <Table.Td tt="uppercase">{area.zoneName}</Table.Td>
-                  <Table.Td>{area.location.division}</Table.Td>
-                  <Table.Td>{area.location.district}</Table.Td>
-                  <Table.Td>{area.location.ps}</Table.Td>
+                  <Table.Td>{employee.emp_id}</Table.Td>
+                  <Table.Td>{employee.name}</Table.Td>
+                  <Table.Td>{employee.designation}</Table.Td>
+                  <Table.Td>{employee.contact}</Table.Td>
+                  <Table.Td>{employee.addr}</Table.Td>
                   <Table.Td>
                     <Menu withArrow>
                       <Menu.Target>
@@ -123,8 +126,8 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item onClick={() => editHandler(area)}>Edit</Menu.Item>
-                        <Menu.Item onClick={() => deleteHandler(area.zoneCode)}>Delete</Menu.Item>
+                        <Menu.Item onClick={() => editHandler(employee)}>Edit</Menu.Item>
+                        <Menu.Item onClick={() => deleteHandler(employee.keyCode)}>Delete</Menu.Item>
                       </Menu.Dropdown>
                     </Menu>
                   </Table.Td>
@@ -132,8 +135,8 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
               ))
             ) : (
               <Table.Tr>
-                <Table.Td colSpan={6} align="center">
-                  Service area not found
+                <Table.Td colSpan={7} align="center">
+                  Employee not found
                 </Table.Td>
               </Table.Tr>
             )}
@@ -143,7 +146,7 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
 
       {/* Pagination Controls */}
       <TableNav
-        listName="Service Areas"
+        listName="Employees"
         limit={limit}
         limitHandler={handleLimitChange}
         page={pagination?.current_page!}
@@ -155,4 +158,4 @@ const ServiceAreaListPageUi = ({ data: { data, pagination }, locations }: any) =
   )
 }
 
-export default ServiceAreaListPageUi
+export default EmployeeListPageUi
