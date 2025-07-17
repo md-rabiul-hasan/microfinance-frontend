@@ -33,7 +33,8 @@ export const menuItems = (roles: string[]) => [
       { link: '/settings/employee-setup', label: 'Employee Setup' },
       { link: '/settings/branch-setup', label: 'Branch Setup' },
       { link: '/settings/project-setup', label: 'Project Setup' },
-      { link: '/settings/external-saving-account-setup', label: 'External Saving A/C Setup' }
+      { link: '/settings/external-saving-account-setup', label: 'External Saving A/C Setup' },
+      { link: '/settings/bank-account-setup', label: 'Bank Account Setup' }
     ]
   }
 ]

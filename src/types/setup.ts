@@ -7,3 +7,10 @@ export type ExternalSavingAccountSetupType = {
   acc_name: string
   acc_number: string
 }
+
+export type BankAccountSetupType = {
+  bank_name: string
+  acc_name: string
+  acc_number: string
+  acc_flag: string
+}
