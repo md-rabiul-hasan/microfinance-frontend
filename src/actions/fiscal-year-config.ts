@@ -1,20 +1,20 @@
 'use server'
 
-import { FiscalYearSetupType } from '@types';
-import api from '@utils/api';
+import { FiscalYearSetupType } from '@types'
+import api from '@utils/api'
+import { revalidatePath } from 'next/cache'
 
 export const getFirscalYear = async () => {
   try {
     const apiObj = await api()
 
-    const { data } = await apiObj.get('/settings/fiscal-year-setup');
+    const { data } = await apiObj.get('/settings/fiscal-year-setup')
 
     return data
   } catch (error) {
     return error.response?.data
   }
 }
-
 
 export const setupFiscalYear = async (formData: FiscalYearSetupType) => {
   try {
@@ -24,7 +24,6 @@ export const setupFiscalYear = async (formData: FiscalYearSetupType) => {
     })
 
     revalidatePath('/settings/fiscal-year-setup')
-
     return data
   } catch (error) {
     return error.response?.data

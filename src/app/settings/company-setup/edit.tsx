@@ -1,18 +1,26 @@
 import { setupFiscalYear } from '@actions/fiscal-year-config'
-import { Button, Select, Title } from '@mantine/core'
+import { Button, FileInput, Select, TextInput, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { MdUpdate as UpdateIcon } from 'react-icons/md'
+import { FaBuilding } from 'react-icons/fa'
+import { FaLocationDot } from 'react-icons/fa6'
+import { FaRegFileAlt } from 'react-icons/fa'
+import { BsBuilding } from 'react-icons/bs'
+import { setupCompanyInfo } from '@actions/company-config'
 
-const EditModal = ({ formatCode }: any) => {
+const EditModal = ({ company }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps, values, reset } = useForm({
     initialValues: {
-      formatCode: String(formatCode)
+      name: company.name,
+      sName: company.sName,
+      addr: company.addr,
+      logo_file: null
     }
   })
 
@@ -22,7 +30,7 @@ const EditModal = ({ formatCode }: any) => {
    */
   const submitHandler = (formData: any) =>
     startTransition(async () => {
-      const res = await setupFiscalYear(formData)
+      const res = await setupCompanyInfo(formData)
       if (res.success) {
         showNotification(getSuccessMessage(res?.message)) // Show success notification
         closeAllModals() // Close the modal upon success
@@ -34,26 +42,38 @@ const EditModal = ({ formatCode }: any) => {
   return (
     <form onSubmit={onSubmit(submitHandler)}>
       <Title order={4} mb="md">
-        Setup Fiscal Year
+        Setup Company Information
       </Title>
-
-
-      <Select
-        label="Select Format"
-        placeholder="Select Format"
-        data={[
-          { value: "1", label: "January to December" },
-          { value: "2", label: "June to June" }
-        ]}
-        searchable
-        withAsterisk
+      <TextInput
+        label="Company Name"
         mb="xs"
-        leftSection={<BiCategoryAlt />}
-        {...getInputProps('formatCode')} // Changed from 'locCode' to 'formatCode' to match your context
+        withAsterisk // Marks the field as required
+        {...getInputProps('name')}
+        leftSection={<FaBuilding />} // Adds an icon
+      />
+      <TextInput
+        label="Short Name"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('sName')}
+        leftSection={<BsBuilding />} // Adds an icon
+      />
+      <TextInput
+        label="Address"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('addr')}
+        leftSection={<FaLocationDot />} // Adds an icon
+      />
+      <FileInput
+        clearable
+        mb="xs"
+        label="Upload files"
+        rightSection={<FaRegFileAlt />}
+        placeholder="Upload files"
+        {...getInputProps('logo_file')}
       />
 
-
-      {/* Submit Button */}
       <Button type="submit" leftSection={<UpdateIcon />} loading={isLoading}>
         Update
       </Button>
