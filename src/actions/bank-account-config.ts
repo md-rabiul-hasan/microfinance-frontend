@@ -45,7 +45,7 @@ export const updateBankAccount = async (id: number, formData: BankAccountSetupTy
   }
 }
 
-export const deleteBankAccount = async (id: number) => {
+export const deleteBankAccount = async (id: string) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.delete(`/settings/bank-account-setup/${id}`)

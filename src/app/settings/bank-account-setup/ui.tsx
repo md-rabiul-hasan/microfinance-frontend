@@ -52,14 +52,15 @@ const BankAccountListPageUi = ({ data: { data, pagination } }: any) => {
       withCloseButton: false
     })
 
-  const deleteHandler = (id: number) => {
+  const deleteHandler = (id: number, product_type: string) => {
     modals.openConfirmModal({
       title: 'Please confirm your action',
       children: <Text size="sm">Are you sure you want to delete this bank account?</Text>,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: () => {
         startTransition(async () => {
-          const res = await deleteBankAccount(id)
+          const passdata = `${id}-${product_type}`
+          const res = await deleteBankAccount(passdata)
           if (res.success) {
             showNotification({ ...getSuccessMessage(res.message), autoClose: 10000 })
           } else {
@@ -136,7 +137,9 @@ const BankAccountListPageUi = ({ data: { data, pagination } }: any) => {
                       </Menu.Target>
                       <Menu.Dropdown>
                         <Menu.Item onClick={() => editHandler(account)}>Edit</Menu.Item>
-                        <Menu.Item onClick={() => deleteHandler(account.keyCode)}>Delete</Menu.Item>
+                        <Menu.Item onClick={() => deleteHandler(account.keyCode, account.product_type)}>
+                          Delete
+                        </Menu.Item>
                       </Menu.Dropdown>
                     </Menu>
                   </Table.Td>
