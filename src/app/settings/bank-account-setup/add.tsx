@@ -29,7 +29,8 @@ const AddModal = ({ locations }: any) => {
       bank_name: '',
       acc_name: '',
       acc_number: '',
-      acc_flag: ''
+      acc_flag: '',
+      product_type: ''
     }
   })
 
@@ -76,6 +77,20 @@ const AddModal = ({ locations }: any) => {
         withAsterisk // Marks the field as required
         {...getInputProps('acc_number')}
         leftSection={<CiCreditCard1 />} // Adds an icon
+      />
+
+      <Select
+        label="Product Type"
+        placeholder="Select Product Type"
+        data={[
+          { value: 'casa', label: 'CASA' },
+          { value: 'fdr', label: 'FDR' }
+        ]}
+        searchable
+        withAsterisk
+        mb="xs"
+        leftSection={<BiCategoryAlt />}
+        {...getInputProps('product_type')} // Use appropriate field name for your form
       />
 
       <Select

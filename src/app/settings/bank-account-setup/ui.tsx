@@ -104,6 +104,7 @@ const BankAccountListPageUi = ({ data: { data, pagination } }: any) => {
               <Table.Th>Bank Name</Table.Th>
               <Table.Th>Account Title</Table.Th>
               <Table.Th>Account Number</Table.Th>
+              <Table.Th>Product Type</Table.Th>
               <Table.Th>Account Type</Table.Th>
               <Table.Th>Action</Table.Th>
             </Table.Tr>
@@ -116,6 +117,7 @@ const BankAccountListPageUi = ({ data: { data, pagination } }: any) => {
                   <Table.Td>{account.bank_name}</Table.Td>
                   <Table.Td>{account.acc_name}</Table.Td>
                   <Table.Td>{account.acc_number}</Table.Td>
+                  <Table.Td tt="uppercase">{account.product_type}</Table.Td>
                   <Table.Td>
                     {account.acc_flag === 0
                       ? 'General account'

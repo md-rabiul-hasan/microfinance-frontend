@@ -13,4 +13,5 @@ export type BankAccountSetupType = {
   acc_name: string
   acc_number: string
   acc_flag: string
+  product_type: string
 }

@@ -30,7 +30,8 @@ const EditModal = ({ account }: any) => {
       bank_name: account.bank_name,
       acc_name: account.acc_name,
       acc_number: account.acc_number,
-      acc_flag: String(account.acc_flag)
+      acc_flag: String(account.acc_flag),
+      product_type: account.product_type
     }
   })
 
@@ -76,6 +77,21 @@ const EditModal = ({ account }: any) => {
         withAsterisk // Marks the field as required
         {...getInputProps('acc_number')}
         leftSection={<CiCreditCard1 />} // Adds an icon
+      />
+
+      <Select
+        label="Product Type"
+        placeholder="Select Product Type"
+        data={[
+          { value: 'casa', label: 'CASA' },
+          { value: 'fdr', label: 'FDR' }
+        ]}
+        searchable
+        withAsterisk
+        readOnly
+        mb="xs"
+        leftSection={<BiCategoryAlt />}
+        {...getInputProps('product_type')} // Use appropriate field name for your form
       />
 
       <Select
