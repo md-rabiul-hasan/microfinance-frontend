@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteServiceArea } from '@actions/service-area-config'
+import { deleteServiceArea } from '@actions/settings/service-area-config'
 import TableNav from '@components/common/table-nav'
 import TitleBar from '@components/common/title-bar'
 import useNavigation from '@hooks/useNavigation'
@@ -15,8 +15,8 @@ import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import AddModal from './add'
 import EditModal from './edit'
-import { deleteEmployee } from '@actions/employee-config'
-import { deleteExternalSavingAccount } from '@actions/external-saving-account-config'
+import { deleteEmployee } from '@actions/settings/employee-config'
+import { deleteExternalSavingAccount } from '@actions/settings/external-saving-account-config'
 
 // Define the props type
 

@@ -1,5 +1,5 @@
 import EmployeeListPageUi from './ui'
-import { getEmployeeList } from '@actions/employee-config'
+import { getEmployeeList } from '@actions/settings/employee-config'
 
 type SearchParams = {
   page?: number

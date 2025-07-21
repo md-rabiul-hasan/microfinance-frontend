@@ -1,7 +1,6 @@
 'use server'
 
-import { CreateServiceAreaType, ExternalSavingAccountSetupType } from '@types'
-import { EmployeeSetupType } from '@types/employee'
+import { ExternalSavingAccountSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 

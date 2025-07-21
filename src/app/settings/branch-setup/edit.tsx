@@ -1,4 +1,4 @@
-import { updateServiceArea } from '@actions/service-area-config'
+import { updateServiceArea } from '@actions/settings/service-area-config'
 import { Button, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
@@ -11,10 +11,9 @@ import { MdPerson } from 'react-icons/md'
 import { PiCertificateFill } from 'react-icons/pi'
 import { FaSquarePhone } from 'react-icons/fa6'
 import { FaLocationDot } from 'react-icons/fa6'
-import { updateEmployee } from '@actions/employee-config'
-import { branchValidationSchema } from '@schemas/branch.schema'
-import { updateBranch } from '@actions/branch-config'
+import { updateBranch } from '@actions/settings/branch-config'
 import { BiSolidBank } from 'react-icons/bi'
+import { branchValidationSchema } from '@schemas/settings.schema'
 
 const EditModal = ({ branch }: any) => {
   const [isLoading, startTransition] = useTransition()

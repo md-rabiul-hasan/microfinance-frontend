@@ -1,4 +1,4 @@
-import { setupFiscalYear } from '@actions/fiscal-year-config'
+import { setupFiscalYear } from '@actions/settings/fiscal-year-config'
 import { Button, Select, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
@@ -8,7 +8,7 @@ import { useTransition } from 'react'
 import { BiCategoryAlt } from 'react-icons/bi'
 import { MdUpdate as UpdateIcon } from 'react-icons/md'
 import { DateInput } from '@mantine/dates'
-import { setupTransactionDate } from '@actions/transaction-date-config'
+import { setupTransactionDate } from '@actions/settings/transaction-date-config'
 
 const EditModal = ({ trnDate }: any) => {
   const [isLoading, startTransition] = useTransition()

@@ -1,6 +1,6 @@
 'use client'
 
-import { deleteProject } from '@actions/project-config'
+import { deleteProject } from '@actions/settings/project-config'
 import TableNav from '@components/common/table-nav'
 import TitleBar from '@components/common/title-bar'
 import useNavigation from '@hooks/useNavigation'

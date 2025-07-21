@@ -1,11 +1,11 @@
-import { setupFiscalYear } from '@actions/fiscal-year-config'
+import { setupFiscalYear } from '@actions/settings/fiscal-year-config'
 import { Button, Select, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
-import { BiCategoryAlt } from "react-icons/bi"
+import { BiCategoryAlt } from 'react-icons/bi'
 import { MdUpdate as UpdateIcon } from 'react-icons/md'
 
 const EditModal = ({ formatCode }: any) => {
@@ -38,14 +38,13 @@ const EditModal = ({ formatCode }: any) => {
         Setup Fiscal Year
       </Title>
 
-
       <Select
         label="Select Format"
         placeholder="Select Format"
         data={[
-          { value: "", label: "Select Format" },
-          { value: "1", label: "January to December" },
-          { value: "2", label: "June to June" }
+          { value: '', label: 'Select Format' },
+          { value: '1', label: 'January to December' },
+          { value: '2', label: 'June to June' }
         ]}
         searchable
         withAsterisk
@@ -53,7 +52,6 @@ const EditModal = ({ formatCode }: any) => {
         leftSection={<BiCategoryAlt />}
         {...getInputProps('formatCode')} // Changed from 'locCode' to 'formatCode' to match your context
       />
-
 
       {/* Submit Button */}
       <Button type="submit" leftSection={<UpdateIcon />} loading={isLoading}>

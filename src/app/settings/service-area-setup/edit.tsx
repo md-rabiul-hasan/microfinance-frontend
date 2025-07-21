@@ -1,13 +1,13 @@
-import { updateServiceArea } from '@actions/service-area-config'
+import { updateServiceArea } from '@actions/settings/service-area-config'
 import { Button, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { serviceAreaValidationSchema } from '@schemas/service-are.schema'
+import { serviceAreaValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { BiCategoryAlt } from 'react-icons/bi'
-import { CiLocationOn } from "react-icons/ci"
+import { CiLocationOn } from 'react-icons/ci'
 import { MdUpdate as UpdateIcon } from 'react-icons/md'
 
 const EditModal = ({ area, locations }: any) => {
@@ -38,7 +38,9 @@ const EditModal = ({ area, locations }: any) => {
 
   return (
     <form onSubmit={onSubmit(submitHandler)}>
-      <Title order={4} mb="md">Add Service Area</Title>
+      <Title order={4} mb="md">
+        Add Service Area
+      </Title>
       {/* Product Name Input */}
       <TextInput
         label="Zone Name"

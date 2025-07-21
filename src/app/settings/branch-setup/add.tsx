@@ -1,4 +1,4 @@
-import { createEmployee } from '@actions/employee-config'
+import { createEmployee } from '@actions/settings/employee-config'
 import { Button, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
@@ -12,9 +12,9 @@ import { MdPerson } from 'react-icons/md'
 import { PiCertificateFill } from 'react-icons/pi'
 import { FaSquarePhone } from 'react-icons/fa6'
 import { FaLocationDot } from 'react-icons/fa6'
-import { branchValidationSchema } from '@schemas/branch.schema'
-import { createBranch } from '@actions/branch-config'
+import { createBranch } from '@actions/settings/branch-config'
 import { BiSolidBank } from 'react-icons/bi'
+import { branchValidationSchema } from '@schemas/settings.schema'
 
 const AddModal = ({ locations }: any) => {
   const [isLoading, startTransition] = useTransition()

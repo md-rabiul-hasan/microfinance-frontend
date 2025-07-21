@@ -1,4 +1,4 @@
-import { getExternalSavingAccount } from '@actions/external-saving-account-config'
+import { getExternalSavingAccount } from '@actions/settings/external-saving-account-config'
 import ExternalSavingAccountListUi from './ui'
 
 type SearchParams = {

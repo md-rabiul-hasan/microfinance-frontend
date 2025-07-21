@@ -1,9 +1,8 @@
-import { createEmployee } from '@actions/employee-config'
+import { createEmployee } from '@actions/settings/employee-config'
 import { Button, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { employeeValidationSchema } from '@schemas/employee.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { CiLocationOn } from 'react-icons/ci'
@@ -13,6 +12,7 @@ import { MdPerson } from 'react-icons/md'
 import { PiCertificateFill } from 'react-icons/pi'
 import { FaSquarePhone } from 'react-icons/fa6'
 import { FaLocationDot } from 'react-icons/fa6'
+import { employeeValidationSchema } from '@schemas/settings.schema'
 
 const AddModal = ({ locations }: any) => {
   const [isLoading, startTransition] = useTransition()

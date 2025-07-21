@@ -1,4 +1,4 @@
-import { getBranchList } from '@actions/branch-config'
+import { getBranchList } from '@actions/settings/branch-config'
 import BranchListPageUi from './ui'
 
 type SearchParams = {

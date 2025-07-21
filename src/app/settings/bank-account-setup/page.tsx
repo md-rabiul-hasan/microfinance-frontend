@@ -1,7 +1,5 @@
-import { getBankAccountList } from '@actions/bank-account-config'
+import { getBankAccountList } from '@actions/settings/bank-account-config'
 import BankAccountListPageUi from './ui'
-import EmployeeListPageUi from './ui'
-import { getEmployeeList } from '@actions/employee-config'
 
 type SearchParams = {
   page?: number

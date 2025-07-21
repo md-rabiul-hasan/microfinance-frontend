@@ -1,6 +1,6 @@
 'use server'
 
-import { BranchSetupType } from '@types/branch'
+import { BranchSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 

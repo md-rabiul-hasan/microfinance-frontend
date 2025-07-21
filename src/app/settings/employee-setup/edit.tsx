@@ -1,9 +1,8 @@
-import { updateServiceArea } from '@actions/service-area-config'
+import { updateServiceArea } from '@actions/settings/service-area-config'
 import { Button, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { employeeValidationSchema } from '@schemas/employee.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { BiCategoryAlt } from 'react-icons/bi'
@@ -14,7 +13,8 @@ import { MdPerson } from 'react-icons/md'
 import { PiCertificateFill } from 'react-icons/pi'
 import { FaSquarePhone } from 'react-icons/fa6'
 import { FaLocationDot } from 'react-icons/fa6'
-import { updateEmployee } from '@actions/employee-config'
+import { updateEmployee } from '@actions/settings/employee-config'
+import { employeeValidationSchema } from '@schemas/settings.schema'
 
 const EditModal = ({ employee }: any) => {
   const [isLoading, startTransition] = useTransition()

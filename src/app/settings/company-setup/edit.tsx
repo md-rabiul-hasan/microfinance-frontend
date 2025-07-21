@@ -1,4 +1,4 @@
-import { setupFiscalYear } from '@actions/fiscal-year-config'
+import { setupFiscalYear } from '@actions/settings/fiscal-year-config'
 import { Button, FileInput, Select, TextInput, Title } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
@@ -10,7 +10,7 @@ import { FaBuilding } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
 import { FaRegFileAlt } from 'react-icons/fa'
 import { BsBuilding } from 'react-icons/bs'
-import { setupCompanyInfo } from '@actions/company-config'
+import { setupCompanyInfo } from '@actions/settings/company-config'
 
 const EditModal = ({ company }: any) => {
   const [isLoading, startTransition] = useTransition()

@@ -1,7 +1,6 @@
 'use server'
 
-import { CreateServiceAreaType } from '@types'
-import { EmployeeSetupType } from '@types/employee'
+import { CreateServiceAreaType, EmployeeSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 

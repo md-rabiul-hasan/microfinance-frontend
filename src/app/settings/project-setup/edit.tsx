@@ -1,15 +1,15 @@
-import { updateProject } from '@actions/project-config'
+import { updateProject } from '@actions/settings/project-config'
 import { Button, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { projectValidationSchema } from '@schemas/project.schema'
+import { projectValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { BiSolidBank } from 'react-icons/bi'
 import { FaLocationDot } from 'react-icons/fa6'
 import { MdUpdate as UpdateIcon } from 'react-icons/md'
-import { PiNoteFill } from "react-icons/pi"
+import { PiNoteFill } from 'react-icons/pi'
 
 const EditModal = ({ project }: any) => {
   const [isLoading, startTransition] = useTransition()
@@ -19,7 +19,7 @@ const EditModal = ({ project }: any) => {
     initialValues: {
       project_name: project.project_name,
       project_location: project.project_location,
-      project_details: project.project_details,
+      project_details: project.project_details
     }
   })
 

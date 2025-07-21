@@ -19,3 +19,28 @@ export type BankAccountSetupType = {
 export type TransactionDateSetupType = {
   trnDate: string
 }
+
+export type BranchSetupType = {
+  name: string
+  addr: string | null
+  contact: string
+}
+
+export type EmployeeSetupType = {
+  emp_id: string
+  name: string
+  designation: string
+  addr: string
+  contact: string
+}
+
+export type ProjectSetupType = {
+  project_name: string
+  project_location: string
+  project_details: string | null
+}
+
+export type CreateServiceAreaType = {
+  zoneName: string
+  locCode: number
+}

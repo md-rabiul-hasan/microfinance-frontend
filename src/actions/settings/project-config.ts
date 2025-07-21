@@ -1,6 +1,6 @@
 'use server'
 
-import { ProjectSetupType } from '@types/project'
+import { ProjectSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 

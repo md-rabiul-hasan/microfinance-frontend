@@ -1,6 +1,6 @@
 import { getLocationList } from '@actions/common-config'
-import { getServiceAreaList } from '@actions/service-area-config'
 import ServiceAreaListPageUi from './ui'
+import { getServiceAreaList } from '@actions/settings/service-area-config'
 
 type SearchParams = {
   page?: number
@@ -17,7 +17,7 @@ const ServiceAreaPage = async ({ searchParams }: Props) => {
   const { per_page = 10, page = 1, search = '' } = params
 
   const res = await getServiceAreaList({ page, per_page, search })
-  const locations = await getLocationList();
+  const locations = await getLocationList()
 
   return <ServiceAreaListPageUi data={res} locations={locations} />
 }

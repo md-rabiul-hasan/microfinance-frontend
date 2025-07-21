@@ -1,4 +1,4 @@
-import { getProjectList } from '@actions/project-config'
+import { getProjectList } from '@actions/settings/project-config'
 import ProjectListPageUi from './ui'
 
 type SearchParams = {

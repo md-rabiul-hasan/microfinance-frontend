@@ -1,14 +1,14 @@
-import { createProject } from '@actions/project-config'
+import { createProject } from '@actions/settings/project-config'
 import { Button, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { projectValidationSchema } from '@schemas/project.schema'
+import { projectValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { BiSave, BiSolidBank } from 'react-icons/bi'
 import { FaLocationDot } from 'react-icons/fa6'
-import { PiNoteFill } from "react-icons/pi"
+import { PiNoteFill } from 'react-icons/pi'
 
 const AddModal = ({ locations }: any) => {
   const [isLoading, startTransition] = useTransition()
