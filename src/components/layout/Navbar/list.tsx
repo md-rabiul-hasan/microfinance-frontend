@@ -29,6 +29,7 @@ export const menuItems = (roles: string[]) => [
     links: [
       { link: '/settings/service-area-setup', label: 'Service Area Setup' },
       { link: '/settings/fiscal-year-setup', label: 'Fiscal Year Setup' },
+      { link: '/settings/transaction-date-setup', label: 'Transaction Date Setup' },
       { link: '/settings/company-setup', label: 'Company Setup' },
       { link: '/settings/employee-setup', label: 'Employee Setup' },
       { link: '/settings/branch-setup', label: 'Branch Setup' },

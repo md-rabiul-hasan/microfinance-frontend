@@ -15,3 +15,7 @@ export type BankAccountSetupType = {
   acc_flag: string
   product_type: string
 }
+
+export type TransactionDateSetupType = {
+  trnDate: string
+}
