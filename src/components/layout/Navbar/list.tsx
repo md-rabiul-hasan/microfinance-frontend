@@ -1,6 +1,7 @@
-import { ReactNode } from 'react'
-import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
-import { CiSettings } from 'react-icons/ci'
+import { ReactNode } from 'react';
+import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai';
+import { CiSettings } from 'react-icons/ci';
+import { FaUsers } from "react-icons/fa6";
 
 type MenuItem = {
   link: string
@@ -36,6 +37,13 @@ export const menuItems = (roles: string[]) => [
       { link: '/settings/project-setup', label: 'Project Setup' },
       { link: '/settings/external-saving-account-setup', label: 'External Saving A/C Setup' },
       { link: '/settings/bank-account-setup', label: 'Bank Account Setup' }
+    ]
+  },
+  {
+    label: 'Membership',
+    icon: <FaUsers />,
+    links: [
+      { link: '/membership/my-member-setup', label: 'My Member' },
     ]
   }
 ]
