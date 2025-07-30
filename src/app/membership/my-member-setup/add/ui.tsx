@@ -21,7 +21,7 @@ import { PiHandsPrayingLight } from "react-icons/pi"
 import { RiIdCardLine } from "react-icons/ri"
 import { TbCirclesRelation } from "react-icons/tb"
 
-const AddMemberUi = ({ locations }: any) => {
+const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps } = useForm({
@@ -88,12 +88,11 @@ const AddMemberUi = ({ locations }: any) => {
               label="Title"
               size="xs"
               data={[
-                { value: 'Mr', label: 'Mr.' },
-                { value: 'Mrs', label: 'Mrs.' },
-                { value: 'Ms', label: 'Ms.' }
+                { value: 'M', label: 'Mr.' },
+                { value: 'F', label: 'Ms.' }
               ]}
               withAsterisk
-              {...getInputProps('title')}
+              {...getInputProps('gender')}
               leftSection={<BsGenderTrans />}
             />
           </Grid.Col>
@@ -120,7 +119,6 @@ const AddMemberUi = ({ locations }: any) => {
             <TextInput
               label="Email"
               size="xs"
-              withAsterisk
               {...getInputProps('email')}
               leftSection={<MdOutlineEmail />}
             />
@@ -145,7 +143,7 @@ const AddMemberUi = ({ locations }: any) => {
           </Grid.Col>
           <Grid.Col span={3}>
             <TextInput
-              label="Spouse Name"
+              label="Spouse's Name (if any)"
               size="xs"
               {...getInputProps('spouse')}
               leftSection={<ImManWoman />}
@@ -166,12 +164,11 @@ const AddMemberUi = ({ locations }: any) => {
             <Select
               label="Religion"
               size="xs"
-              data={[
-                { value: 'islam', label: 'Islam' },
-                { value: 'hindu', label: 'Hindu' },
-                { value: 'christian', label: 'Christian' },
-                { value: 'buddhist', label: 'Buddhist' }
-              ]}
+              data={religions.map((data: any) => ({
+                value: String(data.religionCode),
+                label: `${data.religionName}`
+              }))}
+              searchable
               withAsterisk
               {...getInputProps('religion')}
               leftSection={<PiHandsPrayingLight />}
@@ -181,12 +178,11 @@ const AddMemberUi = ({ locations }: any) => {
             <Select
               label="Blood Group"
               size="xs"
-              data={[
-                { value: 'A+', label: 'A+' },
-                { value: 'A-', label: 'A-' },
-                { value: 'B+', label: 'B+' },
-                // Add other blood groups
-              ]}
+              data={bloodGroups.map((data: any) => ({
+                value: String(data.bloodCode),
+                label: `${data.grpName}`
+              }))}
+              searchable
               {...getInputProps('blood')}
               leftSection={<MdOutlineBloodtype />}
             />
@@ -214,11 +210,12 @@ const AddMemberUi = ({ locations }: any) => {
             <Select
               label="Profession"
               size="xs"
-              data={[
-                { value: 'business', label: 'Business' },
-                { value: 'service', label: 'Service' },
-                // Add other professions
-              ]}
+              data={professions.map((data: any) => ({
+                value: String(data.keyCode),
+                label: `${data.name}`
+              }))}
+              searchable
+              withAsterisk
               {...getInputProps('profession')}
               leftSection={<MdOutlineWorkOutline />}
             />
@@ -227,13 +224,11 @@ const AddMemberUi = ({ locations }: any) => {
             <Select
               label="Location Area"
               size="xs"
-              data={[
-                { value: 'spouse', label: 'Spouse' },
-                { value: 'father', label: 'Father' },
-                { value: 'mother', label: 'Mother' },
-                { value: 'son', label: 'Son' },
-                { value: 'daughter', label: 'Daughter' }
-              ]}
+              data={addressZones.map((data: any) => ({
+                value: String(data.zoneCode),
+                label: `${data.zoneName}`
+              }))}
+              searchable
               {...getInputProps('address_zoneCode')}
               leftSection={<IoLocationOutline />}
             />
@@ -260,12 +255,21 @@ const AddMemberUi = ({ locations }: any) => {
               label="Relationship"
               size="xs"
               data={[
-                { value: 'spouse', label: 'Spouse' },
-                { value: 'father', label: 'Father' },
-                { value: 'mother', label: 'Mother' },
-                { value: 'son', label: 'Son' },
-                { value: 'daughter', label: 'Daughter' }
+                { value: 'Spouse', label: 'Spouse' },
+                { value: 'Father', label: 'Father' },
+                { value: 'Mother', label: 'Mother' },
+                { value: 'Son', label: 'Son' },
+                { value: 'Daughter', label: 'Daughter' },
+                { value: 'Sister', label: 'Sister' },
+                { value: 'Brother', label: 'Brother' },
+                { value: 'Uncle', label: 'Uncle' },
+                { value: 'Maternal Uncle', label: 'Maternal Uncle' },
+                { value: 'Grand Father', label: 'Grand Father' },
+                { value: 'Grand Mother', label: 'Grand Mother' },
+                { value: 'Cousine', label: 'Cousine' },
+                { value: 'Other', label: 'Other' }
               ]}
+              searchable
               withAsterisk
               {...getInputProps('nom_relation')}
               leftSection={<TbCirclesRelation />}
@@ -295,11 +299,8 @@ const AddMemberUi = ({ locations }: any) => {
               label="Introducer Type"
               size="xs"
               data={[
-                { value: 'spouse', label: 'Spouse' },
-                { value: 'father', label: 'Father' },
-                { value: 'mother', label: 'Mother' },
-                { value: 'son', label: 'Son' },
-                { value: 'daughter', label: 'Daughter' }
+                { value: 'M', label: 'Member' },
+                { value: 'O', label: 'Non Member' },
               ]}
               withAsterisk
               {...getInputProps('int_type')}
