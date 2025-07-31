@@ -36,20 +36,9 @@ const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
   const handlePageChange = (val: number) => navigate({ page: val.toString() })
   const handleLimitChange = (val: string | null) => navigate({ per_page: val || '10' })
 
-  const addHandler = () =>
-    openModal({
-      children: <AddModal locations={locations} />,
-      centered: true,
-      size: '70%',
-      withCloseButton: false
-    })
-
-  const editHandler = (area: any) =>
-    openModal({
-      children: <EditModal area={area} locations={locations} />,
-      centered: true,
-      withCloseButton: false
-    })
+  const editHandler = (id: any) => {
+    router.push(`/membership/my-member-setup/add?id=${id}`)
+  }
 
   const deleteHandler = (id: number) => {
     modals.openConfirmModal({
@@ -87,7 +76,7 @@ const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
             onChange={(event) => setInterSearch(event.currentTarget.value)}
           />
           <Tooltip label="Add New Area" withArrow position="bottom">
-            <ActionIcon onClick={addHandler}>
+            <ActionIcon onClick={() => router.push('/membership/my-member-setup/add')}>
               <FaPlusCircle />
             </ActionIcon>
           </Tooltip>
@@ -131,7 +120,7 @@ const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item onClick={() => editHandler(member)}>Edit</Menu.Item>
+                        <Menu.Item onClick={() => editHandler(member.memberKeyCode)}>Edit</Menu.Item>
                         <Menu.Item onClick={() => deleteHandler(member.memberKeyCode)}>Delete</Menu.Item>
                       </Menu.Dropdown>
                     </Menu>

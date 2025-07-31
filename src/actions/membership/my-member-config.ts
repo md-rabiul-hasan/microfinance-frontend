@@ -1,6 +1,7 @@
 'use server'
 
 import { CreateServiceAreaType } from '@types'
+import { MyMemberSetupType } from '@types/my-member'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 
@@ -18,14 +19,14 @@ export const getMyMemberList = async (params?: { page?: number; per_page?: numbe
   }
 }
 
-export const createServiceArea = async (formData: CreateServiceAreaType, path?: string) => {
+export const createMember = async (formData: MyMemberSetupType, path?: string) => {
   try {
     const apiObj = await api()
-    const { data } = await apiObj.post('/settings/service-area', {
+    const { data } = await apiObj.post('/membership/my-member-setup', {
       ...formData
     })
 
-    revalidatePath('/settings/service-area-setup')
+    revalidatePath('/membership/my-member-setup')
 
     return data
   } catch (error) {

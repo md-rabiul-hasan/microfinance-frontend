@@ -1,37 +1,40 @@
 'use client'
 
+import { createMember } from '@actions/membership/my-member-config'
 import { createServiceArea } from '@actions/settings/service-area-config'
 import { Button, Grid, Paper, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+import { myMemberSetupValidationSchema } from '@schemas/my-member.schema'
 import { serviceAreaValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { BiSave } from 'react-icons/bi'
-import { BsGenderTrans } from "react-icons/bs"
-import { CgDetailsMore } from "react-icons/cg"
-import { CiMobile3, CiSearch } from "react-icons/ci"
-import { FaRegUser } from "react-icons/fa"
-import { ImManWoman } from "react-icons/im"
-import { IoCalendarOutline, IoLocationOutline, IoManOutline, IoWomanOutline } from "react-icons/io5"
-import { LiaIdCardAltSolid } from "react-icons/lia"
-import { MdOutlineBloodtype, MdOutlineElderlyWoman, MdOutlineEmail, MdOutlineWorkOutline } from "react-icons/md"
-import { PiHandsPrayingLight } from "react-icons/pi"
-import { RiIdCardLine } from "react-icons/ri"
-import { TbCirclesRelation } from "react-icons/tb"
+import { BsGenderTrans } from 'react-icons/bs'
+import { CgDetailsMore } from 'react-icons/cg'
+import { CiMobile3, CiSearch } from 'react-icons/ci'
+import { FaRegUser } from 'react-icons/fa'
+import { ImManWoman } from 'react-icons/im'
+import { IoCalendarOutline, IoLocationOutline, IoManOutline, IoWomanOutline } from 'react-icons/io5'
+import { LiaIdCardAltSolid } from 'react-icons/lia'
+import { MdOutlineBloodtype, MdOutlineElderlyWoman, MdOutlineEmail, MdOutlineWorkOutline } from 'react-icons/md'
+import { PiHandsPrayingLight } from 'react-icons/pi'
+import { RiIdCardLine } from 'react-icons/ri'
+import { TbCirclesRelation } from 'react-icons/tb'
 
 const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps } = useForm({
-    validate: yupResolver(serviceAreaValidationSchema),
+    validate: yupResolver(myMemberSetupValidationSchema),
     initialValues: {
       // Basic Info
       member_id: '',
-      title: '',
+      gender: '',
       name: '',
       contact: '',
+      email: '',
       father: '',
       mother: '',
       spouse: '',
@@ -39,22 +42,25 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
       religion: '',
       blood: '',
       national_id: '',
-      address: '',
+      address_det: '',
       profession: '',
-      location: '',
+      address_zoneCode: '',
 
       // Nominee Info
       nom_name: '',
       nom_relation: '',
-      nom_contact: '',
-      nom_nid: '',
-      nom_address: ''
+      nom_nid_bc: '',
+      nomContact: '',
+      int_type: '',
+      int_id: '',
+      int_details: '',
+      mem_date: ''
     }
   })
 
   const submitHandler = (formData: any) =>
     startTransition(async () => {
-      const res = await createServiceArea(formData)
+      const res = await createMember(formData)
       if (res.success) {
         showNotification(getSuccessMessage(res?.message))
         closeAllModals()
@@ -66,12 +72,14 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
   return (
     <form onSubmit={onSubmit(submitHandler)}>
       <Title order={4} mb="md">
-        Add Member
+        Member Information
       </Title>
 
       {/* Basic Information Section */}
       <Paper shadow="xs" mb="xs" p="md">
-        <Title order={5} mb="xs">Basic Information</Title>
+        <Title order={5} mb="xs">
+          Basic Information
+        </Title>
 
         <Grid>
           <Grid.Col span={3}>
@@ -118,6 +126,7 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
           <Grid.Col span={3}>
             <TextInput
               label="Email"
+              withAsterisk
               size="xs"
               {...getInputProps('email')}
               leftSection={<MdOutlineEmail />}
@@ -229,6 +238,7 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
                 label: `${data.zoneName}`
               }))}
               searchable
+              withAsterisk
               {...getInputProps('address_zoneCode')}
               leftSection={<IoLocationOutline />}
             />
@@ -238,7 +248,9 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
 
       {/* Nominee Information Section */}
       <Paper shadow="xs" mb="xs" p="md">
-        <Title order={5} mb="xs">Nominee Information</Title>
+        <Title order={5} mb="xs">
+          Nominee Information
+        </Title>
 
         <Grid>
           <Grid.Col span={3}>
@@ -280,7 +292,7 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
               label="Contact No"
               size="xs"
               withAsterisk
-              {...getInputProps('contact')}
+              {...getInputProps('nomContact')}
               leftSection={<CiMobile3 />}
             />
           </Grid.Col>
@@ -300,7 +312,7 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
               size="xs"
               data={[
                 { value: 'M', label: 'Member' },
-                { value: 'O', label: 'Non Member' },
+                { value: 'O', label: 'Non Member' }
               ]}
               withAsterisk
               {...getInputProps('int_type')}
@@ -325,7 +337,6 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
             />
           </Grid.Col> */}
 
-
           <Grid.Col span={6}>
             <TextInput
               label="Details of Introducer"
@@ -339,6 +350,8 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
               label="Membership Date"
               size="xs"
               {...getInputProps('mem_date')}
+              type="date"
+              withAsterisk
               leftSection={<IoCalendarOutline />}
             />
           </Grid.Col>
