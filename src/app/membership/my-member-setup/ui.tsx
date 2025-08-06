@@ -14,7 +14,9 @@ import { startTransition, useEffect, useState } from 'react'
 import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import AddModal from './add'
-import EditModal from './edit'
+import EditModal from './upload'
+import { deleteMember } from '@actions/membership/my-member-config'
+import UploadModal from './upload'
 
 // Define the props type
 
@@ -40,14 +42,21 @@ const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
     router.push(`/membership/my-member-setup/add?id=${id}`)
   }
 
+  const uploadHandler = (memberKeyCode: any) =>
+    openModal({
+      children: <UploadModal memberKeyCode={memberKeyCode} />,
+      centered: true,
+      withCloseButton: false
+    })
+
   const deleteHandler = (id: number) => {
     modals.openConfirmModal({
       title: 'Please confirm your action',
-      children: <Text size="sm">Are you sure you want to delete this service area?</Text>,
+      children: <Text size="sm">Are you sure you want to delete this member?</Text>,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: () => {
         startTransition(async () => {
-          const res = await deleteServiceArea(id)
+          const res = await deleteMember(id)
           if (res.success) {
             showNotification({ ...getSuccessMessage(res.message), autoClose: 10000 })
           } else {
@@ -121,6 +130,7 @@ const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
                       </Menu.Target>
                       <Menu.Dropdown>
                         <Menu.Item onClick={() => editHandler(member.memberKeyCode)}>Edit</Menu.Item>
+                        <Menu.Item onClick={() => uploadHandler(member.memberKeyCode)}>Image Upload</Menu.Item>
                         <Menu.Item onClick={() => deleteHandler(member.memberKeyCode)}>Delete</Menu.Item>
                       </Menu.Dropdown>
                     </Menu>

@@ -1,14 +1,15 @@
 'use client'
 
-import { createMember } from '@actions/membership/my-member-config'
+import { createMember, updateMember } from '@actions/membership/my-member-config'
 import { createServiceArea } from '@actions/settings/service-area-config'
-import { Button, Grid, Paper, Select, TextInput, Title } from '@mantine/core'
+import { Box, Button, Flex, Grid, Paper, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { myMemberSetupValidationSchema } from '@schemas/my-member.schema'
 import { serviceAreaValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import Image from 'next/image'
 import { useTransition } from 'react'
 import { BiSave } from 'react-icons/bi'
 import { BsGenderTrans } from 'react-icons/bs'
@@ -23,44 +24,50 @@ import { PiHandsPrayingLight } from 'react-icons/pi'
 import { RiIdCardLine } from 'react-icons/ri'
 import { TbCirclesRelation } from 'react-icons/tb'
 
-const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any) => {
+const AddMemberUi = ({ religions, bloodGroups, professions, addressZones, members, details }: any) => {
   const [isLoading, startTransition] = useTransition()
 
-  const { onSubmit, getInputProps } = useForm({
+  const { onSubmit, getInputProps, values } = useForm({
     validate: yupResolver(myMemberSetupValidationSchema),
     initialValues: {
       // Basic Info
-      member_id: '',
-      gender: '',
-      name: '',
-      contact: '',
-      email: '',
-      father: '',
-      mother: '',
-      spouse: '',
-      dob: '',
-      religion: '',
-      blood: '',
-      national_id: '',
-      address_det: '',
-      profession: '',
-      address_zoneCode: '',
+      member_id: details?.member_id || '',
+      gender: details?.gender || '',
+      name: details?.name || '',
+      contact: details?.contact || '',
+      email: details?.email || '',
+      father: details?.father || '',
+      mother: details?.mother || '',
+      spouse: details?.spouse || '',
+      dob: details?.dob || '',
+      religion: details?.religion != null ? String(details.religion) : '',
+      blood: details?.blood != null ? String(details.blood) : '',
+      national_id: details?.national_id || '',
+      address_det: details?.address_det || '',
+      profession: details?.profession != null ? String(details.profession) : '',
+      address_zoneCode: details?.address_zoneCode != null ? String(details.address_zoneCode) : '',
 
       // Nominee Info
-      nom_name: '',
-      nom_relation: '',
-      nom_nid_bc: '',
-      nomContact: '',
-      int_type: '',
-      int_id: '',
-      int_details: '',
-      mem_date: ''
+      nom_name: details?.nom_name || '',
+      nom_relation: details?.nom_relation || '',
+      nom_nid_bc: details?.nom_nid_bc || '',
+      nomContact: details?.nomContact || '',
+      int_type: details?.int_type || '',
+      int_id: details?.int_id?.toString() || '',
+      int_details: details?.int_details || '',
+      mem_date: details?.mem_date || ''
     }
   })
 
   const submitHandler = (formData: any) =>
     startTransition(async () => {
-      const res = await createMember(formData)
+      let res = null
+      if (details) {
+        res = await updateMember(details.memberKeyCode, formData)
+      } else {
+        res = await createMember(formData)
+      }
+
       if (res.success) {
         showNotification(getSuccessMessage(res?.message))
         closeAllModals()
@@ -320,31 +327,34 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
             />
           </Grid.Col>
 
-          {/* <Grid.Col span={4}>
-            <Select
-              label="Introducer ID"
-              size="xs"
-              display="none"
-              data={[
-                { value: 'spouse', label: 'Spouse' },
-                { value: 'father', label: 'Father' },
-                { value: 'mother', label: 'Mother' },
-                { value: 'son', label: 'Son' },
-                { value: 'daughter', label: 'Daughter' }
-              ]}
-              withAsterisk
-              {...getInputProps('int_id')}
-            />
-          </Grid.Col> */}
+          {values.int_type === 'M' && (
+            <Grid.Col span={4}>
+              <Select
+                label="Introducer ID"
+                size="xs"
+                data={members.map((data: any) => ({
+                  value: String(data.memberKeyCode),
+                  label: `${data.member_id} - ${data.name}`
+                }))}
+                searchable
+                withAsterisk
+                {...getInputProps('int_id')}
+              />
+            </Grid.Col>
+          )}
 
-          <Grid.Col span={6}>
-            <TextInput
-              label="Details of Introducer"
-              size="xs"
-              {...getInputProps('int_details')}
-              leftSection={<CgDetailsMore />}
-            />
-          </Grid.Col>
+          {values.int_type === 'O' && (
+            <Grid.Col span={6}>
+              <TextInput
+                label="Details of Introducer"
+                size="xs"
+                withAsterisk
+                {...getInputProps('int_details')}
+                leftSection={<CgDetailsMore />}
+              />
+            </Grid.Col>
+          )}
+
           <Grid.Col span={2}>
             <TextInput
               label="Membership Date"
@@ -361,6 +371,77 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones }: any)
       <Button type="submit" leftSection={<BiSave />} loading={isLoading} mt="md">
         Submit
       </Button>
+      {details?.profile_image?.insert_key || details?.signature_image?.insert_key ? (
+        <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>
+          {/* Profile Picture Section */}
+          {details?.profile_image?.insert_key && (
+            <Box style={{ flex: 1 }}>
+              <Title order={5} mb="sm" style={{ textAlign: 'center' }}>
+                Profile Picture
+              </Title>
+              <Box
+                mt="sm"
+                style={{
+                  border: '1px dashed #ddd',
+                  borderRadius: 'var(--mantine-radius-sm)',
+                  padding: '0.5rem',
+                  minHeight: '180px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/profile_picture/${details.profile_image.insert_key}`}
+                  alt="Profile preview"
+                  width={300}
+                  height={180}
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                    objectFit: 'contain'
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
+
+          {/* Signature Card Section */}
+          {details?.signature_image?.insert_key && (
+            <Box style={{ flex: 1 }}>
+              <Title order={5} mb="sm" style={{ textAlign: 'center' }}>
+                Signature Card
+              </Title>
+              <Box
+                mt="sm"
+                style={{
+                  border: '1px dashed #ddd',
+                  borderRadius: 'var(--mantine-radius-sm)',
+                  padding: '0.5rem',
+                  minHeight: '180px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Image
+                  src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/signature_card/${details.signature_image.insert_key}`}
+                  alt="Signature preview"
+                  width={300}
+                  height={180}
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                    objectFit: 'contain'
+                  }}
+                />
+              </Box>
+            </Box>
+          )}
+        </Flex>
+      ) : (
+        <div></div>
+      )}
     </form>
   )
 }

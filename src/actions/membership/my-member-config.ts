@@ -34,24 +34,52 @@ export const createMember = async (formData: MyMemberSetupType, path?: string) =
   }
 }
 
-export const updateServiceArea = async (id: number, formData: CreateServiceAreaType) => {
+export const updateMember = async (id: number, formData: MyMemberSetupType) => {
   try {
     const apiObj = await api()
-    const { data } = await apiObj.put(`/settings/service-area/${id}`, formData)
-    revalidatePath('/products/list')
+    const { data } = await apiObj.put(`/membership/my-member-setup/${id}`, formData)
+    revalidatePath('/membership/my-member-setup')
     return data
   } catch (error) {
     return error.response?.data
   }
 }
 
-export const deleteServiceArea = async (id: number) => {
+export const deleteMember = async (id: number) => {
   try {
     const apiObj = await api()
-    const { data } = await apiObj.delete(`/settings/service-area/${id}`)
-    revalidatePath('/products/list')
+    const { data } = await apiObj.delete(`/membership/my-member-setup/${id}`)
+    revalidatePath('/membership/my-member-setup')
     return data
   } catch (error) {
+    return error.response?.data
+  }
+}
+
+export const detailsMemberInfo = async (id: string | number) => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.get(`/membership/my-member-setup/${id}`)
+    return data
+  } catch (error) {
+    return error.response?.data
+  }
+}
+
+export const uploadMemberImage = async (params: any) => {
+  try {
+    const formData = new FormData()
+
+    const apiObj = await api()
+    const { data } = await apiObj.post('/membership/my-member-setup/image-upload', params, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+
+    revalidatePath('/membership/my-member-setup')
+    return data
+  } catch (error: any) {
     return error.response?.data
   }
 }

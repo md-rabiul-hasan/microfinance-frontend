@@ -56,3 +56,14 @@ export const getAddressZones = async () => {
     return []
   }
 }
+
+export const getMembers = async () => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.get('/common/members')
+
+    return data.data
+  } catch (error) {
+    return []
+  }
+}
