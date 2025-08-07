@@ -1,7 +1,9 @@
-import { ReactNode } from 'react';
-import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai';
-import { CiSettings } from 'react-icons/ci';
-import { FaUsers } from "react-icons/fa6";
+import { ReactNode } from 'react'
+import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
+import { CiSettings } from 'react-icons/ci'
+import { FaUsers } from 'react-icons/fa6'
+import { LiaDonateSolid } from 'react-icons/lia'
+import { HiOutlineUserGroup } from 'react-icons/hi'
 
 type MenuItem = {
   link: string
@@ -41,10 +43,13 @@ export const menuItems = (roles: string[]) => [
   },
   {
     label: 'Membership',
-    icon: <FaUsers />,
-    links: [
-      { link: '/membership/my-member-setup', label: 'My Member' },
-    ]
+    icon: <HiOutlineUserGroup />,
+    links: [{ link: '/membership/my-member-setup', label: 'My Member' }]
+  },
+  {
+    label: 'Deposit',
+    icon: <LiaDonateSolid />,
+    links: [{ link: '/deposit/regular-deposit', label: 'Regular Deposit' }]
   }
 ]
 

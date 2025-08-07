@@ -67,3 +67,13 @@ export const getMembers = async () => {
     return []
   }
 }
+
+export const getMemberInformation = async (member_id: string) => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.get(`/common/member-info?memberId=${member_id}`)
+    return data
+  } catch (error) {
+    return []
+  }
+}
