@@ -225,6 +225,7 @@ const FdrDepositPageUi = () => {
                   <Table.Tr>
                     <Table.Th>Account</Table.Th>
                     <Table.Th>Open Date</Table.Th>
+                    <Table.Th>Close Date</Table.Th>
                     <Table.Th>Amount</Table.Th>
                     <Table.Th>Tenure</Table.Th>
                     <Table.Th>Action</Table.Th>
@@ -237,6 +238,9 @@ const FdrDepositPageUi = () => {
                         <Table.Td>Fixed Deposit</Table.Td>
                         <Table.Td>
                           {deposit.open_date}
+                        </Table.Td>
+                        <Table.Td>
+                          {deposit.close_date}
                         </Table.Td>
                         <Table.Td>৳ {deposit.amount}</Table.Td>
                         <Table.Td>{deposit.period_in_month} Months</Table.Td>
@@ -256,7 +260,7 @@ const FdrDepositPageUi = () => {
                     ))
                   ) : (
                     <Table.Tr>
-                      <Table.Td colSpan={5} style={{ textAlign: 'center' }}>
+                      <Table.Td colSpan={6} style={{ textAlign: 'center' }}>
                         {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
                       </Table.Td>
                     </Table.Tr>
