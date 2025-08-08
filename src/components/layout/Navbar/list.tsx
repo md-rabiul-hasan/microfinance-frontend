@@ -1,9 +1,8 @@
 import { ReactNode } from 'react'
 import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
 import { CiSettings } from 'react-icons/ci'
-import { FaUsers } from 'react-icons/fa6'
-import { LiaDonateSolid } from 'react-icons/lia'
 import { HiOutlineUserGroup } from 'react-icons/hi'
+import { LiaDonateSolid } from 'react-icons/lia'
 
 type MenuItem = {
   link: string
@@ -49,7 +48,10 @@ export const menuItems = (roles: string[]) => [
   {
     label: 'Deposit',
     icon: <LiaDonateSolid />,
-    links: [{ link: '/deposit/regular-deposit', label: 'Regular Deposit' }]
+    links: [
+      { link: '/deposit/regular-deposit', label: 'Regular Deposit' },
+      { link: '/deposit/irregular-deposit', label: 'Irregular Deposit' },
+    ]
   }
 ]
 

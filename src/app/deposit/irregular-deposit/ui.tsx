@@ -1,7 +1,8 @@
 'use client'
 
 import { getMemberInformation } from '@actions/common-config'
-import { createDeposit, getMemberDepositList } from '@actions/deposit/regular-deposit-config'
+import { getMemberIrregularDepositList } from '@actions/deposit/irregular-deposit-config'
+import { createDeposit } from '@actions/deposit/regular-deposit-config'
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
@@ -31,7 +32,7 @@ import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
-const RegularDepositPageUi = ({ accounts }: any) => {
+const IrregularDepositPageUi = ({ accounts }: any) => {
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
@@ -75,7 +76,7 @@ const RegularDepositPageUi = ({ accounts }: any) => {
         form.setFieldValue('member_key_code', memberKeyCode)
 
         // Then get deposit history
-        const depositRes = await getMemberDepositList(memberKeyCode)
+        const depositRes = await getMemberIrregularDepositList(memberKeyCode)
 
         if (depositRes.success) {
           setMemberData(depositRes.data)
@@ -125,7 +126,7 @@ const RegularDepositPageUi = ({ accounts }: any) => {
   return (
     <Container fluid>
       <Group justify="space-between" mb="xs">
-        <TitleBar title="Member Deposit || Regular Deposit Item" url="/" />
+        <TitleBar title="Member Deposit || Irregular Deposit Item" url="/" />
       </Group>
 
       <Grid>
@@ -133,7 +134,7 @@ const RegularDepositPageUi = ({ accounts }: any) => {
           <Paper shadow="xs" p="xs">
             <form onSubmit={form.onSubmit(submitHandler)}>
               <Title order={4} mb="md">
-                Collect regular deposit amount from member
+                Collect irregular deposit amount from member
               </Title>
 
               {/* Member ID Search */}
@@ -271,4 +272,4 @@ const RegularDepositPageUi = ({ accounts }: any) => {
   )
 }
 
-export default RegularDepositPageUi
+export default IrregularDepositPageUi

@@ -24,10 +24,10 @@ export const getMemberDepositList = async (memberKeyCode: string) => {
   }
 }
 
-export const createRegularDeposit = async (formData: RegularDepositSetupType, path?: string) => {
+export const createDeposit = async (formData: RegularDepositSetupType, path?: string) => {
   try {
     const apiObj = await api()
-    const { data } = await apiObj.post('/deposit/regular-deposit/store', {
+    const { data } = await apiObj.post('/deposit/store', {
       ...formData
     })
 
@@ -40,10 +40,10 @@ export const createRegularDeposit = async (formData: RegularDepositSetupType, pa
 }
 
 
-export const updateRegularDeposit = async (insertKey: any, formData: RegularDepositSetupType, path?: string) => {
+export const updateDeposit = async (insertKey: any, formData: RegularDepositSetupType, path?: string) => {
   try {
     const apiObj = await api()
-    const { data } = await apiObj.post(`/deposit/regular-deposit/store?insertKey=${insertKey}`, {
+    const { data } = await apiObj.post(`/deposit/store?insertKey=${insertKey}`, {
       ...formData
     })
 
