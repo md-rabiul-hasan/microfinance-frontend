@@ -51,6 +51,7 @@ export const menuItems = (roles: string[]) => [
     links: [
       { link: '/deposit/regular-deposit', label: 'Regular Deposit' },
       { link: '/deposit/irregular-deposit', label: 'Irregular Deposit' },
+      { link: '/deposit/fixed-deposit', label: 'Fixed Deposit' },
     ]
   }
 ]
