@@ -1,5 +1,6 @@
 'use client'
 
+import { getMemberInformation } from '@actions/common-config'
 import { createRegularDeposit, getMemberDepositList } from '@actions/deposit/regular-deposit-config'
 import TitleBar from '@components/common/title-bar'
 import {
@@ -18,23 +19,24 @@ import {
   Title
 } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
-import { closeAllModals, openModal } from '@mantine/modals'
+import { openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
-import { useTransition, useState } from 'react'
+import { useState, useTransition } from 'react'
 import { BiCategoryAlt, BiSave, BiSearch } from 'react-icons/bi'
+import { IoIosMore as MoreIcon } from 'react-icons/io'
+import { IoCalendarOutline } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
-import { IoCalendarOutline } from 'react-icons/io5'
-import { IoIosMore as MoreIcon } from 'react-icons/io'
-import { getMemberInformation } from '@actions/common-config'
-import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import EditModal from './edit'
 
 const RegularDepositPageUi = ({ accounts }: any) => {
   const [isLoading, startTransition] = useTransition()
+  const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
   const [memberName, setMemberName] = useState('')
+  const [memberKeyCode, setMemberKeyCode] = useState(0)
   const [memberData, setMemberData] = useState<any>(null)
 
   const form = useForm({
@@ -54,7 +56,7 @@ const RegularDepositPageUi = ({ accounts }: any) => {
       return
     }
 
-    startTransition(async () => {
+    startSearchTransition(async () => {
       try {
         // First get member information
         const memberRes = await getMemberInformation(memberId)
@@ -68,7 +70,8 @@ const RegularDepositPageUi = ({ accounts }: any) => {
 
         // Set member info in form and state
         setMemberName(memberRes.data?.name)
-        const memberKeyCode = memberRes.data?.memberKeyCode || memberId
+        const memberKeyCode = memberRes.data?.memberKeyCode || 0
+        setMemberKeyCode(memberKeyCode)
         form.setFieldValue('member_key_code', memberKeyCode)
 
         // Then get deposit history
@@ -114,7 +117,7 @@ const RegularDepositPageUi = ({ accounts }: any) => {
 
   const editHandler = (deposit: any) =>
     openModal({
-      children: <EditModal deposit={deposit} accounts={accounts} memberId={memberId} memberName={memberName} />,
+      children: <EditModal deposit={deposit} accounts={accounts} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />,
       centered: true,
       withCloseButton: false
     })
@@ -152,7 +155,7 @@ const RegularDepositPageUi = ({ accounts }: any) => {
                     onClick={handleSearchMember}
                     mb="xs"
                     px={0}
-                    loading={isLoading}
+                    loading={isSearchLoading}
                     fullWidth
                     style={{ height: '36px' }}
                     title="Search member"

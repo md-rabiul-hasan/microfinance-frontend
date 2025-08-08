@@ -1,6 +1,6 @@
 'use server'
 
-import { CreateServiceAreaType, RegularDepositSetupType } from '@types'
+import { RegularDepositSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 
@@ -28,6 +28,22 @@ export const createRegularDeposit = async (formData: RegularDepositSetupType, pa
   try {
     const apiObj = await api()
     const { data } = await apiObj.post('/deposit/regular-deposit/store', {
+      ...formData
+    })
+
+    revalidatePath('/deposit/regular-deposit')
+
+    return data
+  } catch (error) {
+    return error.response?.data
+  }
+}
+
+
+export const updateRegularDeposit = async (insertKey: any, formData: RegularDepositSetupType, path?: string) => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.post(`/deposit/regular-deposit/store?insertKey=${insertKey}`, {
       ...formData
     })
 

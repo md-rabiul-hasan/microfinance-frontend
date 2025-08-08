@@ -17,6 +17,5 @@ export const RegularDepositSetupValidationSchema = yup.object().shape({
   remarks: yup
     .string()
     .required('Remarks are required')
-    .min(5, 'Remarks must be at least 5 characters')
     .max(200, 'Remarks cannot exceed 200 characters')
 })

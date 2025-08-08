@@ -1,31 +1,24 @@
-import { updateServiceArea } from '@actions/settings/service-area-config'
+import { updateRegularDeposit } from '@actions/deposit/regular-deposit-config'
 import { Button, NumberInput, Select, Textarea, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { BiCategoryAlt } from 'react-icons/bi'
-import { CiLocationOn } from 'react-icons/ci'
-import { MdUpdate as UpdateIcon } from 'react-icons/md'
-import { FaIdCardAlt } from 'react-icons/fa'
-import { MdPerson } from 'react-icons/md'
-import { PiCertificateFill } from 'react-icons/pi'
-import { FaSquarePhone } from 'react-icons/fa6'
-import { FaLocationDot } from 'react-icons/fa6'
-import { updateEmployee } from '@actions/settings/employee-config'
-import { employeeValidationSchema } from '@schemas/settings.schema'
-import { TbCoinTaka } from 'react-icons/tb'
 import { IoCalendarOutline } from 'react-icons/io5'
+import { MdUpdate as UpdateIcon } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
+import { TbCoinTaka } from 'react-icons/tb'
 
-const EditModal = ({ deposit, accounts, memberId, memberName }: any) => {
+const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps, values, reset } = useForm({
-    validate: yupResolver(employeeValidationSchema),
+    validate: yupResolver(RegularDepositSetupValidationSchema),
     initialValues: {
-      member_key_code: '',
+      member_key_code: memberKeyCode,
       account_code: String(deposit.acc_code),
       amount: deposit.amt,
       deposit_date: deposit.trDate,
@@ -37,7 +30,16 @@ const EditModal = ({ deposit, accounts, memberId, memberName }: any) => {
    * Handles the form submission.
    * Sends an API request to update the product details.
    */
-  const submitHandler = (formData: any) => startTransition(async () => {})
+  const submitHandler = (formData: any) => startTransition(async () => {
+    console.log('Form Data:', formData)
+    const res = await updateRegularDeposit(deposit.insertKey, formData)
+    if (res.success) {
+      showNotification(getSuccessMessage(res?.message)) // Show success notification
+      closeAllModals() // Close the modal upon success
+    } else {
+      showNotification(getErrorMessage(res?.message)) // Show error notification
+    }
+  })
 
   return (
     <form onSubmit={onSubmit(submitHandler)}>
