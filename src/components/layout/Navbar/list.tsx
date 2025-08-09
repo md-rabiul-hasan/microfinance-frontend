@@ -3,6 +3,7 @@ import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
 import { CiSettings } from 'react-icons/ci'
 import { HiOutlineUserGroup } from 'react-icons/hi'
 import { LiaDonateSolid } from 'react-icons/lia'
+import { PiHandWithdrawLight } from "react-icons/pi"
 
 type MenuItem = {
   link: string
@@ -53,7 +54,12 @@ export const menuItems = (roles: string[]) => [
       { link: '/deposit/irregular-deposit', label: 'Irregular Deposit' },
       { link: '/deposit/fixed-deposit', label: 'Fixed Deposit' },
     ]
-  }
+  },
+  {
+    label: 'Withdrawal',
+    icon: <PiHandWithdrawLight />,
+    links: [{ link: '/withdrawal/withdrawal-amount', label: 'Withdraw Amount' }]
+  },
 ]
 
 export const isActiveLink = (path: string, link: string = ''): boolean => {

@@ -1,0 +1,335 @@
+'use client'
+
+import { getMemberInformation } from '@actions/common-config'
+import { createWithdrawal, getAccountBalance, getMemberWithdrawList } from '@actions/withdrawal/withdrawal-amount-config'
+import TitleBar from '@components/common/title-bar'
+import {
+  ActionIcon,
+  Button,
+  Container,
+  Grid,
+  Group,
+  Loader,
+  Menu,
+  NumberInput,
+  Paper,
+  Select,
+  Table,
+  Textarea,
+  TextInput,
+  Title
+} from '@mantine/core'
+import { useForm, yupResolver } from '@mantine/form'
+import { openModal } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
+import { WithdrawalAmountSetupValidationSchema } from '@schemas/withdrawal.schema'
+import { formatAsTaka } from '@utils/format.util'
+import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { useState, useTransition } from 'react'
+import { BiCategoryAlt, BiSave, BiSearch } from 'react-icons/bi'
+import { IoIosMore as MoreIcon } from 'react-icons/io'
+import { IoCalendarOutline } from 'react-icons/io5'
+import { RiUser3Line } from 'react-icons/ri'
+import { TbCoinTaka } from 'react-icons/tb'
+import EditModal from './edit'
+
+const WithdrawalPageUi = ({ accounts }: any) => {
+  const [isLoading, startTransition] = useTransition()
+  const [isSearchLoading, startSearchTransition] = useTransition()
+  const [memberId, setMemberId] = useState('')
+  const [memberName, setMemberName] = useState('')
+  const [memberKeyCode, setMemberKeyCode] = useState(0)
+  const [memberData, setMemberData] = useState<any>(null)
+  const [accountBalance, setAccountBalance] = useState<number | null>(null)
+  const [isBalanceLoading, setIsBalanceLoading] = useState(false)
+
+  const form = useForm({
+    validate: yupResolver(WithdrawalAmountSetupValidationSchema),
+    initialValues: {
+      member_key_code: '',
+      account_code: '',
+      available_balance: '',
+      amount: '',
+      withdraw_date: '',
+      remarks: ''
+    }
+  })
+
+  const handleSearchMember = () => {
+    if (!memberId.trim()) {
+      showNotification(getErrorMessage('Please enter a member ID'))
+      return
+    }
+
+    startSearchTransition(async () => {
+      try {
+        // First get member information
+        const memberRes = await getMemberInformation(memberId)
+
+        if (!memberRes.success) {
+          showNotification(getErrorMessage(memberRes?.message))
+          setMemberName('')
+          setMemberData(null)
+          setAccountBalance(null)
+          return
+        }
+
+        // Set member info in form and state
+        setMemberName(memberRes.data?.name)
+        const memberKeyCode = memberRes.data?.memberKeyCode || 0
+        setMemberKeyCode(memberKeyCode)
+        form.setFieldValue('member_key_code', memberKeyCode)
+
+        // Then get deposit history
+        const depositRes = await getMemberWithdrawList(memberKeyCode)
+
+        if (depositRes.success) {
+          setMemberData(depositRes.data)
+        } else {
+          showNotification(getErrorMessage(depositRes?.message))
+          setMemberData(null)
+        }
+      } catch (error) {
+        showNotification(getErrorMessage('Failed to fetch member information'))
+        setMemberName('')
+        setMemberData(null)
+        setAccountBalance(null)
+      }
+    })
+  }
+
+  const handleAccountSelect = async (accountCode: string) => {
+    if (!memberKeyCode) {
+      showNotification(getErrorMessage('Please select a member first'))
+      return
+    }
+
+    setIsBalanceLoading(true)
+    try {
+      const res = await getAccountBalance(memberKeyCode, accountCode)
+      if (res.success) {
+        setAccountBalance(res.data.balance)
+        form.setFieldValue('available_balance', res.data.balance)
+      } else {
+        showNotification(getErrorMessage(res?.message))
+        setAccountBalance(null)
+        form.setFieldValue('available_balance', '')
+      }
+    } catch (error) {
+      showNotification(getErrorMessage('Failed to fetch account balance'))
+      setAccountBalance(null)
+      form.setFieldValue('available_balance', '')
+    } finally {
+      setIsBalanceLoading(false)
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearchMember()
+    }
+  }
+
+  const submitHandler = (values: typeof form.values) => {
+    if (!accountBalance || parseFloat(values.amount) > accountBalance) {
+      showNotification(getErrorMessage('Withdrawal amount cannot exceed available balance'))
+      return
+    }
+
+    startTransition(async () => {
+      try {
+        const res = await createWithdrawal(values)
+        console.log('res', res);
+        if (res.success) {
+          showNotification(getSuccessMessage(res?.message))
+          // Refresh member data after successful deposit
+          handleSearchMember()
+          form.reset()
+          setAccountBalance(null)
+        } else {
+          showNotification(getErrorMessage(res?.message))
+        }
+      } catch (error) {
+        console.log('error', error);
+
+        showNotification(getErrorMessage('Failed to create withdrawal'))
+      }
+    })
+  }
+
+  const editHandler = (deposit: any) =>
+    openModal({
+      children: <EditModal deposit={deposit} accounts={accounts} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />,
+      centered: true,
+      withCloseButton: false
+    })
+
+  return (
+    <Container fluid>
+      <Group justify="space-between" mb="xs">
+        <TitleBar title="Withdrawal Amount" url="/" />
+      </Group>
+
+      <Grid>
+        <Grid.Col span={{ base: 12, md: 5 }}>
+          <Paper shadow="xs" p="xs">
+            <form onSubmit={form.onSubmit(submitHandler)}>
+              <Title order={4} mb="md">
+                Amount withdrawal by member
+              </Title>
+
+              {/* Member ID Search */}
+              <Grid gutter="xs" align="flex-end">
+                <Grid.Col span={10}>
+                  <TextInput
+                    label="Member ID"
+                    mb="xs"
+                    withAsterisk
+                    value={memberId}
+                    onChange={(e) => setMemberId(e.currentTarget.value)}
+                    onKeyDown={handleKeyPress}
+                    leftSection={<RiUser3Line />}
+                    placeholder="Enter member ID"
+                  />
+                </Grid.Col>
+                <Grid.Col span={2}>
+                  <Button
+                    onClick={handleSearchMember}
+                    mb="xs"
+                    px={0}
+                    loading={isSearchLoading}
+                    fullWidth
+                    style={{ height: '36px' }}
+                    title="Search member"
+                  >
+                    <BiSearch size={18} />
+                  </Button>
+                </Grid.Col>
+              </Grid>
+
+              <TextInput
+                label="Member Name"
+                value={memberName}
+                readOnly
+                mb="xs"
+                withAsterisk
+                leftSection={<RiUser3Line />}
+              />
+
+              <Select
+                label="Withdrawal From"
+                placeholder="Please Select"
+                data={accounts.map((data: any) => ({
+                  value: String(data.accountCode),
+                  label: `${data.AccountDisplayName} - ${data.accountCode}`
+                }))}
+                searchable
+                withAsterisk
+                mb="xs"
+                leftSection={<BiCategoryAlt />}
+                {...form.getInputProps('account_code')}
+                onChange={(value) => {
+                  form.getInputProps('account_code').onChange(value)
+                  if (value) handleAccountSelect(value)
+                }}
+              />
+
+              <NumberInput
+                label="Available Balance"
+                value={accountBalance || 0}
+                decimalScale={2}
+                fixedDecimalScale
+                disabled
+                hideControls
+                mb="xs"
+                withAsterisk
+                leftSection={isBalanceLoading ? <Loader size="xs" /> : <TbCoinTaka />}
+                formatter={(value) => formatAsTaka(parseFloat(value))}
+              />
+
+              <NumberInput
+                label="Withdrawal Amount (BDT)"
+                decimalScale={2}
+                fixedDecimalScale
+                hideControls
+                mb="xs"
+                withAsterisk
+                {...form.getInputProps('amount')}
+                leftSection={<TbCoinTaka />}
+                formatter={(value) => formatAsTaka(parseFloat(value))}
+              />
+
+              <TextInput
+                type="date"
+                label="Withdrawal Date"
+                mb="xs"
+                {...form.getInputProps('withdraw_date')}
+                withAsterisk
+                leftSection={<IoCalendarOutline />}
+              />
+
+              <Textarea label="Remarks" {...form.getInputProps('remarks')} withAsterisk mb="xs" />
+
+              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                Submit
+              </Button>
+            </form>
+          </Paper>
+        </Grid.Col>
+
+        <Grid.Col span={{ base: 12, md: 7 }}>
+          {memberName && (
+            <Paper shadow="xs" p="xs">
+              <Title order={4} mb="md">
+                Withdrawal History for: {memberName}
+              </Title>
+              <Table striped highlightOnHover>
+                <Table.Thead>
+                  <Table.Tr>
+                    <Table.Th>Date</Table.Th>
+                    <Table.Th>Account</Table.Th>
+                    <Table.Th>Amount</Table.Th>
+                    <Table.Th>Action</Table.Th>
+                  </Table.Tr>
+                </Table.Thead>
+                <Table.Tbody>
+                  {memberData?.length > 0 ? (
+                    memberData.map((deposit: any) => (
+                      <Table.Tr key={deposit.tr_sl}>
+                        <Table.Td>{deposit.trDate}</Table.Td>
+                        <Table.Td>
+                          {deposit.account_info?.AccountDisplayName} ({deposit.account_info?.accountCode})
+                        </Table.Td>
+                        <Table.Td>{formatAsTaka(deposit.amt)}</Table.Td>
+                        <Table.Td>
+                          <Menu withArrow>
+                            <Menu.Target>
+                              <ActionIcon variant="subtle" size="sm">
+                                <MoreIcon />
+                              </ActionIcon>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                              <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item>
+                            </Menu.Dropdown>
+                          </Menu>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))
+                  ) : (
+                    <Table.Tr>
+                      <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
+                        {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
+                      </Table.Td>
+                    </Table.Tr>
+                  )}
+                </Table.Tbody>
+              </Table>
+            </Paper>
+          )}
+        </Grid.Col>
+      </Grid>
+    </Container>
+  )
+}
+
+export default WithdrawalPageUi
