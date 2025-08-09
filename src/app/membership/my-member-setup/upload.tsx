@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { FileInput, Title, Box, Image, Flex, LoadingOverlay } from '@mantine/core'
+import { uploadMemberImage } from '@actions/membership/my-member-config'
+import { Box, FileInput, Flex, Image, LoadingOverlay, Title } from '@mantine/core'
 import { showNotification } from '@mantine/notifications'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { useState } from 'react'
 import { FaUser } from 'react-icons/fa'
 import { PiSignatureDuotone } from 'react-icons/pi'
-import { uploadMemberImage } from '@actions/membership/my-member-config'
 
 const UploadModal = ({ memberKeyCode }: { memberKeyCode: string }) => {
   const [profileLoading, setProfileLoading] = useState(false)

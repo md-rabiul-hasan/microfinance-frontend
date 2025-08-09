@@ -1,9 +1,9 @@
-import { updateDeposit } from '@actions/deposit/regular-deposit-config'
+import { updateWithdrawal } from '@actions/withdrawal/withdrawal-amount-config'
 import { Button, NumberInput, Select, Textarea, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
+import { WithdrawalAmountSetupValidationSchema } from '@schemas/withdrawal.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
 import { BiCategoryAlt } from 'react-icons/bi'
@@ -16,12 +16,12 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps, values, reset } = useForm({
-    validate: yupResolver(RegularDepositSetupValidationSchema),
+    validate: yupResolver(WithdrawalAmountSetupValidationSchema),
     initialValues: {
       member_key_code: memberKeyCode,
       account_code: String(deposit.acc_code),
       amount: deposit.amt,
-      deposit_date: deposit.trDate,
+      withdraw_date: deposit.trDate,
       remarks: deposit.description
     }
   })
@@ -31,8 +31,7 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
    * Sends an API request to update the product details.
    */
   const submitHandler = (formData: any) => startTransition(async () => {
-    console.log('Form Data:', formData)
-    const res = await updateDeposit(deposit.insertKey, formData)
+    const res = await updateWithdrawal(deposit.insertKey, formData)
     if (res.success) {
       showNotification(getSuccessMessage(res?.message)) // Show success notification
       closeAllModals() // Close the modal upon success
@@ -44,7 +43,7 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
   return (
     <form onSubmit={onSubmit(submitHandler)}>
       <Title order={4} mb="md">
-        Update Member Deposit
+        Update Member Withdrawal
       </Title>
       <TextInput
         label="Member Name"
@@ -55,7 +54,7 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
         leftSection={<RiUser3Line />}
       />
       <Select
-        label="Deposit Against"
+        label="Withdrawal From"
         placeholder="Please Select"
         data={accounts.map((data: any) => ({
           value: String(data.accountCode),
@@ -69,7 +68,7 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
       />
 
       <NumberInput
-        label="Deposit Amount"
+        label="Withdrawal Amount (BDT)"
         decimalScale={2}
         fixedDecimalScale
         mb="xs"
@@ -80,9 +79,9 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
 
       <TextInput
         type="date"
-        label="Deposit Date"
+        label="Withdrawal Date"
         mb="xs"
-        {...getInputProps('deposit_date')}
+        {...getInputProps('withdraw_date')}
         withAsterisk
         leftSection={<IoCalendarOutline />}
       />

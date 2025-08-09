@@ -5,16 +5,21 @@ import { createWithdrawal, getAccountBalance, getMemberWithdrawList } from '@act
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
+  Box,
   Button,
   Container,
+  Flex,
   Grid,
   Group,
+  Image,
   Loader,
   Menu,
   NumberInput,
   Paper,
+  ScrollArea,
   Select,
   Table,
+  Text,
   Textarea,
   TextInput,
   Title
@@ -42,6 +47,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
   const [memberData, setMemberData] = useState<any>(null)
   const [accountBalance, setAccountBalance] = useState<number | null>(null)
   const [isBalanceLoading, setIsBalanceLoading] = useState(false)
+  const [memberInfo, setMemberInfo] = useState<any>(null)
 
   const form = useForm({
     validate: yupResolver(WithdrawalAmountSetupValidationSchema),
@@ -76,6 +82,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
 
         // Set member info in form and state
         setMemberName(memberRes.data?.name)
+        setMemberInfo(memberRes.data)
         const memberKeyCode = memberRes.data?.memberKeyCode || 0
         setMemberKeyCode(memberKeyCode)
         form.setFieldValue('member_key_code', memberKeyCode)
@@ -278,52 +285,126 @@ const WithdrawalPageUi = ({ accounts }: any) => {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 7 }}>
+
+          {
+            memberInfo?.profile_image?.insert_key || memberInfo?.signature_image?.insert_key ? (
+              <Box mb="xs">
+                <Title order={4}>
+                  Visual Identification
+                </Title>
+
+                <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>
+                  {/* Profile Image */}
+                  <Box style={{ flex: 1 }} pos="relative">
+                    <Box
+                      mt="sm"
+                      style={{
+                        border: '1px dashed #ddd',
+                        borderRadius: 'var(--mantine-radius-sm)',
+                        padding: '0.5rem',
+                        minHeight: '180px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {memberInfo?.profile_image?.insert_key ? (
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/profile_picture/${memberInfo.profile_image.insert_key}`}
+                          alt="Profile preview"
+                          height={180}
+                          fit="contain"
+                          style={{ maxWidth: '100%' }}
+                        />
+                      ) : (
+                        <Text color="dimmed" size="sm">
+                          No profile image available
+                        </Text>
+                      )}
+                    </Box>
+                  </Box>
+
+                  {/* Signature Image */}
+                  <Box style={{ flex: 1 }} pos="relative">
+                    <Box
+                      mt="sm"
+                      style={{
+                        border: '1px dashed #ddd',
+                        borderRadius: 'var(--mantine-radius-sm)',
+                        padding: '0.5rem',
+                        minHeight: '180px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {memberInfo?.signature_image?.insert_key ? (
+                        <Image
+                          src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/signature_card/${memberInfo.signature_image.insert_key}`}
+                          alt="Signature preview"
+                          height={180}
+                          fit="contain"
+                          style={{ maxWidth: '100%' }}
+                        />
+                      ) : (
+                        <Text color="dimmed" size="sm">
+                          No signature image available
+                        </Text>
+                      )}
+                    </Box>
+                  </Box>
+                </Flex>
+              </Box>
+            ) : null
+          }
           {memberName && (
             <Paper shadow="xs" p="xs">
               <Title order={4} mb="md">
                 Withdrawal History for: {memberName}
               </Title>
-              <Table striped highlightOnHover>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>Date</Table.Th>
-                    <Table.Th>Account</Table.Th>
-                    <Table.Th>Amount</Table.Th>
-                    <Table.Th>Action</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {memberData?.length > 0 ? (
-                    memberData.map((deposit: any) => (
-                      <Table.Tr key={deposit.tr_sl}>
-                        <Table.Td>{deposit.trDate}</Table.Td>
-                        <Table.Td>
-                          {deposit.account_info?.AccountDisplayName} ({deposit.account_info?.accountCode})
-                        </Table.Td>
-                        <Table.Td>{formatAsTaka(deposit.amt)}</Table.Td>
-                        <Table.Td>
-                          <Menu withArrow>
-                            <Menu.Target>
-                              <ActionIcon variant="subtle" size="sm">
-                                <MoreIcon />
-                              </ActionIcon>
-                            </Menu.Target>
-                            <Menu.Dropdown>
-                              <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item>
-                            </Menu.Dropdown>
-                          </Menu>
+              <ScrollArea h={325} type="always">
+                <Table striped highlightOnHover>
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th>Date</Table.Th>
+                      <Table.Th>Account</Table.Th>
+                      <Table.Th>Amount</Table.Th>
+                      <Table.Th>Action</Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {memberData?.length > 0 ? (
+                      memberData.map((deposit: any) => (
+                        <Table.Tr key={deposit.tr_sl}>
+                          <Table.Td>{deposit.trDate}</Table.Td>
+                          <Table.Td>
+                            {deposit.account_info?.AccountDisplayName} ({deposit.account_info?.accountCode})
+                          </Table.Td>
+                          <Table.Td>{formatAsTaka(deposit.amt)}</Table.Td>
+                          <Table.Td>
+                            <Menu withArrow>
+                              <Menu.Target>
+                                <ActionIcon variant="subtle" size="sm">
+                                  <MoreIcon />
+                                </ActionIcon>
+                              </Menu.Target>
+                              <Menu.Dropdown>
+                                <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item>
+                              </Menu.Dropdown>
+                            </Menu>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))
+                    ) : (
+                      <Table.Tr>
+                        <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
+                          {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
                         </Table.Td>
                       </Table.Tr>
-                    ))
-                  ) : (
-                    <Table.Tr>
-                      <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
-                        {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
-                      </Table.Td>
-                    </Table.Tr>
-                  )}
-                </Table.Tbody>
-              </Table>
+                    )}
+                  </Table.Tbody>
+                </Table>
+              </ScrollArea>
             </Paper>
           )}
         </Grid.Col>
