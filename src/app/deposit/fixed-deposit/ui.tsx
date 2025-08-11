@@ -21,7 +21,9 @@ import { useForm, yupResolver } from '@mantine/form'
 import { openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { FixedDepositSetupValidationSchema } from '@schemas/deposit.schema'
+import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiSave, BiSearch } from 'react-icons/bi'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
@@ -31,6 +33,7 @@ import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
 const FdrDepositPageUi = () => {
+  const initialDepositDate = formatToYMD(getSessionTransactionDate());
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
@@ -44,7 +47,7 @@ const FdrDepositPageUi = () => {
       member_key_code: '',
       fdr_length: '',
       amount: '',
-      opening_date: '',
+      opening_date: initialDepositDate,
       remarks: ''
     }
   })

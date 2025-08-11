@@ -44,7 +44,10 @@ export const menuItems = (roles: string[]) => [
   {
     label: 'Membership',
     icon: <HiOutlineUserGroup />,
-    links: [{ link: '/membership/my-member-setup', label: 'My Member' }]
+    links: [
+      { link: '/membership/my-member-setup/add', label: 'Add Member' },
+      { link: '/membership/my-member-setup', label: 'Update Member' }
+    ]
   },
   {
     label: 'Deposit',

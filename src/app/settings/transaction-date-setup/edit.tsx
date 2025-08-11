@@ -1,38 +1,50 @@
-import { setupFiscalYear } from '@actions/settings/fiscal-year-config'
-import { Button, Select, Title } from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { closeAllModals } from '@mantine/modals'
-import { showNotification } from '@mantine/notifications'
-import { getErrorMessage, getSuccessMessage } from '@utils/notification'
-import { useTransition } from 'react'
-import { BiCategoryAlt } from 'react-icons/bi'
-import { MdUpdate as UpdateIcon } from 'react-icons/md'
-import { DateInput } from '@mantine/dates'
-import { setupTransactionDate } from '@actions/settings/transaction-date-config'
+import { Button, Title } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
+import { useForm } from '@mantine/form';
+import { closeAllModals } from '@mantine/modals';
+import { showNotification } from '@mantine/notifications';
+import { getSuccessMessage } from '@utils/notification';
+import { setSessionTransactionDate } from '@utils/transaction-date';
+import { useTransition } from 'react';
+import { BiCategoryAlt } from 'react-icons/bi';
+import { MdUpdate as UpdateIcon } from 'react-icons/md';
 
-const EditModal = ({ trnDate }: any) => {
-  const [isLoading, startTransition] = useTransition()
+interface EditModalProps {
+  trnDate?: string | Date;
+  onSuccess?: (newDate: Date) => void;
+}
 
-  const { onSubmit, getInputProps, values, reset } = useForm({
+const EditModal = ({ trnDate, onSuccess }: EditModalProps) => {
+  const [isLoading, startTransition] = useTransition();
+
+  const { onSubmit, getInputProps } = useForm({
     initialValues: {
-      trnDate: ''
+      trnDate: trnDate ? new Date(trnDate) : new Date()
     }
-  })
+  });
 
-  /**
-   * Handles the form submission.
-   * Sends an API request to update the product details.
-   */
-  const submitHandler = (formData: any) =>
+  const submitHandler = (formData: { trnDate: Date }) => {
     startTransition(async () => {
-      const res = await setupTransactionDate(formData)
-      if (res.success) {
-        showNotification(getSuccessMessage(res?.message)) // Show success notification
-        closeAllModals() // Close the modal upon success
-      } else {
-        showNotification(getErrorMessage(res?.message)) // Show error notification
+      try {
+        const dateToStore = new Date(formData.trnDate);
+        setSessionTransactionDate(dateToStore);
+
+        showNotification(getSuccessMessage("Transaction date updated successfully"));
+        closeAllModals();
+
+        // Call the success callback if provided
+        if (onSuccess) {
+          onSuccess(dateToStore);
+        }
+      } catch (error) {
+        showNotification({
+          title: 'Error',
+          message: 'Failed to update transaction date',
+          color: 'red'
+        });
       }
-    })
+    });
+  };
 
   return (
     <form onSubmit={onSubmit(submitHandler)}>
@@ -50,12 +62,11 @@ const EditModal = ({ trnDate }: any) => {
         {...getInputProps('trnDate')}
       />
 
-      {/* Submit Button */}
       <Button type="submit" leftSection={<UpdateIcon />} loading={isLoading}>
         Update
       </Button>
     </form>
-  )
-}
+  );
+};
 
-export default EditModal
+export default EditModal;

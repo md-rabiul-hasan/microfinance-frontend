@@ -13,6 +13,7 @@ import { CgPassword as PasswordIcon, CgLogIn as SignInIcon } from 'react-icons/c
 
 import { signInSchema } from '@schemas/auth.schema'
 import { SignInValues } from '@types'
+import { setSessionTransactionDate } from '@utils/transaction-date'
 import { FaUserTie } from "react-icons/fa"
 import classes from './styles.module.css'
 
@@ -46,6 +47,8 @@ const SignInUI = () => {
       return
     }
 
+    // Set transaction date immediately after successful login
+    setSessionTransactionDate(new Date())
     refresh()
     setIsLoading(false)
   }

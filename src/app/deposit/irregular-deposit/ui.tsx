@@ -23,7 +23,9 @@ import { useForm, yupResolver } from '@mantine/form'
 import { openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
+import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiCategoryAlt, BiSave, BiSearch } from 'react-icons/bi'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
@@ -33,6 +35,7 @@ import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
 const IrregularDepositPageUi = ({ accounts }: any) => {
+  const initialDepositDate = formatToYMD(getSessionTransactionDate());
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
@@ -46,7 +49,7 @@ const IrregularDepositPageUi = ({ accounts }: any) => {
       member_key_code: '',
       account_code: '',
       amount: '',
-      deposit_date: '',
+      deposit_date: initialDepositDate,
       remarks: ''
     }
   })

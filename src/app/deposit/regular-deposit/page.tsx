@@ -14,7 +14,7 @@ type Props = {
 const RegularDepositPage = async ({ searchParams }: Props) => {
   const accounts = await getDepositGeneralAccounts()
 
-  return <RegularDepositPageUi data={res} accounts={accounts} />
+  return <RegularDepositPageUi accounts={accounts} />
 }
 
 export default RegularDepositPage

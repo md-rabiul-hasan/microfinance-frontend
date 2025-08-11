@@ -3,14 +3,31 @@
 import TitleBar from '@components/common/title-bar'
 import { ActionIcon, Container, Group, Paper, Table, Tooltip } from '@mantine/core'
 import { openModal } from '@mantine/modals'
+import { formatDate } from '@utils/datetime.util'
+import { getSessionTransactionDate } from '@utils/transaction-date'
+import { useEffect, useState } from 'react'
 import { MdOutlineSettings } from 'react-icons/md'
 import EditModal from './edit'
-import { formatDate, formatDateTime, formatDateTimeGMT } from '@utils/datetime.util'
 
 const TransactionDateUi = ({ data }: any) => {
+  const [sessionDate, setSessionDate] = useState<Date | null>(null)
+
+  // Get session date on component mount
+  useEffect(() => {
+    const date = getSessionTransactionDate()
+    setSessionDate(date)
+  }, [])
+
+  const handleUpdateSuccess = (newDate: Date) => {
+    setSessionDate(newDate);
+  };
+
   const editHandler = () => {
     openModal({
-      children: <EditModal formatCode={data?.data?.trnDate || ''} />,
+      children: <EditModal
+        trnDate={sessionDate || data?.data?.trnDate}
+        onSuccess={handleUpdateSuccess}
+      />,
       centered: true,
       withCloseButton: false
     })
@@ -18,7 +35,6 @@ const TransactionDateUi = ({ data }: any) => {
 
   return (
     <Container>
-      {/* Page title and search input */}
       <Group justify="space-between" mb="xs">
         <TitleBar title="Transaction Date Setup" url="/" />
         <Group gap="xs">
@@ -30,19 +46,20 @@ const TransactionDateUi = ({ data }: any) => {
         </Group>
       </Group>
 
-      {/* Conditionally render the table only if formatCode exists */}
-      {data?.data?.trnDate !== undefined && (
-        <Paper shadow="xs" mb="xs">
-          <Table variant="vertical" layout="fixed" withTableBorder>
-            <Table.Tbody>
-              <Table.Tr>
-                <Table.Th w={160}>Transaction Date</Table.Th>
-                <Table.Td>{formatDate(data.data.trnDate)}</Table.Td>
-              </Table.Tr>
-            </Table.Tbody>
-          </Table>
-        </Paper>
-      )}
+      <Paper shadow="xs" mb="xs">
+        <Table variant="vertical" layout="fixed" withTableBorder>
+          <Table.Tbody>
+            <Table.Tr>
+              <Table.Th w={160}>Transaction Date</Table.Th>
+              <Table.Td>
+                {sessionDate ? formatDate(sessionDate) :
+                  data?.data?.trnDate ? formatDate(new Date(data.data.trnDate)) :
+                    'Loading...'}
+              </Table.Td>
+            </Table.Tr>
+          </Table.Tbody>
+        </Table>
+      </Paper>
     </Container>
   )
 }
