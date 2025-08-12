@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
+import { BiDonateBlood } from "react-icons/bi"
 import { CiSettings } from 'react-icons/ci'
 import { HiOutlineUserGroup } from 'react-icons/hi'
 import { LiaDonateSolid } from 'react-icons/lia'
@@ -62,6 +63,13 @@ export const menuItems = (roles: string[]) => [
     label: 'Withdrawal',
     icon: <PiHandWithdrawLight />,
     links: [{ link: '/withdrawal/withdrawal-amount', label: 'Withdraw Amount' }]
+  },
+  {
+    label: 'Loan Processing',
+    icon: <BiDonateBlood />,
+    links: [
+      { link: '/loan-processing/karz-e-hasanah', label: 'Karz-E-Hasanah' }
+    ]
   },
 ]
 

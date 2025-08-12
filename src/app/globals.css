@@ -53,3 +53,8 @@ p > span {
   padding-left: 0.5rem;
   user-select: none;
 }
+
+
+.formLabels {
+  font-size: 0.85rem;
+}
