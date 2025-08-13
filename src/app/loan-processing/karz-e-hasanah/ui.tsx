@@ -204,19 +204,14 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
     })
   }
 
-  const editHandler = (deposit: any) =>
+  const editHandler = (loan: any) =>
     openModal({
       children: (
-        <EditModal
-          deposit={deposit}
-          accounts={accounts}
-          memberId={memberId}
-          memberName={memberName}
-          memberKeyCode={memberKeyCode}
-        />
+        <EditModal loan={loan} accounts={accounts} approvars={approvars} memberId={memberId} memberName={memberName} />
       ),
       centered: true,
-      withCloseButton: false
+      withCloseButton: false,
+      size: 'xl'
     })
 
   return (
