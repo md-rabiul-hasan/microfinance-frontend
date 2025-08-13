@@ -27,7 +27,9 @@ export const getMemberWithdrawList = async (memberKeyCode: string) => {
 export const getAccountBalance = async (memberKeyCode: string, accountCode: string) => {
   try {
     const apiObj = await api()
-    const { data } = await apiObj.get(`/withdrawal/member-account-balance?memberKeyCode=${memberKeyCode}&accountCode=${accountCode}`)
+    const { data } = await apiObj.get(
+      `/withdrawal/member-account-balance?memberKeyCode=${memberKeyCode}&accountCode=${accountCode}`
+    )
     return data
   } catch (error) {
     return []
@@ -35,7 +37,6 @@ export const getAccountBalance = async (memberKeyCode: string, accountCode: stri
 }
 
 export const createWithdrawal = async (formData: WithdrawalAmountSetupType, path?: string) => {
-  console.log('createWithdrawal formData', formData);
   try {
     const apiObj = await api()
     const { data } = await apiObj.post('/withdrawal/store', {
@@ -49,9 +50,8 @@ export const createWithdrawal = async (formData: WithdrawalAmountSetupType, path
   }
 }
 
-
 export const updateWithdrawal = async (insertKey: any, formData: WithdrawalAmountSetupType, path?: string) => {
-  console.log('createWithdrawal formData', formData);
+  console.log('createWithdrawal formData', formData)
   try {
     const apiObj = await api()
     const { data } = await apiObj.post(`/withdrawal/store?insertKey=${insertKey}`, {

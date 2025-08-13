@@ -1,7 +1,11 @@
 'use client'
 
 import { getMemberInformation } from '@actions/common-config'
-import { createWithdrawal, getAccountBalance, getMemberWithdrawList } from '@actions/withdrawal/withdrawal-amount-config'
+import {
+  createWithdrawal,
+  getAccountBalance,
+  getMemberWithdrawList
+} from '@actions/withdrawal/withdrawal-amount-config'
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
@@ -25,7 +29,7 @@ import {
   Title
 } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
-import { openModal } from '@mantine/modals'
+import { modals, openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { WithdrawalAmountSetupValidationSchema } from '@schemas/withdrawal.schema'
 import { formatToYMD } from '@utils/datetime.util'
@@ -41,7 +45,7 @@ import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
 const WithdrawalPageUi = ({ accounts }: any) => {
-  const initialDate = formatToYMD(getSessionTransactionDate());
+  const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
@@ -146,30 +150,45 @@ const WithdrawalPageUi = ({ accounts }: any) => {
       return
     }
 
-    startTransition(async () => {
-      try {
-        const res = await createWithdrawal(values)
-        console.log('res', res);
-        if (res.success) {
-          showNotification(getSuccessMessage(res?.message))
-          // Refresh member data after successful deposit
-          handleSearchMember()
-          form.reset()
-          setAccountBalance(null)
-        } else {
-          showNotification(getErrorMessage(res?.message))
-        }
-      } catch (error) {
-        console.log('error', error);
+    modals.openConfirmModal({
+      title: 'Please confirm your action',
+      children: <Text size="sm">Are you sure you want to process this member amount withdraw?</Text>,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => {
+        startTransition(async () => {
+          try {
+            const res = await createWithdrawal(values)
+            console.log('res', res)
+            if (res.success) {
+              showNotification(getSuccessMessage(res?.message))
+              // Refresh member data after successful deposit
+              handleSearchMember()
+              form.reset()
+              setAccountBalance(null)
+            } else {
+              showNotification(getErrorMessage(res?.message))
+            }
+          } catch (error) {
+            console.log('error', error)
 
-        showNotification(getErrorMessage('Failed to create withdrawal'))
+            showNotification(getErrorMessage('Failed to create withdrawal'))
+          }
+        })
       }
     })
   }
 
   const editHandler = (deposit: any) =>
     openModal({
-      children: <EditModal deposit={deposit} accounts={accounts} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />,
+      children: (
+        <EditModal
+          deposit={deposit}
+          accounts={accounts}
+          memberId={memberId}
+          memberName={memberName}
+          memberKeyCode={memberKeyCode}
+        />
+      ),
       centered: true,
       withCloseButton: false
     })
@@ -288,78 +307,73 @@ const WithdrawalPageUi = ({ accounts }: any) => {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 7 }}>
+          {memberInfo?.profile_image?.insert_key || memberInfo?.signature_image?.insert_key ? (
+            <Box mb="xs">
+              <Title order={4}>Visual Identification</Title>
 
-          {
-            memberInfo?.profile_image?.insert_key || memberInfo?.signature_image?.insert_key ? (
-              <Box mb="xs">
-                <Title order={4}>
-                  Visual Identification
-                </Title>
-
-                <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>
-                  {/* Profile Image */}
-                  <Box style={{ flex: 1 }} pos="relative">
-                    <Box
-                      mt="sm"
-                      style={{
-                        border: '1px dashed #ddd',
-                        borderRadius: 'var(--mantine-radius-sm)',
-                        padding: '0.5rem',
-                        minHeight: '180px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      {memberInfo?.profile_image?.insert_key ? (
-                        <Image
-                          src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/profile_picture/${memberInfo.profile_image.insert_key}`}
-                          alt="Profile preview"
-                          height={180}
-                          fit="contain"
-                          style={{ maxWidth: '100%' }}
-                        />
-                      ) : (
-                        <Text color="dimmed" size="sm">
-                          No profile image available
-                        </Text>
-                      )}
-                    </Box>
+              <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>
+                {/* Profile Image */}
+                <Box style={{ flex: 1 }} pos="relative">
+                  <Box
+                    mt="sm"
+                    style={{
+                      border: '1px dashed #ddd',
+                      borderRadius: 'var(--mantine-radius-sm)',
+                      padding: '0.5rem',
+                      minHeight: '180px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {memberInfo?.profile_image?.insert_key ? (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/profile_picture/${memberInfo.profile_image.insert_key}`}
+                        alt="Profile preview"
+                        height={180}
+                        fit="contain"
+                        style={{ maxWidth: '100%' }}
+                      />
+                    ) : (
+                      <Text color="dimmed" size="sm">
+                        No profile image available
+                      </Text>
+                    )}
                   </Box>
+                </Box>
 
-                  {/* Signature Image */}
-                  <Box style={{ flex: 1 }} pos="relative">
-                    <Box
-                      mt="sm"
-                      style={{
-                        border: '1px dashed #ddd',
-                        borderRadius: 'var(--mantine-radius-sm)',
-                        padding: '0.5rem',
-                        minHeight: '180px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      {memberInfo?.signature_image?.insert_key ? (
-                        <Image
-                          src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/signature_card/${memberInfo.signature_image.insert_key}`}
-                          alt="Signature preview"
-                          height={180}
-                          fit="contain"
-                          style={{ maxWidth: '100%' }}
-                        />
-                      ) : (
-                        <Text color="dimmed" size="sm">
-                          No signature image available
-                        </Text>
-                      )}
-                    </Box>
+                {/* Signature Image */}
+                <Box style={{ flex: 1 }} pos="relative">
+                  <Box
+                    mt="sm"
+                    style={{
+                      border: '1px dashed #ddd',
+                      borderRadius: 'var(--mantine-radius-sm)',
+                      padding: '0.5rem',
+                      minHeight: '180px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {memberInfo?.signature_image?.insert_key ? (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/signature_card/${memberInfo.signature_image.insert_key}`}
+                        alt="Signature preview"
+                        height={180}
+                        fit="contain"
+                        style={{ maxWidth: '100%' }}
+                      />
+                    ) : (
+                      <Text color="dimmed" size="sm">
+                        No signature image available
+                      </Text>
+                    )}
                   </Box>
-                </Flex>
-              </Box>
-            ) : null
-          }
+                </Box>
+              </Flex>
+            </Box>
+          ) : null}
           {memberName && (
             <Paper shadow="xs" p="xs">
               <Title order={4} mb="md">

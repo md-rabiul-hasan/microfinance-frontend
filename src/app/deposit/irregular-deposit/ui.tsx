@@ -15,12 +15,13 @@ import {
   Paper,
   Select,
   Table,
+  Text,
   Textarea,
   TextInput,
   Title
 } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
-import { openModal } from '@mantine/modals'
+import { modals, openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import { formatToYMD } from '@utils/datetime.util'
@@ -35,7 +36,7 @@ import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
 const IrregularDepositPageUi = ({ accounts }: any) => {
-  const initialDepositDate = formatToYMD(getSessionTransactionDate());
+  const initialDepositDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
@@ -102,26 +103,41 @@ const IrregularDepositPageUi = ({ accounts }: any) => {
   }
 
   const submitHandler = (values: typeof form.values) => {
-    startTransition(async () => {
-      try {
-        const res = await createDeposit(values)
-        if (res.success) {
-          showNotification(getSuccessMessage(res?.message))
-          // Refresh member data after successful deposit
-          handleSearchMember()
-          form.reset()
-        } else {
-          showNotification(getErrorMessage(res?.message))
-        }
-      } catch (error) {
-        showNotification(getErrorMessage('Failed to create deposit'))
+    modals.openConfirmModal({
+      title: 'Please confirm your action',
+      children: <Text size="sm">Are you sure you want to irregular deposit amount ?</Text>,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => {
+        startTransition(async () => {
+          try {
+            const res = await createDeposit(values)
+            if (res.success) {
+              showNotification(getSuccessMessage(res?.message))
+              // Refresh member data after successful deposit
+              handleSearchMember()
+              form.reset()
+            } else {
+              showNotification(getErrorMessage(res?.message))
+            }
+          } catch (error) {
+            showNotification(getErrorMessage('Failed to create deposit'))
+          }
+        })
       }
     })
   }
 
   const editHandler = (deposit: any) =>
     openModal({
-      children: <EditModal deposit={deposit} accounts={accounts} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />,
+      children: (
+        <EditModal
+          deposit={deposit}
+          accounts={accounts}
+          memberId={memberId}
+          memberName={memberName}
+          memberKeyCode={memberKeyCode}
+        />
+      ),
       centered: true,
       withCloseButton: false
     })

@@ -14,6 +14,7 @@ import {
   Group,
   Image,
   Menu,
+  NumberInput,
   Paper,
   ScrollArea,
   Select,
@@ -23,26 +24,29 @@ import {
   Title
 } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
-import { openModal } from '@mantine/modals'
+import { modals, openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { bankAccountValidationSchema } from '@schemas/settings.schema'
 import { formatToYMD } from '@utils/datetime.util'
 import { formatAsTaka } from '@utils/format.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { getSessionTransactionDate } from '@utils/transaction-date'
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { BiCategoryAlt, BiIdCard, BiSave, BiSearch } from 'react-icons/bi'
-import { FaRegClock } from "react-icons/fa"
-import { GrNotes } from "react-icons/gr"
+import { FaRegClock } from 'react-icons/fa'
+import { GrNotes } from 'react-icons/gr'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
-import { IoCalendarOutline } from "react-icons/io5"
-import { MdOutlineGrid3X3 } from "react-icons/md"
+import { IoCalendarOutline } from 'react-icons/io5'
+import { MdOutlineGrid3X3 } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
-import { TbCoinTaka } from "react-icons/tb"
+import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
+import { generate7DigitId } from '@utils/utils'
+import { createKarzEHasanahLoan, getMemberLoanList } from '@actions/loan-processing/karz-e-hasanah-config'
+import { karzEHasanhValidationSchema } from '@schemas/loan-processing.schema'
 
 const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
-  const initialDate = formatToYMD(getSessionTransactionDate());
+  const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
@@ -53,19 +57,16 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
   const [isBalanceLoading, setIsBalanceLoading] = useState(false)
   const [memberInfo, setMemberInfo] = useState<any>(null)
 
-  const { onSubmit, getInputProps, values, reset } = useForm({
-    validate: yupResolver(bankAccountValidationSchema),
+  const form = useForm({
+    validate: yupResolver(karzEHasanhValidationSchema),
     initialValues: {
-      member_key_code: '',
       account_code: '',
-      available_balance: '',
-      amount: '',
       loan_date: initialDate,
       remarks: '',
-      loan_id: '',
-      loan_amount: '',
+      loan_id: generate7DigitId(),
+      loan_amount: 0,
       profit_amount: 0,
-      total_loan_amount: '',
+      total_loan_amount: 0,
       service_charge: '',
       application_fees: '',
       revenue_charge: '',
@@ -82,15 +83,51 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
       memberId_gr_2: '',
       risk_amt_gr_3: '',
       memberId_gr_3: '',
-      risk_amt_authority: '',
-      remarks: '',
+      risk_amt_authority: ''
     }
   })
 
-  const handleAccountSelect = (accountCode: string) => {
-    // Implement your account selection logic here
-    console.log('Selected account:', accountCode)
-  }
+  const { onSubmit, getInputProps, values, reset, setValues, setFieldValue } = form
+
+  // Calculate total loan amount when loan_amount or profit_amount changes
+  useEffect(() => {
+    const loanAmount = Number(values.loan_amount) || 0
+    const profitAmount = Number(values.profit_amount) || 0
+    const total = loanAmount + profitAmount
+
+    // Only update if the value actually changed
+    if (Number(values.total_loan_amount) !== total) {
+      setFieldValue('total_loan_amount', total)
+    }
+  }, [values.loan_amount, values.profit_amount])
+
+  // Calculate completion date and installment when frequency, tenure or loan date changes
+  useEffect(() => {
+    if (values.payment_frequency && values.loan_tenure && values.loan_date) {
+      const totalLoan = Number(values.total_loan_amount) || 0
+      const tenure = Number(values.loan_tenure) || 0
+      const frequency = values.payment_frequency as 'W' | 'M'
+
+      // Calculate completion date
+      const date = new Date(values.loan_date)
+      if (frequency === 'W') {
+        date.setDate(date.getDate() + tenure * 7)
+      } else {
+        date.setMonth(date.getMonth() + tenure)
+      }
+      const completionDate = formatToYMD(date)
+
+      // Calculate installment amount
+      const installment = tenure > 0 ? totalLoan / tenure : 0
+
+      // Batch updates to prevent multiple renders
+      setValues({
+        ...values,
+        payment_completion_date: completionDate,
+        installment_amount: installment.toFixed(2)
+      })
+    }
+  }, [values.payment_frequency, values.loan_tenure, values.loan_date, values.total_loan_amount])
 
   const handleSearchMember = () => {
     if (!memberId.trim()) {
@@ -101,6 +138,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
     startSearchTransition(async () => {
       try {
         const memberRes = await getMemberInformation(memberId)
+        console.log('member', memberRes)
 
         if (!memberRes.success) {
           showNotification(getErrorMessage(memberRes?.message))
@@ -114,12 +152,12 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
         const memberKeyCode = memberRes.data?.memberKeyCode || 0
         setMemberKeyCode(memberKeyCode)
 
-        const depositRes = await getMemberWithdrawList(memberKeyCode)
+        const loanRes = await getMemberLoanList(memberKeyCode)
 
-        if (depositRes.success) {
-          setMemberData(depositRes.data)
+        if (loanRes.success) {
+          setMemberData(loanRes.data)
         } else {
-          showNotification(getErrorMessage(depositRes?.message))
+          showNotification(getErrorMessage(loanRes?.message))
           setMemberData(null)
         }
       } catch (error) {
@@ -138,35 +176,48 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
   }
 
   const submitHandler = (values: any) => {
-    if (!accountBalance || parseFloat(values.amount) > accountBalance) {
-      showNotification(getErrorMessage('Withdrawal amount cannot exceed available balance'))
-      return
-    }
-
-    startTransition(async () => {
-      try {
-        const res = await createWithdrawal(values)
-        if (res.success) {
-          showNotification(getSuccessMessage(res?.message))
-          handleSearchMember()
-          reset()
-          setAccountBalance(null)
-        } else {
-          showNotification(getErrorMessage(res?.message))
-        }
-      } catch (error) {
-        showNotification(getErrorMessage('Failed to create withdrawal'))
+    modals.openConfirmModal({
+      title: 'Please confirm your action',
+      children: <Text size="sm">Are you sure you want to process this loan?</Text>,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => {
+        startTransition(async () => {
+          try {
+            const formData = {
+              ...values,
+              member_key_code: memberKeyCode
+            }
+            const res = await createKarzEHasanahLoan(formData)
+            if (res.success) {
+              showNotification(getSuccessMessage(res?.message))
+              handleSearchMember()
+              reset()
+              setAccountBalance(null)
+            } else {
+              showNotification(getErrorMessage(res?.message))
+            }
+          } catch (error) {
+            showNotification(getErrorMessage('Failed to create loan'))
+          }
+        })
       }
     })
   }
 
   const editHandler = (deposit: any) =>
     openModal({
-      children: <EditModal deposit={deposit} accounts={accounts} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />,
+      children: (
+        <EditModal
+          deposit={deposit}
+          accounts={accounts}
+          memberId={memberId}
+          memberName={memberName}
+          memberKeyCode={memberKeyCode}
+        />
+      ),
       centered: true,
       withCloseButton: false
     })
-
 
   return (
     <Container fluid>
@@ -235,31 +286,32 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Loan Amount"
                       {...getInputProps('loan_amount')}
                       mb="xs"
                       withAsterisk
+                      hideControls
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Profit Amount"
                       {...getInputProps('profit_amount')}
                       mb="xs"
-                      withAsterisk
+                      hideControls
                       disabled
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Total Loan"
                       {...getInputProps('total_loan_amount')}
                       mb="xs"
                       disabled
-                      withAsterisk
+                      hideControls
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
@@ -287,7 +339,6 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                       label="Service Charge"
                       {...getInputProps('service_charge')}
                       mb="xs"
-                      withAsterisk
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
@@ -295,9 +346,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                     <TextInput
                       label="Application Fees"
                       {...getInputProps('application_fees')}
-                      readOnly
                       mb="xs"
-                      withAsterisk
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
@@ -305,9 +354,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                     <TextInput
                       label="Revenue Charge"
                       {...getInputProps('revenue_charge')}
-                      readOnly
                       mb="xs"
-                      withAsterisk
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
@@ -327,15 +374,16 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                       withAsterisk
                       mb="xs"
                       leftSection={<BiCategoryAlt />}
-                      {...getInputProps('payment_frequency')}  // Make sure this matches your form field name
+                      {...getInputProps('payment_frequency')}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Loan Tenure"
                       {...getInputProps('loan_tenure')}
                       mb="xs"
                       withAsterisk
+                      hideControls
                       leftSection={<FaRegClock />}
                     />
                   </Grid.Col>
@@ -351,7 +399,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
                     <TextInput
-                      type='date'
+                      type="date"
                       label="Payment Completion Date"
                       {...getInputProps('payment_completion_date')}
                       disabled
@@ -396,41 +444,38 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
               <Paper shadow="xs" p="xs" mt="xs">
                 <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Risk Amount Cover By Share"
                       {...getInputProps('risk_amt_share')}
-                      readOnly
                       mb="xs"
-                      withAsterisk
+                      hideControls
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Risk Amount Cover By Deposit"
                       {...getInputProps('risk_amt_deposit')}
                       mb="xs"
-                      withAsterisk
+                      hideControls
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Risk Covered By 1st Guarantor"
                       {...getInputProps('risk_amt_gr_1')}
-                      readOnly
+                      hideControls
                       mb="xs"
-                      withAsterisk
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Member ID of 1st Guarantor"
                       {...getInputProps('memberId_gr_1')}
-                      readOnly
+                      hideControls
                       mb="xs"
-                      withAsterisk
                       leftSection={<BiIdCard />}
                     />
                   </Grid.Col>
@@ -438,40 +483,38 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
 
                 <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Risk Covered By 2nd Guarantor"
                       {...getInputProps('risk_amt_gr_2')}
                       mb="xs"
-                      withAsterisk
+                      hideControls
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Member ID of 2nd Guarantor"
                       {...getInputProps('memberId_gr_2')}
-                      readOnly
+                      hideControls
                       mb="xs"
-                      withAsterisk
                       leftSection={<BiIdCard />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Risk Covered By 3rd Guarantor"
                       {...getInputProps('risk_amt_gr_3')}
-                      readOnly
+                      hideControls
                       mb="xs"
-                      withAsterisk
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
+                    <NumberInput
                       label="Member ID of 3rd Guarantor"
                       {...getInputProps('memberId_gr_3')}
                       mb="xs"
-                      withAsterisk
+                      hideControls
                       leftSection={<BiIdCard />}
                     />
                   </Grid.Col>
@@ -479,12 +522,11 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
 
                 <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 6, md: 6 }}>
-                    <TextInput
+                    <NumberInput
                       label="Risk Amount Covered By Approval Authority"
                       {...getInputProps('risk_amt_authority')}
-                      readOnly
+                      hideControls
                       mb="xs"
-                      withAsterisk
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
@@ -492,9 +534,8 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                     <TextInput
                       label="Disbursement Note/Remarks"
                       {...getInputProps('remarks')}
-                      readOnly
-                      mb="xs"
                       withAsterisk
+                      mb="xs"
                       leftSection={<GrNotes />}
                     />
                   </Grid.Col>
@@ -509,78 +550,73 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, md: 4 }}>
+          {memberInfo?.profile_image?.insert_key || memberInfo?.signature_image?.insert_key ? (
+            <Box mb="xs">
+              <Title order={4}>Visual Identification</Title>
 
-          {
-            memberInfo?.profile_image?.insert_key || memberInfo?.signature_image?.insert_key ? (
-              <Box mb="xs">
-                <Title order={4}>
-                  Visual Identification
-                </Title>
-
-                <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>
-                  {/* Profile Image */}
-                  <Box style={{ flex: 1 }} pos="relative">
-                    <Box
-                      mt="sm"
-                      style={{
-                        border: '1px dashed #ddd',
-                        borderRadius: 'var(--mantine-radius-sm)',
-                        padding: '0.5rem',
-                        minHeight: '180px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      {memberInfo?.profile_image?.insert_key ? (
-                        <Image
-                          src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/profile_picture/${memberInfo.profile_image.insert_key}`}
-                          alt="Profile preview"
-                          height={180}
-                          fit="contain"
-                          style={{ maxWidth: '100%' }}
-                        />
-                      ) : (
-                        <Text color="dimmed" size="sm">
-                          No profile image available
-                        </Text>
-                      )}
-                    </Box>
+              <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>
+                {/* Profile Image */}
+                <Box style={{ flex: 1 }} pos="relative">
+                  <Box
+                    mt="sm"
+                    style={{
+                      border: '1px dashed #ddd',
+                      borderRadius: 'var(--mantine-radius-sm)',
+                      padding: '0.5rem',
+                      minHeight: '180px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {memberInfo?.profile_image?.insert_key ? (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/profile_picture/${memberInfo.profile_image.insert_key}`}
+                        alt="Profile preview"
+                        height={180}
+                        fit="contain"
+                        style={{ maxWidth: '100%' }}
+                      />
+                    ) : (
+                      <Text color="dimmed" size="sm">
+                        No profile image available
+                      </Text>
+                    )}
                   </Box>
+                </Box>
 
-                  {/* Signature Image */}
-                  <Box style={{ flex: 1 }} pos="relative">
-                    <Box
-                      mt="sm"
-                      style={{
-                        border: '1px dashed #ddd',
-                        borderRadius: 'var(--mantine-radius-sm)',
-                        padding: '0.5rem',
-                        minHeight: '180px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
-                      {memberInfo?.signature_image?.insert_key ? (
-                        <Image
-                          src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/signature_card/${memberInfo.signature_image.insert_key}`}
-                          alt="Signature preview"
-                          height={180}
-                          fit="contain"
-                          style={{ maxWidth: '100%' }}
-                        />
-                      ) : (
-                        <Text color="dimmed" size="sm">
-                          No signature image available
-                        </Text>
-                      )}
-                    </Box>
+                {/* Signature Image */}
+                <Box style={{ flex: 1 }} pos="relative">
+                  <Box
+                    mt="sm"
+                    style={{
+                      border: '1px dashed #ddd',
+                      borderRadius: 'var(--mantine-radius-sm)',
+                      padding: '0.5rem',
+                      minHeight: '180px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {memberInfo?.signature_image?.insert_key ? (
+                      <Image
+                        src={`${process.env.NEXT_PUBLIC_BASE_API_FILE_URL}/member_uploads/signature_card/${memberInfo.signature_image.insert_key}`}
+                        alt="Signature preview"
+                        height={180}
+                        fit="contain"
+                        style={{ maxWidth: '100%' }}
+                      />
+                    ) : (
+                      <Text color="dimmed" size="sm">
+                        No signature image available
+                      </Text>
+                    )}
                   </Box>
-                </Flex>
-              </Box>
-            ) : null
-          }
+                </Box>
+              </Flex>
+            </Box>
+          ) : null}
           {memberName && (
             <Paper shadow="xs" p="xs">
               <Title order={6} mb="xs">
@@ -602,13 +638,16 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                   </Table.Thead>
                   <Table.Tbody>
                     {memberData?.length > 0 ? (
-                      memberData.map((deposit: any) => (
-                        <Table.Tr key={deposit.tr_sl}>
-                          <Table.Td>{deposit.trDate}</Table.Td>
+                      memberData.map((loan: any) => (
+                        <Table.Tr key={loan.disburseID}>
+                          <Table.Td>{loan.disburseDate}</Table.Td>
+                          <Table.Td>{loan.account_info?.acc_name}</Table.Td>
+                          <Table.Td>{formatAsTaka(loan.LnAmount)}</Table.Td>
+                          <Table.Td>{formatAsTaka(loan.sCharge)}</Table.Td>
                           <Table.Td>
-                            {deposit.account_info?.AccountDisplayName} ({deposit.account_info?.accountCode})
+                            {loan.tenure} {loan.pay_frequency == 'M' ? 'Months' : 'Weeks'}
                           </Table.Td>
-                          <Table.Td>{formatAsTaka(deposit.amt)}</Table.Td>
+                          <Table.Td>{loan.approvar?.commName}</Table.Td>
                           <Table.Td>
                             <Menu withArrow>
                               <Menu.Target>
@@ -617,7 +656,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item>
+                                <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item>
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>
@@ -637,7 +676,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
           )}
         </Grid.Col>
       </Grid>
-    </Container >
+    </Container>
   )
 }
 

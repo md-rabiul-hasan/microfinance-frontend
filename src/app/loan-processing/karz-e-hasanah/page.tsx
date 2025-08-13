@@ -1,4 +1,7 @@
-import { getKarzEHasanLoanAccountList, getKarzEHasanLoanApprovarComitteeList } from '@actions/loan-processing/karz-e-hasanah-config'
+import {
+  getKarzEHasanLoanAccountList,
+  getKarzEHasanLoanApprovarComitteeList
+} from '@actions/loan-processing/karz-e-hasanah-config'
 import KarzEHasanahPageUi from './ui'
 
 type SearchParams = {
@@ -14,7 +17,6 @@ type Props = {
 const KarzEHasanahPage = async ({ searchParams }: Props) => {
   const accounts = await getKarzEHasanLoanAccountList()
   const approvars = await getKarzEHasanLoanApprovarComitteeList()
-  console.log('KarzEHasanahPage accounts:', accounts)
 
   return <KarzEHasanahPageUi accounts={accounts} approvars={approvars} />
 }

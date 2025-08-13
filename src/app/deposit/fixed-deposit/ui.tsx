@@ -13,12 +13,13 @@ import {
   NumberInput,
   Paper,
   Table,
+  Text,
   Textarea,
   TextInput,
   Title
 } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
-import { openModal } from '@mantine/modals'
+import { modals, openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { FixedDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import { formatToYMD } from '@utils/datetime.util'
@@ -33,7 +34,7 @@ import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
 const FdrDepositPageUi = () => {
-  const initialDepositDate = formatToYMD(getSessionTransactionDate());
+  const initialDepositDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
   const [memberId, setMemberId] = useState('')
@@ -101,26 +102,35 @@ const FdrDepositPageUi = () => {
   }
 
   const submitHandler = (values: typeof form.values) => {
-    startTransition(async () => {
-      try {
-        const res = await createFdrDeposit(values)
-        if (res.success) {
-          showNotification(getSuccessMessage(res?.message))
-          // Refresh member data after successful deposit
-          handleSearchMember()
-          form.reset()
-        } else {
-          showNotification(getErrorMessage(res?.message))
-        }
-      } catch (error) {
-        showNotification(getErrorMessage('Failed to create deposit'))
+    modals.openConfirmModal({
+      title: 'Please confirm your action',
+      children: <Text size="sm">Are you sure you want to fixed deposit amount?</Text>,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => {
+        startTransition(async () => {
+          try {
+            const res = await createFdrDeposit(values)
+            if (res.success) {
+              showNotification(getSuccessMessage(res?.message))
+              // Refresh member data after successful deposit
+              handleSearchMember()
+              form.reset()
+            } else {
+              showNotification(getErrorMessage(res?.message))
+            }
+          } catch (error) {
+            showNotification(getErrorMessage('Failed to create deposit'))
+          }
+        })
       }
     })
   }
 
   const editHandler = (deposit: any) =>
     openModal({
-      children: <EditModal deposit={deposit} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />,
+      children: (
+        <EditModal deposit={deposit} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />
+      ),
       centered: true,
       withCloseButton: false
     })
@@ -239,12 +249,8 @@ const FdrDepositPageUi = () => {
                     memberData.map((deposit: any) => (
                       <Table.Tr key={deposit.keyCode}>
                         <Table.Td>Fixed Deposit</Table.Td>
-                        <Table.Td>
-                          {deposit.open_date}
-                        </Table.Td>
-                        <Table.Td>
-                          {deposit.close_date}
-                        </Table.Td>
+                        <Table.Td>{deposit.open_date}</Table.Td>
+                        <Table.Td>{deposit.close_date}</Table.Td>
                         <Table.Td>৳ {deposit.amount}</Table.Td>
                         <Table.Td>{deposit.period_in_month} Months</Table.Td>
                         <Table.Td>
