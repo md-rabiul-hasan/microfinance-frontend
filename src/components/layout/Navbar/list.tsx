@@ -69,7 +69,8 @@ export const menuItems = (roles: string[]) => [
     icon: <BiDonateBlood />,
     links: [
       { link: '/loan-processing/karz-e-hasanah', label: 'Karz-E-Hasanah' },
-      { link: '/loan-processing/purchase-item', label: 'Purchase Item' }
+      { link: '/loan-processing/purchase-item', label: 'Purchase Item' },
+      { link: '/loan-processing/loan-collection', label: 'Loan Collection' }
     ]
   }
 ]
