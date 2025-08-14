@@ -48,3 +48,17 @@ export const getMemberLoanList = async (memberKeyCode: string) => {
     return []
   }
 }
+
+export const updateKarzEHasanahLoan = async (insertKey: any, formData: any) => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.post(`/loan-processing/karz-e-hasanah/update?insertKey=${insertKey}`, {
+      ...formData
+    })
+
+    revalidatePath('/loan-processing/karz-e-hasanah')
+    return data
+  } catch (error) {
+    return error.response?.data
+  }
+}

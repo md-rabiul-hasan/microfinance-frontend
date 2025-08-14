@@ -22,31 +22,25 @@ import {
   Title
 } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
-import { modals, openModal } from '@mantine/modals'
+import { closeAllModals, modals, openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { bankAccountValidationSchema } from '@schemas/settings.schema'
 import { formatToYMD } from '@utils/datetime.util'
-import { formatAsTaka } from '@utils/format.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
-import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useEffect, useState, useTransition } from 'react'
 import { BiCategoryAlt, BiIdCard, BiSave, BiSearch } from 'react-icons/bi'
 import { FaRegClock } from 'react-icons/fa'
 import { GrNotes } from 'react-icons/gr'
-import { IoIosMore as MoreIcon } from 'react-icons/io'
 import { IoCalendarOutline } from 'react-icons/io5'
 import { MdOutlineGrid3X3 } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
-import { generate7DigitId } from '@utils/utils'
-import { createKarzEHasanahLoan, getMemberLoanList } from '@actions/loan-processing/karz-e-hasanah-config'
+import { updateKarzEHasanahLoan } from '@actions/loan-processing/karz-e-hasanah-config'
 import { karzEHasanhValidationSchema } from '@schemas/loan-processing.schema'
 
 const EditModal = ({ loan, accounts, approvars, memberId, memberName }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const form = useForm({
-    validate: yupResolver(karzEHasanhValidationSchema),
     initialValues: {
       account_code: String(loan.lnAccCode),
       loan_date: loan.disburseDate,
@@ -121,7 +115,28 @@ const EditModal = ({ loan, accounts, approvars, memberId, memberName }: any) => 
    * Handles the form submission.
    * Sends an API request to update the product details.
    */
-  const submitHandler = (formData: any) => startTransition(async () => {})
+  const submitHandler = (values: any) => {
+    modals.openConfirmModal({
+      title: 'Please confirm your action',
+      children: <Text size="sm">Are you sure you want to update this loan?</Text>,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => {
+        startTransition(async () => {
+          try {
+            const res = await updateKarzEHasanahLoan(loan.insert_key, values)
+            if (res.success) {
+              showNotification(getSuccessMessage(res?.message))
+              closeAllModals()
+            } else {
+              showNotification(getErrorMessage(res?.message))
+            }
+          } catch (error) {
+            showNotification(getErrorMessage('Failed to create loan'))
+          }
+        })
+      }
+    })
+  }
 
   return (
     <Grid>
@@ -427,7 +442,7 @@ const EditModal = ({ loan, accounts, approvars, memberId, memberName }: any) => 
           </Paper>
 
           <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
-            Submit
+            Update
           </Button>
         </form>
       </Grid.Col>
