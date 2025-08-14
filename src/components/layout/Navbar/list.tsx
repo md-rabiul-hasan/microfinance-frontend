@@ -1,10 +1,10 @@
 import { ReactNode } from 'react'
 import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
-import { BiDonateBlood } from "react-icons/bi"
+import { BiDonateBlood } from 'react-icons/bi'
 import { CiSettings } from 'react-icons/ci'
 import { HiOutlineUserGroup } from 'react-icons/hi'
 import { LiaDonateSolid } from 'react-icons/lia'
-import { PiHandWithdrawLight } from "react-icons/pi"
+import { PiHandWithdrawLight } from 'react-icons/pi'
 
 type MenuItem = {
   link: string
@@ -56,7 +56,7 @@ export const menuItems = (roles: string[]) => [
     links: [
       { link: '/deposit/regular-deposit', label: 'Regular Deposit' },
       { link: '/deposit/irregular-deposit', label: 'Irregular Deposit' },
-      { link: '/deposit/fixed-deposit', label: 'Fixed Deposit' },
+      { link: '/deposit/fixed-deposit', label: 'Fixed Deposit' }
     ]
   },
   {
@@ -68,9 +68,10 @@ export const menuItems = (roles: string[]) => [
     label: 'Loan Processing',
     icon: <BiDonateBlood />,
     links: [
-      { link: '/loan-processing/karz-e-hasanah', label: 'Karz-E-Hasanah' }
+      { link: '/loan-processing/karz-e-hasanah', label: 'Karz-E-Hasanah' },
+      { link: '/loan-processing/purchase-item', label: 'Purchase Item' }
     ]
-  },
+  }
 ]
 
 export const isActiveLink = (path: string, link: string = ''): boolean => {

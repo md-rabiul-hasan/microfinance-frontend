@@ -1,6 +1,6 @@
 export * from './deposit'
 export * from './mymember'
 export * from './setup'
+export * from './loan'
 export * from './utilities'
 export * from './withdrawal'
-

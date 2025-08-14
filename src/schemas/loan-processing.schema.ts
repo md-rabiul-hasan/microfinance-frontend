@@ -16,3 +16,12 @@ export const karzEHasanhValidationSchema = yup.object().shape({
   installment_amount: yup.string().required('Installment amount is required'),
   approved_by: yup.string().required('Approver is required')
 })
+
+export const purchaseItemValidationSchema = yup.object().shape({
+  purchase_id: yup.string().required('Purchase ID is required'),
+  purchase_details: yup.string().required('Purchase details are required'),
+  purchase_date: yup.string().required('Purchase date is required'),
+  purchase_amount: yup.string().required('Purchase amount is required'),
+  purchase_from: yup.string().required('Purchase source is required'),
+  remarks: yup.string().required('Remarks are required') // Added remarks field
+})
