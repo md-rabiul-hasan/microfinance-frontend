@@ -1,29 +1,20 @@
-import { createEmployee } from '@actions/settings/employee-config'
-import { Button, NumberInput, Select, Text, Textarea, TextInput, Title } from '@mantine/core'
+import { createPurchaseItem } from '@actions/loan-processing/purchase-item-config'
+import { Button, NumberInput, Text, Textarea, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals, modals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { getErrorMessage, getSuccessMessage } from '@utils/notification'
-import { useTransition } from 'react'
-import { CiLocationOn } from 'react-icons/ci'
-import { BiSave } from 'react-icons/bi'
-import { FaIdCardAlt } from 'react-icons/fa'
-import { MdPerson } from 'react-icons/md'
-import { PiCertificateFill } from 'react-icons/pi'
-import { FaSquarePhone } from 'react-icons/fa6'
-import { FaLocationDot } from 'react-icons/fa6'
-import { createBranch } from '@actions/settings/branch-config'
-import { BiSolidBank } from 'react-icons/bi'
-import { branchValidationSchema } from '@schemas/settings.schema'
-import { generate7DigitId } from '@utils/utils'
-import { getSessionTransactionDate } from '@utils/transaction-date'
-import { IoCalendarOutline } from 'react-icons/io5'
-import { formatToYMD } from '@utils/datetime.util'
-import { TbCoinTaka } from 'react-icons/tb'
-import { GoHash } from 'react-icons/go'
-import { FaPersonDotsFromLine } from 'react-icons/fa6'
 import { purchaseItemValidationSchema } from '@schemas/loan-processing.schema'
-import { createPurchaseItem } from '@actions/loan-processing/purchase-item-config'
+import { formatToYMD } from '@utils/datetime.util'
+import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { getSessionTransactionDate } from '@utils/transaction-date'
+import { generate7DigitId } from '@utils/utils'
+import { useTransition } from 'react'
+import { BiSave } from 'react-icons/bi'
+import { FaPersonDotsFromLine } from 'react-icons/fa6'
+import { GoHash } from 'react-icons/go'
+import { IoCalendarOutline } from 'react-icons/io5'
+import { MdOutlineProductionQuantityLimits } from "react-icons/md"
+import { TbCoinTaka } from 'react-icons/tb'
 
 const AddModal = ({ locations }: any) => {
   const [isLoading, startTransition] = useTransition()
@@ -79,7 +70,14 @@ const AddModal = ({ locations }: any) => {
         {...getInputProps('purchase_id')}
         leftSection={<GoHash />} // Adds an icon
       />
-      <Textarea label="Product Details" {...getInputProps('purchase_details')} withAsterisk mb="xs" />
+
+      <TextInput
+        label="Product Details"
+        mb="xs"
+        withAsterisk // Marks the field as required
+        {...getInputProps('purchase_details')}
+        leftSection={<MdOutlineProductionQuantityLimits />} // Adds an icon
+      />
 
       <NumberInput
         label="Purchase Cost (BDT)"

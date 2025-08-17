@@ -35,6 +35,7 @@ import { generate7DigitId } from '@utils/utils'
 import { useEffect, useState, useTransition } from 'react'
 import { BiCategoryAlt, BiIdCard, BiSave, BiSearch } from 'react-icons/bi'
 import { FaRegClock } from 'react-icons/fa'
+import { FaPlus } from "react-icons/fa6"
 import { GrNotes } from 'react-icons/gr'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import { IoCalendarOutline } from 'react-icons/io5'
@@ -43,7 +44,7 @@ import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
-const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
+const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
@@ -215,13 +216,96 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
   return (
     <Container fluid>
       <Group justify="space-between" mb="xs">
-        <TitleBar title="Islamic Investment | Karz-E-Hasanah" url="/" />
+        <TitleBar title="Islamic Investment | Murabaha ( Sale product item based on Murabaha )" url="/" />
       </Group>
 
       <Grid>
         <Grid.Col span={{ base: 12, md: 8 }}>
           <form onSubmit={onSubmit(submitHandler)}>
             <div shadow="xs" p="xs" className="responsive-form">
+
+              <Paper shadow="xs" p="xs" mt="xs">
+
+                {/* Loan Details */}
+                <Grid gutter="xs" align="flex-end">
+                  <Grid.Col span={{ base: 6, md: 3 }}>
+                    <TextInput
+                      label="Product ID"
+                      {...getInputProps('product_id')}
+                      disabled
+                      mb="xs"
+                      withAsterisk
+                      leftSection={<MdOutlineGrid3X3 />}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 4, md: 1 }}>
+                    <Button
+                      mb="xs"
+                      px={0}
+                      fullWidth
+                      style={{ height: '36px' }}
+                      title="Search Product"
+                    >
+                      <FaPlus size={18} />
+                    </Button>
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 6, md: 8 }}>
+                    <NumberInput
+                      label="Product Details"
+                      {...getInputProps('product_details')}
+                      mb="xs"
+                      disabled
+                      withAsterisk
+                      hideControls
+                      leftSection={<TbCoinTaka />}
+                    />
+                  </Grid.Col>
+
+                </Grid>
+
+                {/* Loan Type & Charges */}
+                <Grid gutter="xs" align="flex-end">
+                  <Grid.Col span={{ base: 6, md: 3 }}>
+                    <TextInput
+                      type="date"
+                      label="Purchase Date"
+                      {...getInputProps('purchase_date')}
+                      mb="xs"
+                      hideControls
+                      disabled
+                      leftSection={<TbCoinTaka />}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 6, md: 3 }}>
+                    <NumberInput
+                      label="Product Price (BDT)"
+                      {...getInputProps('product_price')}
+                      mb="xs"
+                      disabled
+                      hideControls
+                      leftSection={<TbCoinTaka />}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 12, md: 3 }}>
+                    <NumberInput
+                      label="Profit Amount (BDT)"
+                      {...getInputProps('profit_amount')}
+                      mb="xs"
+                      hideControls
+                      leftSection={<TbCoinTaka />}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={{ base: 6, md: 3 }}>
+                    <NumberInput
+                      label="Total Selling Price (BDT)"
+                      {...getInputProps('total_selling_price')}
+                      mb="xs"
+                      leftSection={<TbCoinTaka />}
+                      disabled
+                    />
+                  </Grid.Col>
+                </Grid>
+              </Paper>
 
               {/* Member ID Search */}
               <Paper shadow="xs" p="xs" mt="xs">
@@ -275,40 +359,6 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                       leftSection={<MdOutlineGrid3X3 />}
                     />
                   </Grid.Col>
-                  <Grid.Col span={{ base: 6, md: 3 }}>
-                    <NumberInput
-                      label="Loan Amount"
-                      {...getInputProps('loan_amount')}
-                      mb="xs"
-                      withAsterisk
-                      hideControls
-                      leftSection={<TbCoinTaka />}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 6, md: 3 }}>
-                    <NumberInput
-                      label="Profit Amount"
-                      {...getInputProps('profit_amount')}
-                      mb="xs"
-                      hideControls
-                      disabled
-                      leftSection={<TbCoinTaka />}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 6, md: 3 }}>
-                    <NumberInput
-                      label="Total Loan"
-                      {...getInputProps('total_loan_amount')}
-                      mb="xs"
-                      disabled
-                      hideControls
-                      leftSection={<TbCoinTaka />}
-                    />
-                  </Grid.Col>
-                </Grid>
-
-                {/* Loan Type & Charges */}
-                <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 12, md: 3 }}>
                     <Select
                       label="Loan Type"
@@ -324,34 +374,6 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                       {...getInputProps('account_code')}
                     />
                   </Grid.Col>
-                  <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
-                      label="Service Charge"
-                      {...getInputProps('service_charge')}
-                      mb="xs"
-                      leftSection={<TbCoinTaka />}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
-                      label="Application Fees"
-                      {...getInputProps('application_fees')}
-                      mb="xs"
-                      leftSection={<TbCoinTaka />}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={{ base: 6, md: 3 }}>
-                    <TextInput
-                      label="Revenue Charge"
-                      {...getInputProps('revenue_charge')}
-                      mb="xs"
-                      leftSection={<TbCoinTaka />}
-                    />
-                  </Grid.Col>
-                </Grid>
-
-                {/* Payment & Tenure */}
-                <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 12, md: 3 }}>
                     <Select
                       label="Payment Frequency"
@@ -377,16 +399,21 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                       leftSection={<FaRegClock />}
                     />
                   </Grid.Col>
+                </Grid>
+
+                {/* Loan Type & Charges */}
+                <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 6, md: 3 }}>
                     <TextInput
                       type="date"
-                      label="Loan Date"
+                      label="Sale Date"
                       {...getInputProps('loan_date')}
                       mb="xs"
                       withAsterisk
                       leftSection={<IoCalendarOutline />}
                     />
                   </Grid.Col>
+
                   <Grid.Col span={{ base: 6, md: 3 }}>
                     <TextInput
                       type="date"
@@ -398,10 +425,6 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                       leftSection={<IoCalendarOutline />}
                     />
                   </Grid.Col>
-                </Grid>
-
-                {/* Installment & Approval */}
-                <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 6, md: 3 }}>
                     <TextInput
                       label="Installment Amount"
@@ -412,6 +435,28 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
+
+                  <Grid.Col span={{ base: 6, md: 3 }}>
+                    <TextInput
+                      label="Application Fees"
+                      {...getInputProps('application_fees')}
+                      mb="xs"
+                      leftSection={<TbCoinTaka />}
+                    />
+                  </Grid.Col>
+
+                </Grid>
+                {/* Installment & Approval */}
+                <Grid gutter="xs" align="flex-end">
+                  <Grid.Col span={{ base: 6, md: 3 }}>
+                    <TextInput
+                      label="Revenue Charge"
+                      {...getInputProps('revenue_charge')}
+                      mb="xs"
+                      leftSection={<TbCoinTaka />}
+                    />
+                  </Grid.Col>
+
                   <Grid.Col span={{ base: 12, md: 3 }}>
                     <Select
                       label="Loan Approved By"
@@ -670,4 +715,4 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
   )
 }
 
-export default KarzEHasanahPageUi
+export default SaleMudarabaPageUi
