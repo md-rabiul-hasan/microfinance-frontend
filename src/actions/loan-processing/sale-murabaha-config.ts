@@ -13,3 +13,18 @@ export const getSellableProductList = async () => {
     return error.response?.data
   }
 }
+
+
+export const createSaleMurabaha = async (formData: any) => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.post('/loan-processing/sale-murabaha/store', {
+      ...formData
+    })
+
+    revalidatePath('/loan-processing/sale-murabaha')
+    return data
+  } catch (error) {
+    return error.response?.data
+  }
+}

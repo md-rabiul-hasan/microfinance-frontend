@@ -71,7 +71,8 @@ export const menuItems = (roles: string[]) => [
       { link: '/loan-processing/karz-e-hasanah', label: 'Karz-E-Hasanah' },
       { link: '/loan-processing/purchase-item', label: 'Purchase Item' },
       { link: '/loan-processing/sale-mudaraba', label: 'Sale Mudaraba' },
-      { link: '/loan-processing/loan-collection', label: 'Loan Collection' }
+      { link: '/loan-processing/loan-collection', label: 'Loan Collection' },
+      { link: '/loan-processing/delete-loan', label: 'Delete Loan' },
     ]
   }
 ]

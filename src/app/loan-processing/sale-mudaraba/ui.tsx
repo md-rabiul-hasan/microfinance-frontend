@@ -1,7 +1,8 @@
 'use client'
 
 import { getMemberInformation } from '@actions/common-config'
-import { createKarzEHasanahLoan, getMemberLoanList } from '@actions/loan-processing/karz-e-hasanah-config'
+import { getMemberLoanList } from '@actions/loan-processing/karz-e-hasanah-config'
+import { createSaleMurabaha } from '@actions/loan-processing/sale-murabaha-config'
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
@@ -26,7 +27,7 @@ import {
 import { useForm, yupResolver } from '@mantine/form'
 import { modals, openModal } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
-import { karzEHasanhValidationSchema } from '@schemas/loan-processing.schema'
+import { saleMurabahaValidationSchema } from '@schemas/loan-processing.schema'
 import { formatToYMD } from '@utils/datetime.util'
 import { formatAsTaka } from '@utils/format.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
@@ -41,10 +42,9 @@ import { IoIosMore as MoreIcon } from 'react-icons/io'
 import { IoCalendarOutline } from 'react-icons/io5'
 import { MdOutlineGrid3X3 } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
-import { TbCoinTaka } from 'react-icons/tb'
+import { TbCoinTaka, TbListDetails } from 'react-icons/tb'
 import EditModal from './edit'
 import ProductListModal from './product'
-import { TbListDetails } from 'react-icons/tb'
 
 const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
   const initialDate = formatToYMD(getSessionTransactionDate())
@@ -61,20 +61,18 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
 
   const form = useForm({
-    validate: yupResolver(karzEHasanhValidationSchema),
+    validate: yupResolver(saleMurabahaValidationSchema),
     initialValues: {
       product_id: '',
       product_details: '',
       purchase_date: '',
       product_price: '',
       profit_amount: '',
-      total_selling_price: '',
+      total_selling_price: 0,
       account_code: '',
       loan_date: initialDate,
       remarks: '',
       loan_id: generate7DigitId(),
-      loan_amount: 0,
-      total_loan_amount: 0,
       service_charge: '',
       application_fees: '',
       revenue_charge: '',
@@ -107,7 +105,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
     if (Number(values.total_selling_price) !== total) {
       setFieldValue('total_selling_price', total)
     }
-  }, [values.loan_amount, values.profit_amount])
+  }, [values.profit_amount])
 
   // Calculate completion date and installment when frequency, tenure or loan date changes
   useEffect(() => {
@@ -120,6 +118,8 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
       const date = new Date(values.loan_date)
       if (frequency === 'W') {
         date.setDate(date.getDate() + tenure * 7)
+      } if (frequency === 'F') {
+        date.setDate(date.getDate() + tenure * 15)
       } else {
         date.setMonth(date.getMonth() + tenure)
       }
@@ -135,7 +135,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
         installment_amount: installment.toFixed(2)
       })
     }
-  }, [values.payment_frequency, values.loan_tenure, values.loan_date, values.total_loan_amount])
+  }, [values.payment_frequency, values.loan_tenure, values.loan_date])
 
   const handleSearchMember = () => {
     if (!memberId.trim()) {
@@ -186,7 +186,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
   const submitHandler = (values: any) => {
     modals.openConfirmModal({
       title: 'Please confirm your action',
-      children: <Text size="sm">Are you sure you want to process this loan?</Text>,
+      children: <Text size="sm">Are you sure you want to process this sale murabaha?</Text>,
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onConfirm: () => {
         startTransition(async () => {
@@ -195,7 +195,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
               ...values,
               member_key_code: memberKeyCode
             }
-            const res = await createKarzEHasanahLoan(formData)
+            const res = await createSaleMurabaha(formData)
             if (res.success) {
               showNotification(getSuccessMessage(res?.message))
               handleSearchMember()
@@ -404,6 +404,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                       placeholder="Please Select"
                       data={[
                         { value: 'W', label: 'Weekly (Shaptahik)' },
+                        { value: 'F', label: 'Fortnightly (Pakkhik)' },
                         { value: 'M', label: 'Monthly (Mashik)' }
                       ]}
                       searchable

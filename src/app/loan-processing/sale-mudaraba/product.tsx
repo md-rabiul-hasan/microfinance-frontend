@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { Table, Text, ScrollArea, LoadingOverlay, ActionIcon, Title } from '@mantine/core'
 import { getSellableProductList } from '@actions/loan-processing/sale-murabaha-config'
+import { ActionIcon, LoadingOverlay, ScrollArea, Table, Text, Title } from '@mantine/core'
+import { formatAsTaka } from '@utils/format.util'
+import { useEffect, useState } from 'react'
 
 interface Product {
   product_uniq_id: string
@@ -49,7 +50,7 @@ const ProductListModal = ({ onSelect, onClose }: ProductListModalProps) => {
       <Table.Td>{index + 1}</Table.Td>
       <Table.Td>{product.product_uniq_id}</Table.Td>
       <Table.Td>{product.item_details}</Table.Td>
-      <Table.Td style={{ textAlign: 'right' }}>{new Intl.NumberFormat().format(product.purchase_cost)}</Table.Td>
+      <Table.Td style={{ textAlign: 'right' }}>{formatAsTaka(product.purchase_cost)}</Table.Td>
       <Table.Td>{product.purchase_date}</Table.Td>
       <Table.Td>
         <ActionIcon variant="subtle" color="blue" onClick={() => handleSelect(product)} title="Select this product">

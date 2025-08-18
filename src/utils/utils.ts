@@ -28,3 +28,14 @@ export const calculateInstallmentAmount = (totalLoan: number, frequency: 'W' | '
   if (!tenure || tenure <= 0) return 0
   return totalLoan / tenure // Same calculation for weekly/monthly since tenure is in weeks/months
 }
+
+
+export const getLoanType = (loanType: number): string => {
+  const loanTypes: Record<number, string> = {
+    0: "Karz",
+    1: "Bai Murabaha",
+    2: "Bai Muazzal"
+  };
+
+  return loanTypes[loanType] || "Unknown Loan Type";
+};
