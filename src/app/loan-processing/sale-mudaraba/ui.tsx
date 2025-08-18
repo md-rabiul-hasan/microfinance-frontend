@@ -35,7 +35,7 @@ import { generate7DigitId } from '@utils/utils'
 import { useEffect, useState, useTransition } from 'react'
 import { BiCategoryAlt, BiIdCard, BiSave, BiSearch } from 'react-icons/bi'
 import { FaRegClock } from 'react-icons/fa'
-import { FaPlus } from "react-icons/fa6"
+import { FaPlus } from 'react-icons/fa6'
 import { GrNotes } from 'react-icons/gr'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import { IoCalendarOutline } from 'react-icons/io5'
@@ -43,6 +43,8 @@ import { MdOutlineGrid3X3 } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
+import ProductListModal from './product'
+import { TbListDetails } from 'react-icons/tb'
 
 const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
   const initialDate = formatToYMD(getSessionTransactionDate())
@@ -55,16 +57,23 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
   const [accountBalance, setAccountBalance] = useState<number | null>(null)
   const [isBalanceLoading, setIsBalanceLoading] = useState(false)
   const [memberInfo, setMemberInfo] = useState<any>(null)
+  // Add this to your parent component's state
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
 
   const form = useForm({
     validate: yupResolver(karzEHasanhValidationSchema),
     initialValues: {
+      product_id: '',
+      product_details: '',
+      purchase_date: '',
+      product_price: '',
+      profit_amount: '',
+      total_selling_price: '',
       account_code: '',
       loan_date: initialDate,
       remarks: '',
       loan_id: generate7DigitId(),
       loan_amount: 0,
-      profit_amount: 0,
       total_loan_amount: 0,
       service_charge: '',
       application_fees: '',
@@ -90,20 +99,20 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
 
   // Calculate total loan amount when loan_amount or profit_amount changes
   useEffect(() => {
-    const loanAmount = Number(values.loan_amount) || 0
+    const product_price = Number(values.product_price) || 0
     const profitAmount = Number(values.profit_amount) || 0
-    const total = loanAmount + profitAmount
+    const total = product_price + profitAmount
 
     // Only update if the value actually changed
-    if (Number(values.total_loan_amount) !== total) {
-      setFieldValue('total_loan_amount', total)
+    if (Number(values.total_selling_price) !== total) {
+      setFieldValue('total_selling_price', total)
     }
   }, [values.loan_amount, values.profit_amount])
 
   // Calculate completion date and installment when frequency, tenure or loan date changes
   useEffect(() => {
     if (values.payment_frequency && values.loan_tenure && values.loan_date) {
-      const totalLoan = Number(values.total_loan_amount) || 0
+      const totalLoan = Number(values.total_selling_price) || 0
       const tenure = Number(values.loan_tenure) || 0
       const frequency = values.payment_frequency as 'W' | 'M'
 
@@ -213,6 +222,25 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
       size: 'xl'
     })
 
+  const sellableProductList = () => {
+    openModal({
+      title: 'Select Product',
+      size: 'xl',
+      children: (
+        <ProductListModal
+          onSelect={(product: any) => {
+            setFieldValue('product_id', product.product_uniq_id)
+            setFieldValue('product_details', product.item_details)
+            setFieldValue('purchase_date', product.purchase_date)
+            setFieldValue('product_price', product.purchase_cost)
+            setFieldValue('total_selling_price', product.purchase_cost)
+          }}
+          onClose={() => modals.closeAll()}
+        />
+      )
+    })
+  }
+
   return (
     <Container fluid>
       <Group justify="space-between" mb="xs">
@@ -223,9 +251,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
         <Grid.Col span={{ base: 12, md: 8 }}>
           <form onSubmit={onSubmit(submitHandler)}>
             <div shadow="xs" p="xs" className="responsive-form">
-
               <Paper shadow="xs" p="xs" mt="xs">
-
                 {/* Loan Details */}
                 <Grid gutter="xs" align="flex-end">
                   <Grid.Col span={{ base: 6, md: 3 }}>
@@ -245,22 +271,21 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                       fullWidth
                       style={{ height: '36px' }}
                       title="Search Product"
+                      onClick={sellableProductList}
                     >
                       <FaPlus size={18} />
                     </Button>
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 8 }}>
-                    <NumberInput
+                    <TextInput
                       label="Product Details"
                       {...getInputProps('product_details')}
                       mb="xs"
                       disabled
                       withAsterisk
-                      hideControls
-                      leftSection={<TbCoinTaka />}
+                      leftSection={<TbListDetails />}
                     />
                   </Grid.Col>
-
                 </Grid>
 
                 {/* Loan Type & Charges */}
@@ -271,9 +296,8 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                       label="Purchase Date"
                       {...getInputProps('purchase_date')}
                       mb="xs"
-                      hideControls
                       disabled
-                      leftSection={<TbCoinTaka />}
+                      leftSection={<IoCalendarOutline />}
                     />
                   </Grid.Col>
                   <Grid.Col span={{ base: 6, md: 3 }}>
@@ -444,7 +468,6 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                       leftSection={<TbCoinTaka />}
                     />
                   </Grid.Col>
-
                 </Grid>
                 {/* Installment & Approval */}
                 <Grid gutter="xs" align="flex-end">
