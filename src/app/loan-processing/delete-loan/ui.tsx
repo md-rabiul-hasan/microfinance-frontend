@@ -1,10 +1,8 @@
 'use client'
 
 import { getMemberInformation } from '@actions/common-config'
-import { getMemberLoanListForDelete } from '@actions/loan-processing/delete-loan-config'
-import {
-  getAccountBalance
-} from '@actions/withdrawal/withdrawal-amount-config'
+import { deleteLoanRequest, getMemberLoanListForDelete } from '@actions/loan-processing/delete-loan-config'
+import { getAccountBalance } from '@actions/withdrawal/withdrawal-amount-config'
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
@@ -31,11 +29,12 @@ import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiSearch } from 'react-icons/bi'
-import { IoSearchSharp } from "react-icons/io5"
+import { IoSearchSharp } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 
 import { getLoanType } from '@utils/utils'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
+import { modals } from '@mantine/modals'
 const DeleteLoanPageUi = ({ accounts }: any) => {
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
@@ -44,20 +43,9 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
   const [memberName, setMemberName] = useState('')
   const [memberKeyCode, setMemberKeyCode] = useState(0)
   const [memberData, setMemberData] = useState<any>(null)
-  const [accountBalance, setAccountBalance] = useState<number | null>(null)
-  const [isBalanceLoading, setIsBalanceLoading] = useState(false)
   const [memberInfo, setMemberInfo] = useState<any>(null)
 
-  const form = useForm({
-    initialValues: {
-      member_key_code: '',
-      account_code: '',
-      available_balance: '',
-      amount: '',
-      withdraw_date: initialDate,
-      remarks: ''
-    }
-  })
+  const { onSubmit, getInputProps, values, reset } = useForm()
 
   const handleSearchMember = () => {
     if (!memberId.trim()) {
@@ -74,7 +62,6 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
           showNotification(getErrorMessage(memberRes?.message))
           setMemberName('')
           setMemberData(null)
-          setAccountBalance(null)
           return
         }
 
@@ -83,40 +70,12 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
         setMemberInfo(memberRes.data)
         const memberKeyCode = memberRes.data?.memberKeyCode || 0
         setMemberKeyCode(memberKeyCode)
-        form.setFieldValue('member_key_code', memberKeyCode)
       } catch (error) {
         showNotification(getErrorMessage('Failed to fetch member information'))
         setMemberName('')
         setMemberData(null)
-        setAccountBalance(null)
       }
     })
-  }
-
-  const handleAccountSelect = async (accountCode: string) => {
-    if (!memberKeyCode) {
-      showNotification(getErrorMessage('Please select a member first'))
-      return
-    }
-
-    setIsBalanceLoading(true)
-    try {
-      const res = await getAccountBalance(memberKeyCode, accountCode)
-      if (res.success) {
-        setAccountBalance(res.data.balance)
-        form.setFieldValue('available_balance', res.data.balance)
-      } else {
-        showNotification(getErrorMessage(res?.message))
-        setAccountBalance(null)
-        form.setFieldValue('available_balance', '')
-      }
-    } catch (error) {
-      showNotification(getErrorMessage('Failed to fetch account balance'))
-      setAccountBalance(null)
-      form.setFieldValue('available_balance', '')
-    } finally {
-      setIsBalanceLoading(false)
-    }
   }
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -143,7 +102,23 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
     })
   }
 
-
+  const deleteHandler = (loan_id: any) => {
+    modals.openConfirmModal({
+      title: 'Please confirm your action',
+      children: <Text size="sm">Are you sure you want to delete this loan?</Text>,
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onConfirm: () => {
+        startTransition(async () => {
+          const res = await deleteLoanRequest(loan_id)
+          if (res.success) {
+            showNotification({ ...getSuccessMessage(res.message), autoClose: 10000 })
+          } else {
+            showNotification(getErrorMessage(res.message))
+          }
+        })
+      }
+    })
+  }
 
   return (
     <Container fluid>
@@ -154,7 +129,7 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
       <Grid>
         <Grid.Col span={{ base: 12, md: 5 }}>
           <Paper shadow="xs" p="xs">
-            <form onSubmit={form.onSubmit(submitHandler)}>
+            <form onSubmit={onSubmit(submitHandler)}>
               <Title order={4} mb="md">
                 Delete Loan Options
               </Title>
@@ -275,7 +250,6 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
 
         {memberData && (
           <Grid.Col span={{ base: 12, md: 12 }}>
-
             <Paper shadow="xs" p="xs">
               <Title order={4} mb="md">
                 Loan History for: {memberName}
@@ -313,7 +287,7 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                <Menu.Item onClick={() => editHandler(deposit)}>Delete</Menu.Item>
+                                <Menu.Item onClick={() => deleteHandler(deposit.loan_id)}>Delete</Menu.Item>
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>
@@ -330,7 +304,6 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
                 </Table>
               </ScrollArea>
             </Paper>
-
           </Grid.Col>
         )}
       </Grid>
