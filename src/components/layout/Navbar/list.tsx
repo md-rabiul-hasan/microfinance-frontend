@@ -73,6 +73,7 @@ export const menuItems = (roles: string[]) => [
       { link: '/loan-processing/sale-mudaraba', label: 'Sale Mudaraba' },
       { link: '/loan-processing/loan-collection', label: 'Loan Collection' },
       { link: '/loan-processing/delete-loan', label: 'Delete Loan' },
+      { link: '/loan-processing/delete-loan-auth', label: 'Delete Loan Auth' }
     ]
   }
 ]

@@ -295,8 +295,8 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
                       ))
                     ) : (
                       <Table.Tr>
-                        <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
-                          {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
+                        <Table.Td colSpan={7} style={{ textAlign: 'center' }}>
+                          {memberData ? 'No loan history found' : 'Search for a member to view loan history'}
                         </Table.Td>
                       </Table.Tr>
                     )}
