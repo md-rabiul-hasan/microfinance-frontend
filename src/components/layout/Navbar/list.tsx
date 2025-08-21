@@ -5,6 +5,7 @@ import { CiSettings } from 'react-icons/ci'
 import { HiOutlineUserGroup } from 'react-icons/hi'
 import { LiaDonateSolid } from 'react-icons/lia'
 import { PiHandWithdrawLight } from 'react-icons/pi'
+import { MdOutlineAccountBalance } from 'react-icons/md'
 
 type MenuItem = {
   link: string
@@ -75,6 +76,11 @@ export const menuItems = (roles: string[]) => [
       { link: '/loan-processing/delete-loan', label: 'Delete Loan' },
       { link: '/loan-processing/delete-loan-auth', label: 'Delete Loan Auth' }
     ]
+  },
+  {
+    label: 'General Accounting',
+    icon: <MdOutlineAccountBalance />,
+    links: [{ link: '/general-accounting/journal-entry', label: 'Journal Entry' }]
   }
 ]
 
