@@ -22,3 +22,17 @@ export const getSubAccountHead = async (accountCode: string) => {
     return []
   }
 }
+
+export const createJournalEntry = async (formData: any, path?: string) => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.post('/general-accounting/journal-entry/store', {
+      ...formData
+    })
+
+    revalidatePath('/general-accounting/journal-entry')
+    return data
+  } catch (error) {
+    return error.response?.data
+  }
+}
