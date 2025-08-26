@@ -80,7 +80,10 @@ export const menuItems = (roles: string[]) => [
   {
     label: 'General Accounting',
     icon: <MdOutlineAccountBalance />,
-    links: [{ link: '/general-accounting/journal-entry', label: 'Journal Entry' }]
+    links: [
+      { link: '/general-accounting/journal-entry', label: 'Journal Entry' },
+      { link: '/general-accounting/cash-voucher', label: 'Cash Voucher' }
+    ]
   }
 ]
 
