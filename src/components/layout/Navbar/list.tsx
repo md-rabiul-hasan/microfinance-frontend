@@ -83,7 +83,8 @@ export const menuItems = (roles: string[]) => [
     links: [
       { link: '/general-accounting/journal-entry', label: 'Journal Entry' },
       { link: '/general-accounting/cash-voucher', label: 'Cash Voucher' },
-      { link: '/general-accounting/profit-reserve', label: 'Profit Reserve' }
+      { link: '/general-accounting/profit-reserve', label: 'Profit Reserve' },
+      { link: '/general-accounting/account-setup', label: 'Account Setup' }
     ]
   }
 ]
