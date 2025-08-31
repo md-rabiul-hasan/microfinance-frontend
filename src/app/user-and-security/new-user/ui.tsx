@@ -6,16 +6,10 @@ import useNavigation from '@hooks/useNavigation'
 import { ActionIcon, Container, Group, Menu, Paper, Table, Text, TextInput, Tooltip } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
 import { modals, openModal } from '@mantine/modals'
-import { showNotification } from '@mantine/notifications'
-import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { startTransition, useEffect, useState } from 'react'
 import { FaPlusCircle } from 'react-icons/fa'
-import { IoIosMore as MoreIcon } from 'react-icons/io'
 import AddModal from './add'
-import EditModal from './edit'
-import { deleteServiceArea } from '@actions/settings/service-area-config'
-
 // Define the props type
 
 const NewUserPageUi = ({ data: { data, pagination }, employees, branches, roles }: any) => {

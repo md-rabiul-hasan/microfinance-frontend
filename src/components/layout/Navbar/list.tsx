@@ -91,7 +91,10 @@ export const menuItems = (roles: string[]) => [
   {
     label: 'User & Security',
     icon: <FiUsers />,
-    links: [{ link: '/user-and-security/new-user', label: 'New User' }]
+    links: [
+      { link: '/user-and-security/new-user', label: 'New User' },
+      { link: '/user-and-security/user-permission', label: 'User Permission' }
+    ]
   }
 ]
 
