@@ -6,6 +6,7 @@ import { HiOutlineUserGroup } from 'react-icons/hi'
 import { LiaDonateSolid } from 'react-icons/lia'
 import { PiHandWithdrawLight } from 'react-icons/pi'
 import { MdOutlineAccountBalance } from 'react-icons/md'
+import { FiUsers } from 'react-icons/fi'
 
 type MenuItem = {
   link: string
@@ -86,6 +87,11 @@ export const menuItems = (roles: string[]) => [
       { link: '/general-accounting/profit-reserve', label: 'Profit Reserve' },
       { link: '/general-accounting/account-setup', label: 'Account Setup' }
     ]
+  },
+  {
+    label: 'User & Security',
+    icon: <FiUsers />,
+    links: [{ link: '/user-and-security/new-user', label: 'New User' }]
   }
 ]
 
