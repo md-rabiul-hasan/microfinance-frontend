@@ -2,11 +2,12 @@ import { ReactNode } from 'react'
 import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
 import { BiDonateBlood } from 'react-icons/bi'
 import { CiSettings } from 'react-icons/ci'
+import { FiUsers } from 'react-icons/fi'
+import { GiTakeMyMoney } from "react-icons/gi"
 import { HiOutlineUserGroup } from 'react-icons/hi'
 import { LiaDonateSolid } from 'react-icons/lia'
-import { PiHandWithdrawLight } from 'react-icons/pi'
 import { MdOutlineAccountBalance } from 'react-icons/md'
-import { FiUsers } from 'react-icons/fi'
+import { PiHandWithdrawLight } from 'react-icons/pi'
 
 type MenuItem = {
   link: string
@@ -86,6 +87,15 @@ export const menuItems = (roles: string[]) => [
       { link: '/general-accounting/cash-voucher', label: 'Cash Voucher' },
       { link: '/general-accounting/profit-reserve', label: 'Profit Reserve' },
       { link: '/general-accounting/account-setup', label: 'Account Setup' }
+    ]
+  },
+  {
+    label: 'Basic Accounting',
+    icon: <GiTakeMyMoney />,
+    links: [
+      { link: '/basic-accounting/banking-transaction', label: 'Banking Transaction' },
+      { link: '/basic-accounting/external-saving-account-transaction', label: 'External Saving A/C Txn' },
+      { link: '/basic-accounting/different-project-transaction', label: 'Different Project Txn' },
     ]
   },
   {
