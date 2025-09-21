@@ -1,118 +1,79 @@
-import { ReactNode } from 'react'
-import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai'
-import { BiDonateBlood } from 'react-icons/bi'
-import { CiSettings } from 'react-icons/ci'
-import { FiUsers } from 'react-icons/fi'
-import { GiTakeMyMoney } from "react-icons/gi"
-import { HiOutlineUserGroup } from 'react-icons/hi'
-import { LiaDonateSolid } from 'react-icons/lia'
-import { MdOutlineAccountBalance } from 'react-icons/md'
-import { PiHandWithdrawLight } from 'react-icons/pi'
+import { fetchMenuList } from '@actions/common-config'; // <-- rename import
+import { ReactNode } from 'react';
+import { AiOutlineDashboard as DashboardIcon } from 'react-icons/ai';
+import { BiDonateBlood } from 'react-icons/bi';
+import { CiSettings } from 'react-icons/ci';
+import { FiUsers } from 'react-icons/fi';
+import { GiTakeMyMoney } from "react-icons/gi";
+import { HiOutlineUserGroup } from 'react-icons/hi';
+import { LiaDonateSolid } from 'react-icons/lia';
+import { MdOutlineAccountBalance } from 'react-icons/md';
+import { PiHandWithdrawLight } from 'react-icons/pi';
 
-type MenuItem = {
+export type MenuItem = {
   link: string
   label: string
-  icon: ReactNode
+  icon?: ReactNode
 }
 
-type MenuItemWithoutIcon = {
+export type MenuItemWithoutIcon = {
   link: string
   label: string
 }
 
-type MenuWithLinks = {
+export type MenuWithLinks = {
   label: string
-  icon: ReactNode
-  links: MenuItemWithoutIcon[]
+  icon?: ReactNode
+  links: (MenuItemWithoutIcon | MenuWithLinks)[]
 }
 
-type MenuItems = MenuItem | MenuWithLinks
+export type MenuItems = MenuItem | MenuWithLinks
 
-export const menuItems = (roles: string[]) => [
-  { link: '/', label: 'Dashboard', icon: <DashboardIcon /> },
-  {
-    label: 'Settings',
-    icon: <CiSettings />,
-    links: [
-      { link: '/settings/service-area-setup', label: 'Service Area Setup' },
-      { link: '/settings/fiscal-year-setup', label: 'Fiscal Year Setup' },
-      { link: '/settings/transaction-date-setup', label: 'Transaction Date Setup' },
-      { link: '/settings/company-setup', label: 'Company Setup' },
-      { link: '/settings/employee-setup', label: 'Employee Setup' },
-      { link: '/settings/branch-setup', label: 'Branch Setup' },
-      { link: '/settings/project-setup', label: 'Project Setup' },
-      { link: '/settings/external-saving-account-setup', label: 'External Saving A/C Setup' },
-      { link: '/settings/bank-account-setup', label: 'Bank Account Setup' }
-    ]
-  },
-  {
-    label: 'Membership',
-    icon: <HiOutlineUserGroup />,
-    links: [
-      { link: '/membership/my-member-setup/add', label: 'Add Member' },
-      { link: '/membership/my-member-setup', label: 'Update Member' }
-    ]
-  },
-  {
-    label: 'Deposit',
-    icon: <LiaDonateSolid />,
-    links: [
-      { link: '/deposit/regular-deposit', label: 'Regular Deposit' },
-      { link: '/deposit/irregular-deposit', label: 'Irregular Deposit' },
-      { link: '/deposit/fixed-deposit', label: 'Fixed Deposit' }
-    ]
-  },
-  {
-    label: 'Withdrawal',
-    icon: <PiHandWithdrawLight />,
-    links: [{ link: '/withdrawal/withdrawal-amount', label: 'Withdraw Amount' }]
-  },
-  {
-    label: 'Loan Processing',
-    icon: <BiDonateBlood />,
-    links: [
-      { link: '/loan-processing/karz-e-hasanah', label: 'Karz-E-Hasanah' },
-      { link: '/loan-processing/purchase-item', label: 'Purchase Item' },
-      { link: '/loan-processing/sale-mudaraba', label: 'Sale Mudaraba' },
-      { link: '/loan-processing/loan-collection', label: 'Loan Collection' },
-      { link: '/loan-processing/delete-loan', label: 'Delete Loan' },
-      { link: '/loan-processing/delete-loan-auth', label: 'Delete Loan Auth' }
-    ]
-  },
-  {
-    label: 'General Accounting',
-    icon: <MdOutlineAccountBalance />,
-    links: [
-      { link: '/general-accounting/journal-entry', label: 'Journal Entry' },
-      { link: '/general-accounting/cash-voucher', label: 'Cash Voucher' },
-      { link: '/general-accounting/profit-reserve', label: 'Profit Reserve' },
-      { link: '/general-accounting/account-setup', label: 'Account Setup' }
-    ]
-  },
-  {
-    label: 'Basic Accounting',
-    icon: <GiTakeMyMoney />,
-    links: [
-      { link: '/basic-accounting/banking-transaction', label: 'Banking Transaction' },
-      { link: '/basic-accounting/external-saving-account-transaction', label: 'External Saving A/C Txn' },
-      { link: '/basic-accounting/different-project-transaction', label: 'Different Project Txn' },
-    ]
-  },
-  {
-    label: 'User & Security',
-    icon: <FiUsers />,
-    links: [
-      { link: '/user-and-security/new-user', label: 'New User' },
-      { link: '/user-and-security/user-permission', label: 'User Permission' }
-    ]
+// 🔹 Map icon names from API → actual React icons
+const iconMap: Record<string, ReactNode> = {
+  dashboard: <DashboardIcon />,
+  settings: <CiSettings />,
+  membership: <HiOutlineUserGroup />,
+  deposit: <LiaDonateSolid />,
+  withdrawal: <PiHandWithdrawLight />,
+  loan: <BiDonateBlood />,
+  accounting: <MdOutlineAccountBalance />,
+  basicAccounting: <GiTakeMyMoney />,
+  users: <FiUsers />
+}
+
+// 🔹 Fetch + transform menu from API
+export const getMenuList = async (): Promise<MenuItems[]> => {
+  try {
+    const data = await fetchMenuList() // ✅ use renamed import
+    console.log('data', data);
+
+    // assume API returns [{ label, link, icon, links }]
+    return data.map((item: any) => ({
+      ...item,
+      icon: item.icon ? iconMap[item.icon] : undefined,
+      links: item.links
+        ? item.links.map((sub: any) => ({
+          ...sub,
+          icon: sub.icon ? iconMap[sub.icon] : undefined
+        }))
+        : undefined
+    }))
+  } catch (err) {
+    console.error('Failed to fetch menu:', err)
+    return []
   }
-]
+}
 
+// 🔹 Helpers
 export const isActiveLink = (path: string, link: string = ''): boolean => {
   if (link === '/') return path === link
-
   const nextChar = path[link.length]
   return path.startsWith(link) && (!nextChar || nextChar === '/')
 }
 
-export const isMenuWithLinks = (item: MenuItems): item is MenuWithLinks => (item as MenuWithLinks).links !== undefined
+export const isMenuWithLinks = (item: MenuItems): item is MenuWithLinks =>
+  (item as MenuWithLinks).links !== undefined
+
+export const hasNestedLinks = (item: MenuItemWithoutIcon | MenuWithLinks): item is MenuWithLinks =>
+  (item as MenuWithLinks).links !== undefined

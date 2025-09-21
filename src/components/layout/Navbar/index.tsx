@@ -1,51 +1,71 @@
 import { NavLink, ScrollArea } from '@mantine/core'
 import clsx from 'clsx'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
-import { useSession } from 'next-auth/react'
-import { isActiveLink, isMenuWithLinks, menuItems } from './list'
+import { useEffect, useState } from 'react'
+import { getMenuList, hasNestedLinks, isActiveLink, isMenuWithLinks, MenuItems } from './list'
 import classes from './styles.module.css'
 
 const AppNavbar = () => {
   const pathname = usePathname()
   const { data: session } = useSession()
+  const [menus, setMenus] = useState<MenuItems[]>([])
 
-  return (
-    <ScrollArea className={classes.root} p="xs">
-      {menuItems(session?.user.roles || []).map((item, index) =>
-        isMenuWithLinks(item) ? (
+  useEffect(() => {
+    const fetchMenus = async () => {
+      const data = await getMenuList()
+      setMenus(data)
+    }
+    fetchMenus()
+  }, [session?.user.roles]) // refetch if roles change
+
+  const renderMenuItems = (items: any[], level = 0) => {
+    return items.map((item, index) => {
+      if (isMenuWithLinks(item) || hasNestedLinks(item)) {
+        const hasActiveChild = item.links.some((link: any) =>
+          hasNestedLinks(link)
+            ? link.links.some((nestedLink: any) => isActiveLink(pathname, nestedLink.link))
+            : isActiveLink(pathname, link.link)
+        )
+
+        return (
           <NavLink
-            label={item.label}
-            leftSection={item.icon}
             key={index}
-            className={clsx(classes.link, item.links.some((url) => url.link === pathname) && classes.activeList)}
-            defaultOpened={item.links.some((url) => url.link === pathname)}
+            label={item.label}
+            leftSection={level === 0 ? item.icon : null}
+            className={clsx(
+              classes.link,
+              hasActiveChild && classes.activeList,
+              level > 0 && classes.nested
+            )}
+            data-level={level}
+            defaultOpened={hasActiveChild}
+            childrenOffset={0}
           >
-            {item.links.map((innerItem, innerIndex) => (
-              <NavLink
-                component={Link}
-                href={innerItem.link}
-                className={classes.link}
-                label={innerItem.label}
-                leftSection={innerItem.icon}
-                active={isActiveLink(pathname, innerItem.link)}
-                key={innerIndex}
-              />
-            ))}
+            {renderMenuItems(item.links, level + 1)}
           </NavLink>
-        ) : (
+        )
+      } else {
+        return (
           <NavLink
             component={Link}
-            href={item.link!}
-            className={classes.link}
-            leftSection={item.icon}
+            href={item.link}
+            className={clsx(classes.link, level > 0 && classes.nested)}
+            data-level={level}
             label={item.label}
+            leftSection={level === 0 ? item.icon : null}
             active={isActiveLink(pathname, item.link)}
             key={index}
           />
         )
-      )}
+      }
+    })
+  }
+
+  return (
+    <ScrollArea className={classes.root} p="xs">
+      {renderMenuItems(menus)}
     </ScrollArea>
   )
 }

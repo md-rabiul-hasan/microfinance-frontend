@@ -1,5 +1,5 @@
 .root {
-  padding: var(--mantine-spacing-xs)
+  padding: var(--mantine-spacing-xs);
 }
 
 .link {
@@ -12,11 +12,33 @@
   cursor: pointer;
 
   &:hover {
-    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-4))
+    background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-4));
   }
 
   &[data-active] {
     color: var(--mantine-color-gray-1);
     background-image: linear-gradient(45deg, #4B6CB7, #182848);
   }
+}
+
+.activeList {
+  background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+  font-weight: 600;
+}
+
+/* Remove the !important declarations and use data-level attributes */
+.nested {
+  padding-left: 2rem;
+}
+
+.nested[data-level="1"] {
+  padding-left: 2rem;
+}
+
+.nested[data-level="2"] {
+  padding-left: 3rem;
+}
+
+.nested[data-level="3"] {
+  padding-left: 4rem;
 }

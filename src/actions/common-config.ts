@@ -77,3 +77,13 @@ export const getMemberInformation = async (member_id: string) => {
     return []
   }
 }
+
+export const fetchMenuList = async () => {
+  try {
+    const apiObj = await api()
+    const { data } = await apiObj.get(`/menu/list`)
+    return data.data
+  } catch (error) {
+    return []
+  }
+}
