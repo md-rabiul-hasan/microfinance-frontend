@@ -59,8 +59,8 @@ const SignInUI = () => {
       <Container size="xs" className={classes.container}>
         <Paper p={28} shadow="sm" radius="md" className={classes.paper}>
           <Group justify="center" gap="xs" mb="xl">
-            <Image src="/images/logo-white.png" alt="ConnectPro" h={40} w="auto" />
-            <Title order={1} color="dark">KARZBOOK</Title>
+            <Image src="/images/logo.png" alt="ConnectPro" h={40} w="auto" />
+            {/* <Title order={1} color="dark">KARZBOOK</Title> */}
           </Group>
 
           <form onSubmit={onSubmit(submitHandler)}>
