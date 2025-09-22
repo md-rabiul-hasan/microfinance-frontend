@@ -76,7 +76,6 @@ const JournalEntryPageUi = ({ accounts }: any) => {
             showNotification(getErrorMessage(res?.message))
           }
         } catch (error) {
-          console.error('Failed to load account details:', error)
           showNotification(getErrorMessage(error?.message || 'Failed to load account details'))
         } finally {
           setIsLoadingDetails(false)
@@ -174,7 +173,6 @@ const JournalEntryPageUi = ({ accounts }: any) => {
             startTransition(async () => {
               try {
                 const res = await createJournalEntry(submissionData)
-                console.log('res', res)
                 if (res.success) {
                   showNotification(getSuccessMessage(res?.message))
                 } else {
@@ -187,7 +185,6 @@ const JournalEntryPageUi = ({ accounts }: any) => {
           }
         })
       } catch (error) {
-        console.error('Submission error:', error)
         showNotification(getErrorMessage('Failed to submit transactions'))
       }
     })

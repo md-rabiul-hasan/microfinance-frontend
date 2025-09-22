@@ -79,7 +79,6 @@ const FdrDepositPageUi = () => {
 
         // Then get deposit history
         const depositRes = await getMemberFdrList(memberKeyCode)
-        console.log('Deposit History:', depositRes)
 
         if (depositRes.success) {
           setMemberData(depositRes.data)

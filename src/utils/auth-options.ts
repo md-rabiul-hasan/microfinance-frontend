@@ -114,7 +114,6 @@ async function refreshToken(token: any) {
       refreshToken: data.refresh_token.token || token.refreshToken // Use new refresh token if provided
     }
   } catch (error) {
-    console.error('Error refreshing token:', error)
     return {
       ...token,
       error: 'RefreshTokenError' // Mark session as invalid

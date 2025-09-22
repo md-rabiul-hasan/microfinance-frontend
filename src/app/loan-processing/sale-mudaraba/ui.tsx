@@ -146,7 +146,6 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
     startSearchTransition(async () => {
       try {
         const memberRes = await getMemberInformation(memberId)
-        console.log('member', memberRes)
 
         if (!memberRes.success) {
           showNotification(getErrorMessage(memberRes?.message))

@@ -95,8 +95,6 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
           showNotification(getErrorMessage(res?.message))
         }
       } catch (error) {
-        console.log('error', error)
-
         showNotification(getErrorMessage('Failed to create withdrawal'))
       }
     })

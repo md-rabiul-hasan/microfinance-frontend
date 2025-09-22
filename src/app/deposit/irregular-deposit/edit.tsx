@@ -31,7 +31,6 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
    * Sends an API request to update the product details.
    */
   const submitHandler = (formData: any) => startTransition(async () => {
-    console.log('Form Data:', formData)
     const res = await updateDeposit(deposit.insertKey, formData)
     if (res.success) {
       showNotification(getSuccessMessage(res?.message)) // Show success notification

@@ -24,7 +24,6 @@ const UploadModal = ({ memberKeyCode }: { memberKeyCode: string }) => {
       formData.append('file', file)
 
       const res = await uploadMemberImage(formData)
-      console.log('res', res)
       if (res.success) {
         showNotification(getSuccessMessage(`${type === 'PH' ? 'Profile' : 'Signature'} uploaded successfully`))
         // Create preview

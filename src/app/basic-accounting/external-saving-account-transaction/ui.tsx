@@ -64,7 +64,6 @@ const ExternalSavingAccountTransactionPageUi = ({ accounts }: any) => {
         setTransactions([])
       }
     } catch (error) {
-      console.error('Failed to load transactions:', error)
       showNotification(getErrorMessage(error?.message || 'Failed to load transactions'))
       setTransactions([])
     } finally {
@@ -116,7 +115,6 @@ const ExternalSavingAccountTransactionPageUi = ({ accounts }: any) => {
           }
         })
       } catch (error) {
-        console.error('Submission error:', error)
         showNotification(getErrorMessage('Failed to submit transaction'))
       }
     })

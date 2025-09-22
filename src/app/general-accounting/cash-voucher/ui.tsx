@@ -108,7 +108,6 @@ const CashVoucherPageUi = ({ accounts }: any) => {
             }
 
             const res = await createCashVoucherTransaction(submissionData)
-            console.log('res', res)
             if (res.success) {
               showNotification(getSuccessMessage(res?.message))
               // Clear the transaction grid after successful submission
@@ -117,7 +116,6 @@ const CashVoucherPageUi = ({ accounts }: any) => {
               showNotification(getErrorMessage(res?.message))
             }
           } catch (error) {
-            console.error('Submission error:', error)
             showNotification(getErrorMessage('Failed to submit transactions'))
           }
         })

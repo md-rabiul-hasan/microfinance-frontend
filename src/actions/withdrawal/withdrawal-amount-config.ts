@@ -51,7 +51,6 @@ export const createWithdrawal = async (formData: WithdrawalAmountSetupType, path
 }
 
 export const updateWithdrawal = async (insertKey: any, formData: WithdrawalAmountSetupType, path?: string) => {
-  console.log('createWithdrawal formData', formData)
   try {
     const apiObj = await api()
     const { data } = await apiObj.post(`/withdrawal/store?insertKey=${insertKey}`, {

@@ -158,7 +158,6 @@ const WithdrawalPageUi = ({ accounts }: any) => {
         startTransition(async () => {
           try {
             const res = await createWithdrawal(values)
-            console.log('res', res)
             if (res.success) {
               showNotification(getSuccessMessage(res?.message))
               // Refresh member data after successful deposit
@@ -169,8 +168,6 @@ const WithdrawalPageUi = ({ accounts }: any) => {
               showNotification(getErrorMessage(res?.message))
             }
           } catch (error) {
-            console.log('error', error)
-
             showNotification(getErrorMessage('Failed to create withdrawal'))
           }
         })

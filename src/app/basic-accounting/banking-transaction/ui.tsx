@@ -66,7 +66,6 @@ const BankingTransactionPageUi = () => {
             showNotification(getErrorMessage(res?.message))
           }
         } catch (error) {
-          console.error('Failed to load account details:', error)
           showNotification(getErrorMessage(error?.message || 'Failed to load account details'))
         } finally {
           setIsLoadingDetails(false)
@@ -110,7 +109,6 @@ const BankingTransactionPageUi = () => {
           }
         })
       } catch (error) {
-        console.error('Submission error:', error)
         showNotification(getErrorMessage('Failed to submit transaction'))
       }
     })

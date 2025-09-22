@@ -105,7 +105,6 @@ const UserPermissionPageUi = ({ users }: { users: User[] }) => {
       }
     } catch (err) {
       showNotification(getErrorMessage('Network error occurred while updating permission'))
-      console.error('Error updating permission:', err)
     } finally {
       setUpdating(false)
     }

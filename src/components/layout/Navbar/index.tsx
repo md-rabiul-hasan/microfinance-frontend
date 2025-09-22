@@ -18,7 +18,7 @@ const AppNavbar = () => {
       setMenus(data)
     }
     fetchMenus()
-  }, [session?.user.roles]) // refetch if roles change
+  }, [session?.user.user_type]) // refetch if roles change
 
   const renderMenuItems = (items: any[], level = 0) => {
     return items.map((item, index) => {
@@ -34,11 +34,7 @@ const AppNavbar = () => {
             key={index}
             label={item.label}
             leftSection={level === 0 ? item.icon : null}
-            className={clsx(
-              classes.link,
-              hasActiveChild && classes.activeList,
-              level > 0 && classes.nested
-            )}
+            className={clsx(classes.link, hasActiveChild && classes.activeList, level > 0 && classes.nested)}
             data-level={level}
             defaultOpened={hasActiveChild}
             childrenOffset={0}

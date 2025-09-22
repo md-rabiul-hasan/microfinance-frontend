@@ -58,7 +58,6 @@ const ProfitReservePageUi = () => {
         }
       } catch (error) {
         showNotification(getErrorMessage('Failed to create profit reserve entry'))
-        console.error('Submission error:', error)
       }
     })
   }
