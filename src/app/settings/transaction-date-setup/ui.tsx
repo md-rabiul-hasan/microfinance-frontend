@@ -8,8 +8,10 @@ import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useEffect, useState } from 'react'
 import { MdOutlineSettings } from 'react-icons/md'
 import EditModal from './edit'
+import { usePermissions } from '@utils/permission'
 
 const TransactionDateUi = ({ data }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const [sessionDate, setSessionDate] = useState<Date | null>(null)
 
   // Get session date on component mount
@@ -19,15 +21,12 @@ const TransactionDateUi = ({ data }: any) => {
   }, [])
 
   const handleUpdateSuccess = (newDate: Date) => {
-    setSessionDate(newDate);
-  };
+    setSessionDate(newDate)
+  }
 
   const editHandler = () => {
     openModal({
-      children: <EditModal
-        trnDate={sessionDate || data?.data?.trnDate}
-        onSuccess={handleUpdateSuccess}
-      />,
+      children: <EditModal trnDate={sessionDate || data?.data?.trnDate} onSuccess={handleUpdateSuccess} />,
       centered: true,
       withCloseButton: false
     })
@@ -37,13 +36,15 @@ const TransactionDateUi = ({ data }: any) => {
     <Container>
       <Group justify="space-between" mb="xs">
         <TitleBar title="Transaction Date Setup" url="/" />
-        <Group gap="xs">
-          <Tooltip label="Setup Transaction Date" withArrow position="bottom">
-            <ActionIcon onClick={editHandler}>
-              <MdOutlineSettings />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
+        {canUpdate ? (
+          <Group gap="xs">
+            <Tooltip label="Setup Transaction Date" withArrow position="bottom">
+              <ActionIcon onClick={editHandler}>
+                <MdOutlineSettings />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+        ) : null}
       </Group>
 
       <Paper shadow="xs" mb="xs">
@@ -52,9 +53,11 @@ const TransactionDateUi = ({ data }: any) => {
             <Table.Tr>
               <Table.Th w={160}>Transaction Date</Table.Th>
               <Table.Td>
-                {sessionDate ? formatDate(sessionDate) :
-                  data?.data?.trnDate ? formatDate(new Date(data.data.trnDate)) :
-                    'Loading...'}
+                {sessionDate
+                  ? formatDate(sessionDate)
+                  : data?.data?.trnDate
+                  ? formatDate(new Date(data.data.trnDate))
+                  : 'Loading...'}
               </Table.Td>
             </Table.Tr>
           </Table.Tbody>

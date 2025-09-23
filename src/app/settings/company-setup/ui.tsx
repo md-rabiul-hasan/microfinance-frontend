@@ -6,8 +6,10 @@ import { MdOutlineSettings } from 'react-icons/md'
 import Image from 'next/image' // Import Next.js Image component
 import { openModal } from '@mantine/modals'
 import EditModal from './edit'
+import { usePermissions } from '@utils/permission'
 
 const CompanyInfoUi = ({ data }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const editHandler = (company: any) =>
     openModal({
       children: <EditModal company={company} />,
@@ -20,13 +22,15 @@ const CompanyInfoUi = ({ data }: any) => {
       {/* Page title and search input */}
       <Group justify="space-between" mb="xs">
         <TitleBar title="Company Setup" url="/" />
-        <Group gap="xs">
-          <Tooltip label="Setup Company" withArrow position="bottom">
-            <ActionIcon onClick={() => editHandler(data.data ?? null)}>
-              <MdOutlineSettings />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
+        {canUpdate ? (
+          <Group gap="xs">
+            <Tooltip label="Setup Company" withArrow position="bottom">
+              <ActionIcon onClick={() => editHandler(data.data ?? null)}>
+                <MdOutlineSettings />
+              </ActionIcon>
+            </Tooltip>
+          </Group>
+        ) : null}
       </Group>
 
       {/* Product Table */}

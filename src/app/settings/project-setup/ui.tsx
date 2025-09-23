@@ -15,10 +15,12 @@ import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import AddModal from './add'
 import EditModal from './edit'
+import { usePermissions } from '@utils/permission'
 
 // Define the props type
 
 const ProjectListPageUi = ({ data: { data, pagination } }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const router = useRouter() // Use Next.js router for navigation
   // Get search parameters and navigation function
   const searchParams = useSearchParams()
@@ -85,11 +87,13 @@ const ProjectListPageUi = ({ data: { data, pagination } }: any) => {
             value={interSearch}
             onChange={(event) => setInterSearch(event.currentTarget.value)}
           />
-          <Tooltip label="Add New Project" withArrow position="bottom">
-            <ActionIcon onClick={addHandler}>
-              <FaPlusCircle />
-            </ActionIcon>
-          </Tooltip>
+          {canCreate ? (
+            <Tooltip label="Add New Project" withArrow position="bottom">
+              <ActionIcon onClick={addHandler}>
+                <FaPlusCircle />
+              </ActionIcon>
+            </Tooltip>
+          ) : null}
         </Group>
       </Group>
 
@@ -121,8 +125,10 @@ const ProjectListPageUi = ({ data: { data, pagination } }: any) => {
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item onClick={() => editHandler(project)}>Edit</Menu.Item>
-                        <Menu.Item onClick={() => deleteHandler(project.keyCode)}>Delete</Menu.Item>
+                        {canUpdate ? <Menu.Item onClick={() => editHandler(project)}>Edit</Menu.Item> : null}
+                        {canDelete ? (
+                          <Menu.Item onClick={() => deleteHandler(project.keyCode)}>Delete</Menu.Item>
+                        ) : null}
                       </Menu.Dropdown>
                     </Menu>
                   </Table.Td>

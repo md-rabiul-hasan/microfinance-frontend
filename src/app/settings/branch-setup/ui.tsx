@@ -17,10 +17,12 @@ import AddModal from './add'
 import EditModal from './edit'
 import { deleteEmployee } from '@actions/settings/employee-config'
 import { deleteBranch } from '@actions/settings/branch-config'
+import { usePermissions } from '@utils/permission'
 
 // Define the props type
 
 const BranchListPageUi = ({ data: { data, pagination } }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const router = useRouter() // Use Next.js router for navigation
   // Get search parameters and navigation function
   const searchParams = useSearchParams()
@@ -87,11 +89,13 @@ const BranchListPageUi = ({ data: { data, pagination } }: any) => {
             value={interSearch}
             onChange={(event) => setInterSearch(event.currentTarget.value)}
           />
-          <Tooltip label="Add New Branch" withArrow position="bottom">
-            <ActionIcon onClick={addHandler}>
-              <FaPlusCircle />
-            </ActionIcon>
-          </Tooltip>
+          {canCreate ? (
+            <Tooltip label="Add New Branch" withArrow position="bottom">
+              <ActionIcon onClick={addHandler}>
+                <FaPlusCircle />
+              </ActionIcon>
+            </Tooltip>
+          ) : null}
         </Group>
       </Group>
 
@@ -123,8 +127,8 @@ const BranchListPageUi = ({ data: { data, pagination } }: any) => {
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item onClick={() => editHandler(branch)}>Edit</Menu.Item>
-                        <Menu.Item onClick={() => deleteHandler(branch.keyCode)}>Delete</Menu.Item>
+                        {canUpdate ? <Menu.Item onClick={() => editHandler(branch)}>Edit</Menu.Item> : null}
+                        {canDelete ? <Menu.Item onClick={() => deleteHandler(branch.keyCode)}>Delete</Menu.Item> : null}
                       </Menu.Dropdown>
                     </Menu>
                   </Table.Td>
