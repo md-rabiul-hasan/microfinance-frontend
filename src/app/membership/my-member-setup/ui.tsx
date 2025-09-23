@@ -13,14 +13,14 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { startTransition, useEffect, useState } from 'react'
 import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
-import AddModal from './add'
-import EditModal from './upload'
 import { deleteMember } from '@actions/membership/my-member-config'
 import UploadModal from './upload'
+import { usePermissions } from '@utils/permission'
 
 // Define the props type
 
 const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const router = useRouter() // Use Next.js router for navigation
   // Get search parameters and navigation function
   const searchParams = useSearchParams()
@@ -84,11 +84,13 @@ const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
             value={interSearch}
             onChange={(event) => setInterSearch(event.currentTarget.value)}
           />
-          <Tooltip label="Add New Area" withArrow position="bottom">
-            <ActionIcon onClick={() => router.push('/membership/my-member-setup/add')}>
-              <FaPlusCircle />
-            </ActionIcon>
-          </Tooltip>
+          {canCreate ? (
+            <Tooltip label="Add New Area" withArrow position="bottom">
+              <ActionIcon onClick={() => router.push('/membership/my-member-setup/add')}>
+                <FaPlusCircle />
+              </ActionIcon>
+            </Tooltip>
+          ) : null}
         </Group>
       </Group>
 
@@ -129,9 +131,15 @@ const MemberListPageUi = ({ data: { data, pagination }, locations }: any) => {
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item onClick={() => editHandler(member.memberKeyCode)}>Edit</Menu.Item>
-                        <Menu.Item onClick={() => uploadHandler(member.memberKeyCode)}>Image Upload</Menu.Item>
-                        <Menu.Item onClick={() => deleteHandler(member.memberKeyCode)}>Delete</Menu.Item>
+                        {canUpdate ? (
+                          <Menu.Item onClick={() => editHandler(member.memberKeyCode)}>Edit</Menu.Item>
+                        ) : null}
+                        {canUpdate ? (
+                          <Menu.Item onClick={() => uploadHandler(member.memberKeyCode)}>Image Upload</Menu.Item>
+                        ) : null}
+                        {canDelete ? (
+                          <Menu.Item onClick={() => deleteHandler(member.memberKeyCode)}>Delete</Menu.Item>
+                        ) : null}
                       </Menu.Dropdown>
                     </Menu>
                   </Table.Td>

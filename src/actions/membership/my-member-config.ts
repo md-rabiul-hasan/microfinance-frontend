@@ -1,6 +1,5 @@
 'use server'
 
-import { CreateServiceAreaType } from '@types'
 import { MyMemberSetupType } from '@types/mymember'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
