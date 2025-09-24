@@ -12,6 +12,7 @@ import {
   Menu,
   NumberInput,
   Paper,
+  ScrollArea,
   Select,
   Table,
   Text,
@@ -33,8 +34,10 @@ import { IoCalendarOutline } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
+import { usePermissions } from '@utils/permission'
 
 const RegularDepositPageUi = ({ accounts }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   // Get transaction date from session and format it
   const initialDepositDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
@@ -228,10 +231,11 @@ const RegularDepositPageUi = ({ accounts }: any) => {
               />
 
               <Textarea label="Remarks" {...form.getInputProps('remarks')} withAsterisk mb="xs" />
-
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
+              {canCreate ? (
+                <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button>
+              ) : null}
             </form>
           </Paper>
         </Grid.Col>
@@ -242,47 +246,49 @@ const RegularDepositPageUi = ({ accounts }: any) => {
               <Title order={4} mb="md">
                 Deposit History for: {memberName}
               </Title>
-              <Table striped highlightOnHover>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>Date</Table.Th>
-                    <Table.Th>Account</Table.Th>
-                    <Table.Th>Amount</Table.Th>
-                    <Table.Th>Action</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {memberData?.length > 0 ? (
-                    memberData.map((deposit: any) => (
-                      <Table.Tr key={deposit.tr_sl}>
-                        <Table.Td>{deposit.trDate}</Table.Td>
-                        <Table.Td>
-                          {deposit.account_info?.AccountDisplayName} ({deposit.account_info?.accountCode})
-                        </Table.Td>
-                        <Table.Td>৳ {deposit.amt}</Table.Td>
-                        <Table.Td>
-                          <Menu withArrow>
-                            <Menu.Target>
-                              <ActionIcon variant="subtle" size="sm">
-                                <MoreIcon />
-                              </ActionIcon>
-                            </Menu.Target>
-                            <Menu.Dropdown>
-                              <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item>
-                            </Menu.Dropdown>
-                          </Menu>
+              <ScrollArea h={325} type="always">
+                <Table striped highlightOnHover>
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th>Date</Table.Th>
+                      <Table.Th>Account</Table.Th>
+                      <Table.Th>Amount</Table.Th>
+                      <Table.Th>Action</Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {memberData?.length > 0 ? (
+                      memberData.map((deposit: any) => (
+                        <Table.Tr key={deposit.tr_sl}>
+                          <Table.Td>{deposit.trDate}</Table.Td>
+                          <Table.Td>
+                            {deposit.account_info?.AccountDisplayName} ({deposit.account_info?.accountCode})
+                          </Table.Td>
+                          <Table.Td>৳ {deposit.amt}</Table.Td>
+                          <Table.Td>
+                            <Menu withArrow>
+                              <Menu.Target>
+                                <ActionIcon variant="subtle" size="sm">
+                                  <MoreIcon />
+                                </ActionIcon>
+                              </Menu.Target>
+                              <Menu.Dropdown>
+                                {canUpdate ? <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item> : null}
+                              </Menu.Dropdown>
+                            </Menu>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))
+                    ) : (
+                      <Table.Tr>
+                        <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
+                          {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
                         </Table.Td>
                       </Table.Tr>
-                    ))
-                  ) : (
-                    <Table.Tr>
-                      <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
-                        {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
-                      </Table.Td>
-                    </Table.Tr>
-                  )}
-                </Table.Tbody>
-              </Table>
+                    )}
+                  </Table.Tbody>
+                </Table>
+              </ScrollArea>
             </Paper>
           )}
         </Grid.Col>

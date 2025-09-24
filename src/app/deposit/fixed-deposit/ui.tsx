@@ -32,8 +32,10 @@ import { IoCalendarOutline } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
+import { usePermissions } from '@utils/permission'
 
 const FdrDepositPageUi = () => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDepositDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
@@ -219,9 +221,11 @@ const FdrDepositPageUi = () => {
 
               <Textarea label="Remarks" {...form.getInputProps('remarks')} withAsterisk mb="xs" />
 
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
+              {canCreate ? (
+                <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button>
+              ) : null}
             </form>
           </Paper>
         </Grid.Col>
@@ -260,7 +264,7 @@ const FdrDepositPageUi = () => {
                               </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                              <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item>
+                              {canUpdate ? <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item> : null}
                             </Menu.Dropdown>
                           </Menu>
                         </Table.Td>

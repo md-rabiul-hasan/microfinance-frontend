@@ -14,15 +14,16 @@ import { startTransition, useEffect, useState } from 'react'
 import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
 import AddModal from './add'
-import EditModal from './edit'
 import { deleteEmployee } from '@actions/settings/employee-config'
 import { deleteBranch } from '@actions/settings/branch-config'
 import { formatAsTaka } from '@utils/format.util'
 import { deletePurchaseItem } from '@actions/loan-processing/purchase-item-config'
+import { usePermissions } from '@utils/permission'
 
 // Define the props type
 
 const PurchaseItemListPageUi = ({ data: { data, pagination } }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const router = useRouter() // Use Next.js router for navigation
   // Get search parameters and navigation function
   const searchParams = useSearchParams()
@@ -82,11 +83,13 @@ const PurchaseItemListPageUi = ({ data: { data, pagination } }: any) => {
             value={interSearch}
             onChange={(event) => setInterSearch(event.currentTarget.value)}
           />
-          <Tooltip label="Add New Branch" withArrow position="bottom">
-            <ActionIcon onClick={addHandler}>
-              <FaPlusCircle />
-            </ActionIcon>
-          </Tooltip>
+          {canCreate ? (
+            <Tooltip label="Add New Branch" withArrow position="bottom">
+              <ActionIcon onClick={addHandler}>
+                <FaPlusCircle />
+              </ActionIcon>
+            </Tooltip>
+          ) : null}
         </Group>
       </Group>
 
@@ -120,9 +123,11 @@ const PurchaseItemListPageUi = ({ data: { data, pagination } }: any) => {
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item onClick={() => deleteHandler(purchase.insertKey, purchase.product_uniq_id)}>
-                          Delete
-                        </Menu.Item>
+                        {canDelete ? (
+                          <Menu.Item onClick={() => deleteHandler(purchase.insertKey, purchase.product_uniq_id)}>
+                            Delete
+                          </Menu.Item>
+                        ) : null}
                       </Menu.Dropdown>
                     </Menu>
                   </Table.Td>
