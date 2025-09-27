@@ -62,7 +62,6 @@ const AddModal = ({ locations }: any) => {
       <TextInput
         label="Details"
         mb="xs"
-        withAsterisk // Marks the field as required
         {...getInputProps('project_details')}
         leftSection={<PiNoteFill />} // Adds an icon
       />

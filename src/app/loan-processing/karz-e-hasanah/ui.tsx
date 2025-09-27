@@ -30,6 +30,7 @@ import { karzEHasanhValidationSchema } from '@schemas/loan-processing.schema'
 import { formatToYMD } from '@utils/datetime.util'
 import { formatAsTaka } from '@utils/format.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { generate7DigitId } from '@utils/utils'
 import { useEffect, useState, useTransition } from 'react'
@@ -44,6 +45,8 @@ import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
 const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
+
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
@@ -86,6 +89,20 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
   })
 
   const { onSubmit, getInputProps, values, reset, setValues, setFieldValue } = form
+
+  // Function to refresh member data
+  const refreshMemberData = async () => {
+    if (!memberKeyCode) return
+
+    try {
+      const loanRes = await getMemberLoanList(memberKeyCode)
+      if (loanRes.success) {
+        setMemberData(loanRes.data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh member data:', error)
+    }
+  }
 
   // Calculate total loan amount when loan_amount or profit_amount changes
   useEffect(() => {
@@ -141,6 +158,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
           showNotification(getErrorMessage(memberRes?.message))
           setMemberName('')
           setMemberData(null)
+          setMemberInfo(null)
           return
         }
 
@@ -162,6 +180,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
         setMemberName('')
         setMemberData(null)
         setAccountBalance(null)
+        setMemberInfo(null)
       }
     })
   }
@@ -187,8 +206,10 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
             const res = await createKarzEHasanahLoan(formData)
             if (res.success) {
               showNotification(getSuccessMessage(res?.message))
-              handleSearchMember()
+              await refreshMemberData() // Refresh data after successful creation
               reset()
+              setFieldValue('loan_id', generate7DigitId())
+              setFieldValue('loan_date', initialDate)
               setAccountBalance(null)
             } else {
               showNotification(getErrorMessage(res?.message))
@@ -204,7 +225,14 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
   const editHandler = (loan: any) =>
     openModal({
       children: (
-        <EditModal loan={loan} accounts={accounts} approvars={approvars} memberId={memberId} memberName={memberName} />
+        <EditModal
+          loan={loan}
+          accounts={accounts}
+          approvars={approvars}
+          memberId={memberId}
+          memberName={memberName}
+          onSuccess={refreshMemberData} // Pass refresh function as prop
+        />
       ),
       centered: true,
       withCloseButton: false,
@@ -531,9 +559,12 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                 </Grid>
               </Paper>
 
-              <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
+              {
+                canCreate ? <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button> : null
+              }
+
             </div>
           </form>
         </Grid.Col>
@@ -645,7 +676,9 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item>
+                                {
+                                  canUpdate ? <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item> : null
+                                }
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>

@@ -1,26 +1,24 @@
 'use client'
 
+import { authorizeDeleteLoanRequest, rejectDeleteLoanRequest } from '@actions/loan-processing/delete-loan-config'
 import TableNav from '@components/common/table-nav'
 import TitleBar from '@components/common/title-bar'
 import useNavigation from '@hooks/useNavigation'
-import { ActionIcon, Container, Group, Menu, Paper, Table, Text, TextInput, Tooltip } from '@mantine/core'
+import { ActionIcon, Container, Group, Menu, Paper, Table, Text, TextInput } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
-import { modals, openModal } from '@mantine/modals'
+import { modals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
+import { getLoanType } from '@utils/utils'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { startTransition, useEffect, useState } from 'react'
-import { FaPlusCircle } from 'react-icons/fa'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
-import AddModal from './add'
-import EditModal from './edit'
-import { deleteServiceArea } from '@actions/settings/service-area-config'
-import { getLoanType } from '@utils/utils'
-import { authorizeDeleteLoanRequest, rejectDeleteLoanRequest } from '@actions/loan-processing/delete-loan-config'
 
 // Define the props type
 
 const DeleteLoanAuthPageUi = ({ data: { data, pagination } }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const router = useRouter() // Use Next.js router for navigation
   // Get search parameters and navigation function
   const searchParams = useSearchParams()
@@ -130,18 +128,22 @@ const DeleteLoanAuthPageUi = ({ data: { data, pagination } }: any) => {
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        <Menu.Item
-                          onClick={() => authorizeHandler(loan?.keyCode, loan?.loan_id)}
-                          disabled={!loan?.keyCode || !loan?.loan_id}
-                        >
-                          Authorize
-                        </Menu.Item>
-                        <Menu.Item
-                          onClick={() => rejectHandler(loan?.keyCode, loan?.loan_id)}
-                          disabled={!loan?.keyCode || !loan?.loan_id}
-                        >
-                          Reject
-                        </Menu.Item>
+                        {canUpdate && (
+                          <>
+                            <Menu.Item
+                              onClick={() => authorizeHandler(loan?.keyCode, loan?.loan_id)}
+                              disabled={!loan?.keyCode || !loan?.loan_id}
+                            >
+                              Authorize
+                            </Menu.Item>
+                            <Menu.Item
+                              onClick={() => rejectHandler(loan?.keyCode, loan?.loan_id)}
+                              disabled={!loan?.keyCode || !loan?.loan_id}
+                            >
+                              Reject
+                            </Menu.Item>
+                          </>
+                        )}
                       </Menu.Dropdown>
                     </Menu>
                   </Table.Td>

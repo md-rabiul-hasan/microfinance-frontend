@@ -26,6 +26,7 @@ import { showNotification } from '@mantine/notifications'
 import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiCategoryAlt, BiSave, BiSearch } from 'react-icons/bi'
@@ -36,6 +37,7 @@ import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
 
 const LoanCollectionPageUi = ({ accounts }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   // Get transaction date from session and format it
   const initialDepositDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
@@ -230,9 +232,12 @@ const LoanCollectionPageUi = ({ accounts }: any) => {
 
               <Textarea label="Remarks" {...form.getInputProps('remarks')} withAsterisk mb="xs" />
 
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
+              {
+                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button> : null
+              }
+
             </form>
           </Paper>
         </Grid.Col>
@@ -270,7 +275,9 @@ const LoanCollectionPageUi = ({ accounts }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item>
+                                {
+                                  canUpdate ? <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item> : null
+                                }
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>

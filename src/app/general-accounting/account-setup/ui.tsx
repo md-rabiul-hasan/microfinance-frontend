@@ -1,32 +1,33 @@
 'use client'
 
-import { useState, useMemo, useTransition } from 'react'
+import { addAccountInChartOfAccount } from '@actions/general-accounting/account-setup-config'
 import {
+  ActionIcon,
+  Badge,
+  Box,
+  Button,
   Container,
   Grid,
-  Paper,
-  Title,
-  Text,
-  List,
   Group,
-  Button,
+  Input,
+  List,
   Modal,
-  TextInput,
-  Select,
   NumberInput,
-  Box,
-  Badge,
-  ActionIcon,
+  Paper,
   rem,
-  Input
+  Select,
+  Text,
+  TextInput,
+  Title
 } from '@mantine/core'
-import { useDisclosure } from '@mantine/hooks'
-import { BiPlus, BiChevronDown, BiChevronRight, BiFolder, BiFolderOpen, BiSearch, BiSave } from 'react-icons/bi'
-import { FiLayers } from 'react-icons/fi'
-import { showNotification } from '@mantine/notifications'
 import { useForm } from '@mantine/form'
-import { addAccountInChartOfAccount } from '@actions/general-accounting/account-setup-config'
+import { useDisclosure } from '@mantine/hooks'
+import { showNotification } from '@mantine/notifications'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
+import { useMemo, useState, useTransition } from 'react'
+import { BiChevronDown, BiChevronRight, BiFolder, BiFolderOpen, BiPlus, BiSave, BiSearch } from 'react-icons/bi'
+import { FiLayers } from 'react-icons/fi'
 
 interface SubAccount {
   key_code: number
@@ -67,6 +68,7 @@ const createAccountEntry = async (formData: any) => {
 }
 
 const AccountSetupUi = ({ accounts }: AccountSetupUiProps) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const [isLoading, startTransition] = useTransition()
   const [opened, { open, close }] = useDisclosure(false)
   const [selectedParent, setSelectedParent] = useState<{ code: number; name: string } | null>(null)
@@ -333,9 +335,12 @@ const AccountSetupUi = ({ accounts }: AccountSetupUiProps) => {
               <Button variant="outline" onClick={close} size="xs">
                 Cancel
               </Button>
-              <Button type="submit" leftSection={<BiSave size={14} />} loading={isLoading} size="xs">
-                Create Account
-              </Button>
+              {
+                canCreate ? <Button type="submit" leftSection={<BiSave size={14} />} loading={isLoading} size="xs">
+                  Create Account
+                </Button> : null
+              }
+
             </Group>
           </form>
         </Box>

@@ -26,6 +26,7 @@ import { showNotification } from '@mantine/notifications'
 import { RegularDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiCategoryAlt, BiSave, BiSearch } from 'react-icons/bi'
@@ -34,7 +35,6 @@ import { IoCalendarOutline } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
-import { usePermissions } from '@utils/permission'
 
 const RegularDepositPageUi = ({ accounts }: any) => {
   const { canCreate, canUpdate, canDelete } = usePermissions()
@@ -139,6 +139,7 @@ const RegularDepositPageUi = ({ accounts }: any) => {
           memberId={memberId}
           memberName={memberName}
           memberKeyCode={memberKeyCode}
+          onSuccess={handleSearchMember} // Pass refresh function
         />
       ),
       centered: true,

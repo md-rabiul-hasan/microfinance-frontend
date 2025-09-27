@@ -12,39 +12,56 @@ import { MdUpdate as UpdateIcon } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 
-const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: any) => {
+interface EditModalProps {
+  withdrawal: any
+  accounts: any[]
+  memberId: string
+  memberName: string
+  memberKeyCode: number
+  onSuccess: () => void // Add this prop to handle success callback
+}
+
+const EditModal = ({ withdrawal, accounts, memberId, memberName, memberKeyCode, onSuccess }: EditModalProps) => {
   const [isLoading, startTransition] = useTransition()
 
-  const { onSubmit, getInputProps, values, reset } = useForm({
+  const { onSubmit, getInputProps } = useForm({
     validate: yupResolver(WithdrawalAmountSetupValidationSchema),
     initialValues: {
       member_key_code: memberKeyCode,
-      account_code: String(deposit.acc_code),
-      amount: deposit.amt,
-      withdraw_date: deposit.trDate,
-      remarks: deposit.description
+      account_code: String(withdrawal.acc_code),
+      amount: withdrawal.amt,
+      withdraw_date: withdrawal.trDate,
+      remarks: withdrawal.description || ''
     }
   })
 
   /**
    * Handles the form submission.
-   * Sends an API request to update the product details.
+   * Sends an API request to update the withdrawal details.
    */
-  const submitHandler = (formData: any) => startTransition(async () => {
-    const res = await updateWithdrawal(deposit.insertKey, formData)
-    if (res.success) {
-      showNotification(getSuccessMessage(res?.message)) // Show success notification
-      closeAllModals() // Close the modal upon success
-    } else {
-      showNotification(getErrorMessage(res?.message)) // Show error notification
-    }
-  })
+  const submitHandler = (formData: any) => {
+    startTransition(async () => {
+      try {
+        const res = await updateWithdrawal(withdrawal.insertKey, formData)
+        if (res.success) {
+          showNotification(getSuccessMessage(res?.message)) // Show success notification
+          onSuccess() // Call the success callback to refresh parent data
+          closeAllModals() // Close the modal upon success
+        } else {
+          showNotification(getErrorMessage(res?.message)) // Show error notification
+        }
+      } catch (error) {
+        showNotification(getErrorMessage('Failed to update withdrawal'))
+      }
+    })
+  }
 
   return (
     <form onSubmit={onSubmit(submitHandler)}>
       <Title order={4} mb="md">
         Update Member Withdrawal
       </Title>
+
       <TextInput
         label="Member Name"
         value={memberName ? `${memberName} (${memberId})` : ''}
@@ -53,6 +70,7 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
         withAsterisk
         leftSection={<RiUser3Line />}
       />
+
       <Select
         label="Withdrawal From"
         placeholder="Please Select"
@@ -71,6 +89,7 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
         label="Withdrawal Amount (BDT)"
         decimalScale={2}
         fixedDecimalScale
+        hideControls
         mb="xs"
         withAsterisk
         {...getInputProps('amount')}
@@ -86,7 +105,13 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
         leftSection={<IoCalendarOutline />}
       />
 
-      <Textarea label="Remarks" {...getInputProps('remarks')} withAsterisk mb="xs" />
+      <Textarea
+        label="Remarks"
+        {...getInputProps('remarks')}
+        withAsterisk
+        mb="xs"
+        placeholder="Enter remarks about this withdrawal"
+      />
 
       {/* Submit Button */}
       <Button type="submit" leftSection={<UpdateIcon />} loading={isLoading}>

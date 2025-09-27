@@ -25,6 +25,7 @@ import { modals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useEffect, useState, useTransition } from 'react'
 import { BiSave } from 'react-icons/bi'
@@ -32,6 +33,7 @@ import { IoIosMore as MoreIcon } from 'react-icons/io'
 import { IoCalendarOutline } from 'react-icons/io5'
 
 const ExternalSavingAccountTransactionPageUi = ({ accounts }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isLoadingDetails, setIsLoadingDetails] = useState(false)
@@ -206,10 +208,12 @@ const ExternalSavingAccountTransactionPageUi = ({ accounts }: any) => {
                 mb="xs"
                 {...form.getInputProps('transaction_type')}
               />
+              {
+                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button> : null
+              }
 
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
             </form>
           </Paper>
         </Grid.Col>
@@ -221,7 +225,7 @@ const ExternalSavingAccountTransactionPageUi = ({ accounts }: any) => {
               Transaction History
             </Title>
             {transactions.length > 0 && (
-              <ScrollArea>
+              <ScrollArea h={470} type="always">
                 <Table striped highlightOnHover>
                   <Table.Thead>
                     <Table.Tr>
@@ -247,7 +251,9 @@ const ExternalSavingAccountTransactionPageUi = ({ accounts }: any) => {
                               </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                              <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item>
+                              {
+                                canDelete ? <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item> : null
+                              }
                             </Menu.Dropdown>
                           </Menu>
                         </Table.Td>

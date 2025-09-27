@@ -1,19 +1,14 @@
-import { updateServiceArea } from '@actions/settings/service-area-config'
-import { Button, Select, TextInput, Title } from '@mantine/core'
+import { updateBranch } from '@actions/settings/branch-config'
+import { Button, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+import { branchValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
-import { MdUpdate as UpdateIcon } from 'react-icons/md'
-import { FaIdCardAlt } from 'react-icons/fa'
-import { MdPerson } from 'react-icons/md'
-import { PiCertificateFill } from 'react-icons/pi'
-import { FaSquarePhone } from 'react-icons/fa6'
-import { FaLocationDot } from 'react-icons/fa6'
-import { updateBranch } from '@actions/settings/branch-config'
 import { BiSolidBank } from 'react-icons/bi'
-import { branchValidationSchema } from '@schemas/settings.schema'
+import { FaLocationDot, FaSquarePhone } from 'react-icons/fa6'
+import { MdUpdate as UpdateIcon } from 'react-icons/md'
 
 const EditModal = ({ branch }: any) => {
   const [isLoading, startTransition] = useTransition()
@@ -67,7 +62,6 @@ const EditModal = ({ branch }: any) => {
       <TextInput
         label="Address"
         mb="xs"
-        withAsterisk // Marks the field as required
         {...getInputProps('addr')}
         leftSection={<FaLocationDot />} // Adds an icon
       />

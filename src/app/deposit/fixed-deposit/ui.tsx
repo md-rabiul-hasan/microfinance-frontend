@@ -12,6 +12,7 @@ import {
   Menu,
   NumberInput,
   Paper,
+  ScrollArea,
   Table,
   Text,
   Textarea,
@@ -24,6 +25,7 @@ import { showNotification } from '@mantine/notifications'
 import { FixedDepositSetupValidationSchema } from '@schemas/deposit.schema'
 import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiSave, BiSearch } from 'react-icons/bi'
@@ -32,7 +34,6 @@ import { IoCalendarOutline } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
-import { usePermissions } from '@utils/permission'
 
 const FdrDepositPageUi = () => {
   const { canCreate, canUpdate, canDelete } = usePermissions()
@@ -54,6 +55,20 @@ const FdrDepositPageUi = () => {
       remarks: ''
     }
   })
+
+  // Function to refresh member data
+  const refreshMemberData = async () => {
+    if (!memberKeyCode) return
+
+    try {
+      const depositRes = await getMemberFdrList(memberKeyCode)
+      if (depositRes.success) {
+        setMemberData(depositRes.data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh member data:', error)
+    }
+  }
 
   const handleSearchMember = () => {
     if (!memberId.trim()) {
@@ -114,8 +129,9 @@ const FdrDepositPageUi = () => {
             if (res.success) {
               showNotification(getSuccessMessage(res?.message))
               // Refresh member data after successful deposit
-              handleSearchMember()
+              await refreshMemberData()
               form.reset()
+              form.setFieldValue('opening_date', initialDepositDate)
             } else {
               showNotification(getErrorMessage(res?.message))
             }
@@ -130,7 +146,13 @@ const FdrDepositPageUi = () => {
   const editHandler = (deposit: any) =>
     openModal({
       children: (
-        <EditModal deposit={deposit} memberId={memberId} memberName={memberName} memberKeyCode={memberKeyCode} />
+        <EditModal
+          deposit={deposit}
+          memberId={memberId}
+          memberName={memberName}
+          memberKeyCode={memberKeyCode}
+          onSuccess={refreshMemberData} // Pass refresh function as prop
+        />
       ),
       centered: true,
       withCloseButton: false
@@ -236,49 +258,51 @@ const FdrDepositPageUi = () => {
               <Title order={4} mb="md">
                 Fixed Deposit History for: {memberName}
               </Title>
-              <Table striped highlightOnHover>
-                <Table.Thead>
-                  <Table.Tr>
-                    <Table.Th>Account</Table.Th>
-                    <Table.Th>Open Date</Table.Th>
-                    <Table.Th>Close Date</Table.Th>
-                    <Table.Th>Amount</Table.Th>
-                    <Table.Th>Tenure</Table.Th>
-                    <Table.Th>Action</Table.Th>
-                  </Table.Tr>
-                </Table.Thead>
-                <Table.Tbody>
-                  {memberData?.length > 0 ? (
-                    memberData.map((deposit: any) => (
-                      <Table.Tr key={deposit.keyCode}>
-                        <Table.Td>Fixed Deposit</Table.Td>
-                        <Table.Td>{deposit.open_date}</Table.Td>
-                        <Table.Td>{deposit.close_date}</Table.Td>
-                        <Table.Td>৳ {deposit.amount}</Table.Td>
-                        <Table.Td>{deposit.period_in_month} Months</Table.Td>
-                        <Table.Td>
-                          <Menu withArrow>
-                            <Menu.Target>
-                              <ActionIcon variant="subtle" size="sm">
-                                <MoreIcon />
-                              </ActionIcon>
-                            </Menu.Target>
-                            <Menu.Dropdown>
-                              {canUpdate ? <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item> : null}
-                            </Menu.Dropdown>
-                          </Menu>
+              <ScrollArea h={325} type="always">
+                <Table striped highlightOnHover>
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th>Account</Table.Th>
+                      <Table.Th>Open Date</Table.Th>
+                      <Table.Th>Close Date</Table.Th>
+                      <Table.Th>Amount</Table.Th>
+                      <Table.Th>Tenure</Table.Th>
+                      <Table.Th>Action</Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {memberData?.length > 0 ? (
+                      memberData.map((deposit: any) => (
+                        <Table.Tr key={deposit.keyCode}>
+                          <Table.Td>Fixed Deposit</Table.Td>
+                          <Table.Td>{deposit.open_date}</Table.Td>
+                          <Table.Td>{deposit.close_date}</Table.Td>
+                          <Table.Td>৳ {deposit.amount}</Table.Td>
+                          <Table.Td>{deposit.period_in_month} Months</Table.Td>
+                          <Table.Td>
+                            <Menu withArrow>
+                              <Menu.Target>
+                                <ActionIcon variant="subtle" size="sm">
+                                  <MoreIcon />
+                                </ActionIcon>
+                              </Menu.Target>
+                              <Menu.Dropdown>
+                                {canUpdate ? <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item> : null}
+                              </Menu.Dropdown>
+                            </Menu>
+                          </Table.Td>
+                        </Table.Tr>
+                      ))
+                    ) : (
+                      <Table.Tr>
+                        <Table.Td colSpan={6} style={{ textAlign: 'center' }}>
+                          {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
                         </Table.Td>
                       </Table.Tr>
-                    ))
-                  ) : (
-                    <Table.Tr>
-                      <Table.Td colSpan={6} style={{ textAlign: 'center' }}>
-                        {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
-                      </Table.Td>
-                    </Table.Tr>
-                  )}
-                </Table.Tbody>
-              </Table>
+                    )}
+                  </Table.Tbody>
+                </Table>
+              </ScrollArea>
             </Paper>
           )}
         </Grid.Col>

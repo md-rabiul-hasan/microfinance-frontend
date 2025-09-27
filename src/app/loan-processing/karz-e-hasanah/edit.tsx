@@ -1,43 +1,38 @@
-import { getMemberInformation } from '@actions/common-config'
-import { createWithdrawal, getMemberWithdrawList } from '@actions/withdrawal/withdrawal-amount-config'
-import TitleBar from '@components/common/title-bar'
+import { updateKarzEHasanahLoan } from '@actions/loan-processing/karz-e-hasanah-config'
 import {
-  ActionIcon,
-  Box,
   Button,
-  Container,
-  Divider,
-  Flex,
   Grid,
-  Group,
-  Image,
-  Menu,
   NumberInput,
   Paper,
-  ScrollArea,
   Select,
-  Table,
   Text,
   TextInput,
   Title
 } from '@mantine/core'
-import { useForm, yupResolver } from '@mantine/form'
-import { closeAllModals, modals, openModal } from '@mantine/modals'
+import { useForm } from '@mantine/form'
+import { closeAllModals, modals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
-import { useEffect, useState, useTransition } from 'react'
-import { BiCategoryAlt, BiIdCard, BiSave, BiSearch } from 'react-icons/bi'
+import { useEffect, useTransition } from 'react'
+import { BiCategoryAlt, BiIdCard, BiSave } from 'react-icons/bi'
 import { FaRegClock } from 'react-icons/fa'
 import { GrNotes } from 'react-icons/gr'
 import { IoCalendarOutline } from 'react-icons/io5'
 import { MdOutlineGrid3X3 } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
-import { updateKarzEHasanahLoan } from '@actions/loan-processing/karz-e-hasanah-config'
-import { karzEHasanhValidationSchema } from '@schemas/loan-processing.schema'
 
-const EditModal = ({ loan, accounts, approvars, memberId, memberName }: any) => {
+interface EditModalProps {
+  loan: any
+  accounts: any[]
+  approvars: any[]
+  memberId: string
+  memberName: string
+  onSuccess: () => void // Add this prop to handle success callback
+}
+
+const EditModal = ({ loan, accounts, approvars, memberId, memberName, onSuccess }: any) => {
   const [isLoading, startTransition] = useTransition()
 
   const form = useForm({
@@ -126,6 +121,7 @@ const EditModal = ({ loan, accounts, approvars, memberId, memberName }: any) => 
             const res = await updateKarzEHasanahLoan(loan.insert_key, values)
             if (res.success) {
               showNotification(getSuccessMessage(res?.message))
+              onSuccess() // Call the success callback to refresh parent data
               closeAllModals()
             } else {
               showNotification(getErrorMessage(res?.message))

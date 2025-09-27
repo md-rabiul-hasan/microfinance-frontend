@@ -11,17 +11,25 @@ import { MdUpdate as UpdateIcon } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 
-const EditModal = ({ deposit, memberId, memberName, memberKeyCode }: any) => {
+interface EditModalProps {
+  deposit: any
+  memberId: string
+  memberName: string
+  memberKeyCode: number
+  onSuccess: () => void // Add this prop to handle success callback
+}
+
+const EditModal = ({ deposit, memberId, memberName, memberKeyCode, onSuccess }: EditModalProps) => {
   const [isLoading, startTransition] = useTransition()
 
-  const { onSubmit, getInputProps, values, reset } = useForm({
+  const { onSubmit, getInputProps } = useForm({
     validate: yupResolver(FixedDepositSetupValidationSchema),
     initialValues: {
       member_key_code: memberKeyCode,
       fdr_length: deposit.period_in_month,
       amount: deposit.amount,
       opening_date: deposit.open_date,
-      remarks: deposit.remarks
+      remarks: deposit.remarks || ''
     }
   })
 
@@ -29,21 +37,29 @@ const EditModal = ({ deposit, memberId, memberName, memberKeyCode }: any) => {
    * Handles the form submission.
    * Sends an API request to update the product details.
    */
-  const submitHandler = (formData: any) => startTransition(async () => {
-    const res = await updateFdrDeposit(deposit.insert_key, formData)
-    if (res.success) {
-      showNotification(getSuccessMessage(res?.message)) // Show success notification
-      closeAllModals() // Close the modal upon success
-    } else {
-      showNotification(getErrorMessage(res?.message)) // Show error notification
-    }
-  })
+  const submitHandler = (formData: any) => {
+    startTransition(async () => {
+      try {
+        const res = await updateFdrDeposit(deposit.insert_key, formData)
+        if (res.success) {
+          showNotification(getSuccessMessage(res?.message)) // Show success notification
+          onSuccess() // Call the success callback to refresh parent data
+          closeAllModals() // Close the modal upon success
+        } else {
+          showNotification(getErrorMessage(res?.message)) // Show error notification
+        }
+      } catch (error) {
+        showNotification(getErrorMessage('Failed to update deposit'))
+      }
+    })
+  }
 
   return (
     <form onSubmit={onSubmit(submitHandler)}>
       <Title order={4} mb="md">
         Update Member Fixed Deposit
       </Title>
+
       <TextInput
         label="Member Name"
         value={memberName ? `${memberName} (${memberId})` : ''}
@@ -52,6 +68,7 @@ const EditModal = ({ deposit, memberId, memberName, memberKeyCode }: any) => {
         withAsterisk
         leftSection={<RiUser3Line />}
       />
+
       <NumberInput
         label="Deposit Amount (BDT)"
         decimalScale={2}
@@ -83,7 +100,13 @@ const EditModal = ({ deposit, memberId, memberName, memberKeyCode }: any) => {
         leftSection={<IoCalendarOutline />}
       />
 
-      <Textarea label="Remarks" {...getInputProps('remarks')} withAsterisk mb="xs" />
+      <Textarea
+        label="Remarks"
+        {...getInputProps('remarks')}
+        withAsterisk
+        mb="xs"
+        placeholder="Enter remarks about this deposit"
+      />
 
       {/* Submit Button */}
       <Button type="submit" leftSection={<UpdateIcon />} loading={isLoading}>
@@ -93,4 +116,4 @@ const EditModal = ({ deposit, memberId, memberName, memberKeyCode }: any) => {
   )
 }
 
-export default EditModal
+export default EditModal;

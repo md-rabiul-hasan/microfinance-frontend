@@ -1,18 +1,19 @@
 'use client'
 
-import TableNav from '@components/common/table-nav'
 import TitleBar from '@components/common/title-bar'
 import useNavigation from '@hooks/useNavigation'
-import { ActionIcon, Container, Group, Menu, Paper, Table, Text, TextInput, Tooltip } from '@mantine/core'
+import { ActionIcon, Container, Group, Paper, Table, TextInput, Tooltip } from '@mantine/core'
 import { useDebouncedValue } from '@mantine/hooks'
-import { modals, openModal } from '@mantine/modals'
+import { openModal } from '@mantine/modals'
+import { usePermissions } from '@utils/permission'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { startTransition, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaPlusCircle } from 'react-icons/fa'
 import AddModal from './add'
 // Define the props type
 
 const NewUserPageUi = ({ data: { data, pagination }, employees, branches, roles }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const router = useRouter() // Use Next.js router for navigation
   // Get search parameters and navigation function
   const searchParams = useSearchParams()
@@ -54,11 +55,13 @@ const NewUserPageUi = ({ data: { data, pagination }, employees, branches, roles 
             value={interSearch}
             onChange={(event) => setInterSearch(event.currentTarget.value)}
           />
-          <Tooltip label="Add New User" withArrow position="bottom">
-            <ActionIcon onClick={addHandler}>
-              <FaPlusCircle />
-            </ActionIcon>
-          </Tooltip>
+          {
+            canCreate ? (<Tooltip label="Add New User" withArrow position="bottom">
+              <ActionIcon onClick={addHandler}>
+                <FaPlusCircle />
+              </ActionIcon>
+            </Tooltip>) : null
+          }
         </Group>
       </Group>
 

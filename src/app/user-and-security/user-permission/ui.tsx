@@ -1,26 +1,27 @@
 'use client'
 
+import { getUserMenuList, userMenuPermissionUpdate } from '@actions/user-and-security/user-permission'
 import {
+  Alert,
+  Badge,
+  Box,
+  Button,
+  Checkbox,
+  Collapse,
   Container,
   Grid,
   Group,
-  Paper,
-  Text,
-  Select,
-  Button,
   LoadingOverlay,
-  Checkbox,
-  Box,
-  Collapse,
-  Alert,
-  Badge
+  Paper,
+  Select,
+  Text
 } from '@mantine/core'
-import { useState } from 'react'
-import { FaChevronDown, FaChevronRight, FaLock, FaLockOpen } from 'react-icons/fa'
-import { BiSearch, BiCategoryAlt } from 'react-icons/bi'
-import { getUserMenuList, userMenuPermissionUpdate } from '@actions/user-and-security/user-permission'
 import { showNotification } from '@mantine/notifications'
-import { getSuccessMessage, getErrorMessage } from '@utils/notification'
+import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
+import { useState } from 'react'
+import { BiCategoryAlt, BiSearch } from 'react-icons/bi'
+import { FaChevronDown, FaChevronRight, FaLock, FaLockOpen } from 'react-icons/fa'
 
 interface User {
   value: string
@@ -39,6 +40,7 @@ interface MenuItem {
 }
 
 const UserPermissionPageUi = ({ users }: { users: User[] }) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const [selectedUser, setSelectedUser] = useState<string>('')
   const [menuData, setMenuData] = useState<MenuItem[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -188,7 +190,7 @@ const UserPermissionPageUi = ({ users }: { users: User[] }) => {
             onClick={() => !updating && handleMenuClick(menu)}
           >
             {menu.hasPermission ? <FaLockOpen size={14} color="green" /> : <FaLock size={14} color="red" />}
-            <Checkbox checked={menu.hasPermission || false} onChange={() => {}} disabled={updating} />
+            <Checkbox checked={menu.hasPermission || false} onChange={() => { }} disabled={updating} />
             <Text size="sm">{menu.name}</Text>
             {menu.hasPermission && (
               <Badge color="green" size="xs">
@@ -222,15 +224,23 @@ const UserPermissionPageUi = ({ users }: { users: User[] }) => {
           />
         </Grid.Col>
         <Grid.Col span={2}>
-          <Button
-            onClick={handleSearchMember}
-            loading={isLoading}
-            leftSection={<BiSearch size={16} />}
-            fullWidth
-            disabled={!selectedUser}
-          >
-            Load
-          </Button>
+          {
+            canUpdate ? (
+              <Button
+                onClick={handleSearchMember}
+                loading={isLoading}
+                leftSection={<BiSearch size={16} />}
+                fullWidth
+                disabled={!selectedUser}
+              >
+                Load
+              </Button>
+            ) : (
+              <Button disabled fullWidth>
+                You haven’t permission for setup user permission
+              </Button>
+            )
+          }
         </Grid.Col>
       </Grid>
 

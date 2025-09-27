@@ -12,10 +12,10 @@ import { MdUpdate as UpdateIcon } from 'react-icons/md'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 
-const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: any) => {
+const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode, onSuccess }: any) => {
   const [isLoading, startTransition] = useTransition()
 
-  const { onSubmit, getInputProps, values, reset } = useForm({
+  const { onSubmit, getInputProps } = useForm({
     validate: yupResolver(RegularDepositSetupValidationSchema),
     initialValues: {
       member_key_code: memberKeyCode,
@@ -33,10 +33,14 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
   const submitHandler = (formData: any) => startTransition(async () => {
     const res = await updateDeposit(deposit.insertKey, formData)
     if (res.success) {
-      showNotification(getSuccessMessage(res?.message)) // Show success notification
-      closeAllModals() // Close the modal upon success
+      showNotification(getSuccessMessage(res?.message))
+      closeAllModals()
+      // Call the success callback to refresh data
+      if (onSuccess) {
+        onSuccess()
+      }
     } else {
-      showNotification(getErrorMessage(res?.message)) // Show error notification
+      showNotification(getErrorMessage(res?.message))
     }
   })
 
@@ -96,4 +100,4 @@ const EditModal = ({ deposit, accounts, memberId, memberName, memberKeyCode }: a
   )
 }
 
-export default EditModal
+export default EditModal;

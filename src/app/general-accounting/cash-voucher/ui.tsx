@@ -1,36 +1,37 @@
 'use client'
 
-import { createJournalEntry, getSubAccountHead } from '@actions/general-accounting/journal-entry-config'
+import { createCashVoucherTransaction } from '@actions/general-accounting/cash-voucher-config'
 import TitleBar from '@components/common/title-bar'
-import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import {
+  ActionIcon,
   Button,
   Container,
+  Divider,
   Grid,
   Group,
+  NumberInput,
   Paper,
   Select,
+  Table,
+  Text,
   Textarea,
   TextInput,
-  Title,
-  NumberInput,
-  Divider,
-  Table,
-  ActionIcon,
-  Text
+  Title
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
+import { modals } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
 import { formatToYMD } from '@utils/datetime.util'
+import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiSave } from 'react-icons/bi'
-import { IoCalendarOutline } from 'react-icons/io5'
-import { showNotification } from '@mantine/notifications'
 import { FaTrash } from 'react-icons/fa'
-import { modals } from '@mantine/modals'
-import { createCashVoucherTransaction } from '@actions/general-accounting/cash-voucher-config'
+import { IoCalendarOutline } from 'react-icons/io5'
 
 const CashVoucherPageUi = ({ accounts }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [transactionGrid, setTransactionGrid] = useState([])
@@ -178,9 +179,12 @@ const CashVoucherPageUi = ({ accounts }: any) => {
 
               <Textarea label="Narration (if any)" {...form.getInputProps('narration')} mb="xs" />
 
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Add To Transaction Grid
-              </Button>
+              {
+                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Add To Transaction Grid
+                </Button> : null
+              }
+
             </form>
           </Paper>
         </Grid.Col>
@@ -231,9 +235,12 @@ const CashVoucherPageUi = ({ accounts }: any) => {
                   </Text>
                 </Group>
 
-                <Button fullWidth mt="md" onClick={submitAllTransactions} loading={isLoading}>
-                  Process Cash Voucher
-                </Button>
+                {
+                  canCreate ? <Button fullWidth mt="md" onClick={submitAllTransactions} loading={isLoading}>
+                    Process Cash Voucher
+                  </Button> : null
+                }
+
               </>
             )}
           </Paper>

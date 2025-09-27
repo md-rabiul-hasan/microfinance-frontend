@@ -35,6 +35,7 @@ import { WithdrawalAmountSetupValidationSchema } from '@schemas/withdrawal.schem
 import { formatToYMD } from '@utils/datetime.util'
 import { formatAsTaka } from '@utils/format.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useState, useTransition } from 'react'
 import { BiCategoryAlt, BiSave, BiSearch } from 'react-icons/bi'
@@ -43,7 +44,6 @@ import { IoCalendarOutline } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 import { TbCoinTaka } from 'react-icons/tb'
 import EditModal from './edit'
-import { usePermissions } from '@utils/permission'
 
 const WithdrawalPageUi = ({ accounts }: any) => {
   const { canCreate, canUpdate, canDelete } = usePermissions()
@@ -70,6 +70,20 @@ const WithdrawalPageUi = ({ accounts }: any) => {
     }
   })
 
+  // Function to refresh member data
+  const refreshMemberData = async () => {
+    if (!memberKeyCode) return
+
+    try {
+      const depositRes = await getMemberWithdrawList(memberKeyCode)
+      if (depositRes.success) {
+        setMemberData(depositRes.data)
+      }
+    } catch (error) {
+      console.error('Failed to refresh member data:', error)
+    }
+  }
+
   const handleSearchMember = () => {
     if (!memberId.trim()) {
       showNotification(getErrorMessage('Please enter a member ID'))
@@ -86,6 +100,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
           setMemberName('')
           setMemberData(null)
           setAccountBalance(null)
+          setMemberInfo(null)
           return
         }
 
@@ -96,7 +111,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
         setMemberKeyCode(memberKeyCode)
         form.setFieldValue('member_key_code', memberKeyCode)
 
-        // Then get deposit history
+        // Then get withdrawal history
         const depositRes = await getMemberWithdrawList(memberKeyCode)
 
         if (depositRes.success) {
@@ -110,6 +125,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
         setMemberName('')
         setMemberData(null)
         setAccountBalance(null)
+        setMemberInfo(null)
       }
     })
   }
@@ -162,9 +178,10 @@ const WithdrawalPageUi = ({ accounts }: any) => {
             const res = await createWithdrawal(values)
             if (res.success) {
               showNotification(getSuccessMessage(res?.message))
-              // Refresh member data after successful deposit
-              handleSearchMember()
+              // Refresh member data after successful withdrawal
+              await refreshMemberData()
               form.reset()
+              form.setFieldValue('withdraw_date', initialDate)
               setAccountBalance(null)
             } else {
               showNotification(getErrorMessage(res?.message))
@@ -177,15 +194,16 @@ const WithdrawalPageUi = ({ accounts }: any) => {
     })
   }
 
-  const editHandler = (deposit: any) =>
+  const editHandler = (withdrawal: any) =>
     openModal({
       children: (
         <EditModal
-          deposit={deposit}
+          withdrawal={withdrawal}
           accounts={accounts}
           memberId={memberId}
           memberName={memberName}
           memberKeyCode={memberKeyCode}
+          onSuccess={refreshMemberData} // Pass refresh function as prop
         />
       ),
       centered: true,
@@ -392,13 +410,13 @@ const WithdrawalPageUi = ({ accounts }: any) => {
                   </Table.Thead>
                   <Table.Tbody>
                     {memberData?.length > 0 ? (
-                      memberData.map((deposit: any) => (
-                        <Table.Tr key={deposit.tr_sl}>
-                          <Table.Td>{deposit.trDate}</Table.Td>
+                      memberData.map((withdrawal: any) => (
+                        <Table.Tr key={withdrawal.tr_sl}>
+                          <Table.Td>{withdrawal.trDate}</Table.Td>
                           <Table.Td>
-                            {deposit.account_info?.AccountDisplayName} ({deposit.account_info?.accountCode})
+                            {withdrawal.account_info?.AccountDisplayName} ({withdrawal.account_info?.accountCode})
                           </Table.Td>
-                          <Table.Td>{formatAsTaka(deposit.amt)}</Table.Td>
+                          <Table.Td>{formatAsTaka(withdrawal.amt)}</Table.Td>
                           <Table.Td>
                             <Menu withArrow>
                               <Menu.Target>
@@ -407,7 +425,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                {canUpdate ? <Menu.Item onClick={() => editHandler(deposit)}>Edit</Menu.Item> : null}
+                                {canUpdate ? <Menu.Item onClick={() => editHandler(withdrawal)}>Edit</Menu.Item> : null}
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>
@@ -416,7 +434,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
                     ) : (
                       <Table.Tr>
                         <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
-                          {memberData ? 'No deposit history found' : 'Search for a member to view deposit history'}
+                          {memberData ? 'No withdrawal history found' : 'Search for a member to view withdrawal history'}
                         </Table.Td>
                       </Table.Tr>
                     )}

@@ -1,20 +1,13 @@
-import { createEmployee } from '@actions/settings/employee-config'
-import { Button, Select, TextInput, Title } from '@mantine/core'
+import { createBranch } from '@actions/settings/branch-config'
+import { Button, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
+import { branchValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import { useTransition } from 'react'
-import { CiLocationOn } from 'react-icons/ci'
-import { BiSave } from 'react-icons/bi'
-import { FaIdCardAlt } from 'react-icons/fa'
-import { MdPerson } from 'react-icons/md'
-import { PiCertificateFill } from 'react-icons/pi'
-import { FaSquarePhone } from 'react-icons/fa6'
-import { FaLocationDot } from 'react-icons/fa6'
-import { createBranch } from '@actions/settings/branch-config'
-import { BiSolidBank } from 'react-icons/bi'
-import { branchValidationSchema } from '@schemas/settings.schema'
+import { BiSave, BiSolidBank } from 'react-icons/bi'
+import { FaLocationDot, FaSquarePhone } from 'react-icons/fa6'
 
 const AddModal = ({ locations }: any) => {
   const [isLoading, startTransition] = useTransition()
@@ -68,7 +61,6 @@ const AddModal = ({ locations }: any) => {
       <TextInput
         label="Address"
         mb="xs"
-        withAsterisk // Marks the field as required
         {...getInputProps('addr')}
         leftSection={<FaLocationDot />} // Adds an icon
       />

@@ -26,6 +26,7 @@ import { modals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { formatToYMD } from '@utils/datetime.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useEffect, useState, useTransition } from 'react'
 import { BiSave } from 'react-icons/bi'
@@ -33,6 +34,7 @@ import { IoIosMore as MoreIcon } from 'react-icons/io'
 import { IoCalendarOutline } from 'react-icons/io5'
 
 const BankingTransactionPageUi = () => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isLoadingDetails, setIsLoadingDetails] = useState(false)
@@ -215,9 +217,12 @@ const BankingTransactionPageUi = () => {
                 {...form.getInputProps('transaction_type')}
               />
 
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
+              {
+                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button> : null
+              }
+
             </form>
           </Paper>
         </Grid.Col>
@@ -228,7 +233,7 @@ const BankingTransactionPageUi = () => {
               <Title order={4} mb="md">
                 Transaction History
               </Title>
-              <ScrollArea>
+              <ScrollArea h={525} type="always">
                 <Table striped highlightOnHover>
                   <Table.Thead>
                     <Table.Tr>
@@ -254,7 +259,10 @@ const BankingTransactionPageUi = () => {
                               </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                              <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item>
+                              {
+                                canDelete ? <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item> : null
+                              }
+
                             </Menu.Dropdown>
                           </Menu>
                         </Table.Td>

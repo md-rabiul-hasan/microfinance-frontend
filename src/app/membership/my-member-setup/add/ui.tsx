@@ -1,15 +1,14 @@
 'use client'
 
 import { createMember, updateMember } from '@actions/membership/my-member-config'
-import { createServiceArea } from '@actions/settings/service-area-config'
 import { Box, Button, Flex, Grid, Paper, Select, TextInput, Title } from '@mantine/core'
 import { useForm, yupResolver } from '@mantine/form'
 import { closeAllModals } from '@mantine/modals'
 import { showNotification } from '@mantine/notifications'
 import { myMemberSetupValidationSchema } from '@schemas/my-member.schema'
-import { serviceAreaValidationSchema } from '@schemas/settings.schema'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 import { BiSave } from 'react-icons/bi'
 import { BsGenderTrans } from 'react-icons/bs'
@@ -25,6 +24,7 @@ import { RiIdCardLine } from 'react-icons/ri'
 import { TbCirclesRelation } from 'react-icons/tb'
 
 const AddMemberUi = ({ religions, bloodGroups, professions, addressZones, members, details }: any) => {
+  const router = useRouter(); // Use Next.js router for navigation
   const [isLoading, startTransition] = useTransition()
 
   const { onSubmit, getInputProps, values } = useForm({
@@ -71,6 +71,8 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones, member
       if (res.success) {
         showNotification(getSuccessMessage(res?.message))
         closeAllModals()
+        // Redirect after successful operation
+        router.push('/membership/my-member-setup')
       } else {
         showNotification(getErrorMessage(res?.message))
       }
@@ -368,8 +370,14 @@ const AddMemberUi = ({ religions, bloodGroups, professions, addressZones, member
         </Grid>
       </Paper>
 
-      <Button type="submit" leftSection={<BiSave />} loading={isLoading} mt="md">
-        Submit
+
+      <Button
+        type="submit"
+        leftSection={<BiSave />}
+        loading={isLoading}
+        mt="md"
+      >
+        {details?.member_id ? "Update" : "Submit"}
       </Button>
       {details?.profile_image?.insert_key || details?.signature_image?.insert_key ? (
         <Flex gap="md" direction={{ base: 'column', sm: 'row' }}>

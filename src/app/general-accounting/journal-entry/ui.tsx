@@ -2,37 +2,39 @@
 
 import { createJournalEntry, getSubAccountHead } from '@actions/general-accounting/journal-entry-config'
 import TitleBar from '@components/common/title-bar'
-import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import {
-  Button,
-  Container,
-  Grid,
-  Group,
-  Paper,
-  Select,
-  Textarea,
-  TextInput,
-  Title,
-  Loader,
-  NumberInput,
-  Divider,
-  Table,
   ActionIcon,
   Box,
+  Button,
+  Container,
+  Divider,
+  Grid,
+  Group,
+  Loader,
+  NumberInput,
+  Paper,
   ScrollArea,
-  Text
+  Select,
+  Table,
+  Text,
+  Textarea,
+  TextInput,
+  Title
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { formatToYMD } from '@utils/datetime.util'
-import { getSessionTransactionDate } from '@utils/transaction-date'
-import { useState, useTransition, useEffect } from 'react'
-import { BiSave } from 'react-icons/bi'
-import { IoCalendarOutline } from 'react-icons/io5'
-import { showNotification } from '@mantine/notifications'
-import { FaTrash } from 'react-icons/fa'
 import { modals } from '@mantine/modals'
+import { showNotification } from '@mantine/notifications'
+import { formatToYMD } from '@utils/datetime.util'
+import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
+import { getSessionTransactionDate } from '@utils/transaction-date'
+import { useEffect, useState, useTransition } from 'react'
+import { BiSave } from 'react-icons/bi'
+import { FaTrash } from 'react-icons/fa'
+import { IoCalendarOutline } from 'react-icons/io5'
 
 const JournalEntryPageUi = ({ accounts }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isLoadingDetails, setIsLoadingDetails] = useState(false)
@@ -282,10 +284,13 @@ const JournalEntryPageUi = ({ accounts }: any) => {
               />
 
               <Textarea label="Narration (if any)" {...form.getInputProps('narration')} mb="xs" />
+              {
+                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Add To Transaction Grid
+                </Button> : null
+              }
 
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Add To Transaction Grid
-              </Button>
+
             </form>
           </Paper>
         </Grid.Col>
@@ -344,19 +349,22 @@ const JournalEntryPageUi = ({ accounts }: any) => {
                   <Text fw={500}>Total Debit: {totalDebit.toFixed(2)}</Text>
                   <Text fw={500}>Total Credit: {totalCredit.toFixed(2)}</Text>
                 </Group>
+                {
+                  canCreate ? <Button
+                    fullWidth
+                    mt="md"
+                    onClick={submitAllTransactions}
+                    disabled={transactionGrid.length === 0 || totalDebit !== totalCredit}
+                    color={totalDebit === totalCredit ? 'blue' : 'red'}
+                    loading={isLoading}
+                  >
+                    {totalDebit === totalCredit
+                      ? `Submit All Transactions (${transactionGrid.length})`
+                      : 'Debit and Credit must be equal'}
+                  </Button> : null
+                }
 
-                <Button
-                  fullWidth
-                  mt="md"
-                  onClick={submitAllTransactions}
-                  disabled={transactionGrid.length === 0 || totalDebit !== totalCredit}
-                  color={totalDebit === totalCredit ? 'blue' : 'red'}
-                  loading={isLoading}
-                >
-                  {totalDebit === totalCredit
-                    ? `Submit All Transactions (${transactionGrid.length})`
-                    : 'Debit and Credit must be equal'}
-                </Button>
+
               </>
             )}
           </Paper>

@@ -2,7 +2,6 @@
 
 import { getMemberInformation } from '@actions/common-config'
 import { deleteLoanRequest, getMemberLoanListForDelete } from '@actions/loan-processing/delete-loan-config'
-import { getAccountBalance } from '@actions/withdrawal/withdrawal-amount-config'
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
@@ -32,10 +31,12 @@ import { BiSearch } from 'react-icons/bi'
 import { IoSearchSharp } from 'react-icons/io5'
 import { RiUser3Line } from 'react-icons/ri'
 
+import { modals } from '@mantine/modals'
+import { usePermissions } from '@utils/permission'
 import { getLoanType } from '@utils/utils'
 import { IoIosMore as MoreIcon } from 'react-icons/io'
-import { modals } from '@mantine/modals'
 const DeleteLoanPageUi = ({ accounts }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
@@ -285,7 +286,10 @@ const DeleteLoanPageUi = ({ accounts }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                <Menu.Item onClick={() => deleteHandler(deposit.loan_id)}>Delete</Menu.Item>
+                                {
+                                  canDelete ? <Menu.Item onClick={() => deleteHandler(deposit.loan_id)}>Delete</Menu.Item> : null
+                                }
+
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>

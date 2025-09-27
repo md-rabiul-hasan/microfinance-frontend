@@ -2,32 +2,32 @@
 
 import { createProfitEntry } from '@actions/general-accounting/profit-reserve-config'
 import TitleBar from '@components/common/title-bar'
-import { getErrorMessage, getSuccessMessage } from '@utils/notification'
 import {
   Button,
   Container,
   Grid,
   Group,
+  NumberInput,
   Paper,
   Select,
   Textarea,
   TextInput,
-  Title,
-  NumberInput,
-  Text
+  Title
 } from '@mantine/core'
-import { useForm } from '@mantine/form'
-import { yupResolver } from '@mantine/form'
+import { useForm, yupResolver } from '@mantine/form'
+import { showNotification } from '@mantine/notifications'
+import { profitReserveValidationSchema } from '@schemas/general-accounting.schema'
 import { formatToYMD } from '@utils/datetime.util'
+import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { useTransition } from 'react'
 import { BiSave } from 'react-icons/bi'
 import { IoCalendarOutline } from 'react-icons/io5'
-import { showNotification } from '@mantine/notifications'
 import { MdAccountBalance } from 'react-icons/md'
-import { profitReserveValidationSchema } from '@schemas/general-accounting.schema'
 
 const ProfitReservePageUi = () => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
 
@@ -123,10 +123,13 @@ const ProfitReservePageUi = () => {
                 {...getInputProps('narration')}
                 mb="xs"
               />
+              {
+                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button> : null
+              }
 
-              <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
+
             </form>
           </Paper>
         </Grid.Col>

@@ -31,6 +31,7 @@ import { saleMurabahaValidationSchema } from '@schemas/loan-processing.schema'
 import { formatToYMD } from '@utils/datetime.util'
 import { formatAsTaka } from '@utils/format.util'
 import { getErrorMessage, getSuccessMessage } from '@utils/notification'
+import { usePermissions } from '@utils/permission'
 import { getSessionTransactionDate } from '@utils/transaction-date'
 import { generate7DigitId } from '@utils/utils'
 import { useEffect, useState, useTransition } from 'react'
@@ -47,6 +48,7 @@ import EditModal from './edit'
 import ProductListModal from './product'
 
 const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
+  const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
   const [isSearchLoading, startSearchTransition] = useTransition()
@@ -600,9 +602,12 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                 </Grid>
               </Paper>
 
-              <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
-                Submit
-              </Button>
+              {
+                canCreate ? <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
+                  Submit
+                </Button> : null
+              }
+
             </div>
           </form>
         </Grid.Col>
@@ -714,7 +719,9 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item>
+                                {
+                                  canUpdate ? <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item> : null
+                                }
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>

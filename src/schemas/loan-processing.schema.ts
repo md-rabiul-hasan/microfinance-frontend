@@ -1,12 +1,10 @@
 import * as yup from 'yup'
 
 export const karzEHasanhValidationSchema = yup.object().shape({
-  member_key_code: yup.string().required('Member key code is required'),
   account_code: yup.string().required('Account code is required'),
   remarks: yup.string().required('Remarks are required'),
   loan_id: yup.string().required('Loan ID is required'),
   loan_amount: yup.string().required('Loan amount is required'),
-  profit_amount: yup.string().required('Profit amount is required'),
   payment_frequency: yup
     .string()
     .oneOf(['W', 'M'], 'Payment frequency must be Weekly (W) or Monthly (M)')
