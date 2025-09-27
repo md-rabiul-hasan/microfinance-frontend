@@ -1,7 +1,6 @@
 .root {
   padding: var(--mantine-spacing-xs);
 }
-
 .link {
   display: flex;
   align-items: center;
@@ -11,14 +10,23 @@
   border-radius: calc(var(--mantine-spacing-xs) * 0.5);
   cursor: pointer;
 
-  &:hover {
+&:hover {
     background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-4));
-  }
+}
 
-  &[data-active] {
+&[data-active] {
     color: var(--mantine-color-gray-1);
-    background-image: linear-gradient(45deg, #4B6CB7, #182848);
-  }
+    background-color: rgb(118, 95, 235);
+    background-image: linear-gradient(270deg, rgb(var(--mantine-color-brand-7) / 0.7) 0%, var(--mantine-color-brand-7) 100%) !important;
+    box-shadow: 0 0.125rem 0.375rem 0 rgba(var(--mantine-color-brand-7), 0.3);
+
+    /* Change hover color for active state */
+    &:hover {
+        background-color: rgb(118, 95, 235);
+        background-image: linear-gradient(270deg, rgb(var(--mantine-color-brand-7) / 0.9) 0%, var(--mantine-color-brand-7) 100%) !important;
+    }
+}
+
 }
 
 .activeList {
@@ -41,4 +49,4 @@
 
 .nested[data-level="3"] {
   padding-left: 4rem;
-}
+} 

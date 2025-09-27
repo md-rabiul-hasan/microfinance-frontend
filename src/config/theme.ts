@@ -1,7 +1,11 @@
 import { createTheme } from '@mantine/core'
 
 export const theme = createTheme({
-  defaultGradient: { from: '#4B6CB7', to: '#182848', deg: 60 },
+  defaultGradient: {
+    from: '#7267EF', // Converted from rgb(114, 103, 239)
+    to: 'var(--bs-primary)', // You'll need to replace this with the actual hex value
+    deg: 270
+  },
   defaultRadius: 'sm',
   cursorType: 'pointer',
   autoContrast: true,

@@ -18,7 +18,7 @@ const AppNavbar = () => {
       setMenus(data)
     }
     fetchMenus()
-  }, [session?.user.user_type]) // refetch if roles change
+  }, [session?.user.user_type])
 
   const renderMenuItems = (items: any[], level = 0) => {
     return items.map((item, index) => {
@@ -33,7 +33,7 @@ const AppNavbar = () => {
           <NavLink
             key={index}
             label={item.label}
-            leftSection={level === 0 ? item.icon : null}
+            leftSection={level === 0 ? item.icon : item.icon} // Show icon at all levels
             className={clsx(classes.link, hasActiveChild && classes.activeList, level > 0 && classes.nested)}
             data-level={level}
             defaultOpened={hasActiveChild}
@@ -50,7 +50,7 @@ const AppNavbar = () => {
             className={clsx(classes.link, level > 0 && classes.nested)}
             data-level={level}
             label={item.label}
-            leftSection={level === 0 ? item.icon : null}
+            leftSection={item.icon} // Always show icon if available
             active={isActiveLink(pathname, item.link)}
             key={index}
           />
