@@ -14,7 +14,10 @@ export const getBranchList = async (params?: { page?: number; per_page?: number;
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -29,7 +32,10 @@ export const createBranch = async (formData: BranchSetupType, path?: string) => 
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -40,7 +46,10 @@ export const updateBranch = async (id: number, formData: BranchSetupType) => {
     revalidatePath('/settings/branch-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -51,6 +60,9 @@ export const deleteBranch = async (id: number) => {
     revalidatePath('/settings/branch-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

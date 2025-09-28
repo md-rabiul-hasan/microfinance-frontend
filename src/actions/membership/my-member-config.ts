@@ -14,7 +14,10 @@ export const getMyMemberList = async (params?: { page?: number; per_page?: numbe
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -29,7 +32,10 @@ export const createMember = async (formData: MyMemberSetupType, path?: string) =
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -40,7 +46,10 @@ export const updateMember = async (id: number, formData: MyMemberSetupType) => {
     revalidatePath('/membership/my-member-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -51,7 +60,10 @@ export const deleteMember = async (id: number) => {
     revalidatePath('/membership/my-member-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -61,7 +73,10 @@ export const detailsMemberInfo = async (id: string | number) => {
     const { data } = await apiObj.get(`/membership/my-member-setup/${id}`)
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -79,6 +94,9 @@ export const uploadMemberImage = async (params: any) => {
     revalidatePath('/membership/my-member-setup')
     return data
   } catch (error: any) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

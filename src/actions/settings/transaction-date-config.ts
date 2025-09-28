@@ -12,7 +12,10 @@ export const getTransactionDate = async () => {
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -26,6 +29,9 @@ export const setupTransactionDate = async (formData: TransactionDateSetupType) =
     revalidatePath('/settings/transaction-date-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

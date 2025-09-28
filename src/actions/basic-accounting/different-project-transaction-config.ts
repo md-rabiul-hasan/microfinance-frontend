@@ -34,7 +34,10 @@ export const addDifferentProjectTransactionsTransaction = async (formData: any, 
     revalidatePath('/basic-accounting/different-project-transaction')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -48,6 +51,9 @@ export const deleteDifferentProjectTransactionsTransaction = async (insert_key: 
     revalidatePath('/basic-accounting/different-project-transaction')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

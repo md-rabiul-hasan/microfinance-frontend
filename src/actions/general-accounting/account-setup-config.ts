@@ -9,7 +9,10 @@ export const getChartOfAccountList = async (formData: any, path?: string) => {
     const { data } = await apiObj.get('/general-accounting/account-setup/get-account-list')
     return data.data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -23,6 +26,9 @@ export const addAccountInChartOfAccount = async (formData: any, path?: string) =
     revalidatePath('/general-accounting/account-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

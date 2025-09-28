@@ -46,7 +46,10 @@ export const createWithdrawal = async (formData: WithdrawalAmountSetupType, path
     revalidatePath('/withdrawal/withdrawal-amount')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -60,6 +63,9 @@ export const updateWithdrawal = async (insertKey: any, formData: WithdrawalAmoun
     revalidatePath('/withdrawal/withdrawal-amount')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

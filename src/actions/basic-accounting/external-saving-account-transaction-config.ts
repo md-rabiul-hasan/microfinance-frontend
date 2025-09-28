@@ -34,7 +34,10 @@ export const addExternalSavingAccountTransaction = async (formData: any, path?: 
     revalidatePath('/basic-accounting/external-saving-account-transaction')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -48,6 +51,9 @@ export const deleteExternalSavingAccountTransaction = async (insert_key: string)
     revalidatePath('/basic-accounting/external-saving-account-transaction')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

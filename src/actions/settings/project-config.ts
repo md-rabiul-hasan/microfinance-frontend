@@ -14,7 +14,10 @@ export const getProjectList = async (params?: { page?: number; per_page?: number
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -29,7 +32,10 @@ export const createProject = async (formData: ProjectSetupType, path?: string) =
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -40,7 +46,10 @@ export const updateProject = async (id: number, formData: ProjectSetupType) => {
     revalidatePath('/settings/project-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -51,6 +60,9 @@ export const deleteProject = async (id: number) => {
     revalidatePath('/settings/project-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

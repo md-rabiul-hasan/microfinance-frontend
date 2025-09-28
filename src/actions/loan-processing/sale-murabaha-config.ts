@@ -10,7 +10,10 @@ export const getSellableProductList = async () => {
     const { data } = await apiObj.get('/loan-processing/sale-murabaha/sellable-product-list')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -25,6 +28,9 @@ export const createSaleMurabaha = async (formData: any) => {
     revalidatePath('/loan-processing/sale-murabaha')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

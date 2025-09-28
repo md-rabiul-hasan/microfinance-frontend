@@ -14,7 +14,10 @@ export const getBankAccountList = async (params?: { page?: number; per_page?: nu
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -29,7 +32,10 @@ export const createBankAccount = async (formData: BankAccountSetupType, path?: s
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -40,7 +46,10 @@ export const updateBankAccount = async (id: number, formData: BankAccountSetupTy
     revalidatePath('/settings/bank-account-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -51,6 +60,9 @@ export const deleteBankAccount = async (id: string) => {
     revalidatePath('/settings/bank-account-setup')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

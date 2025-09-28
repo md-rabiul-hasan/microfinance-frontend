@@ -1,6 +1,6 @@
 'use server'
 
-import { BranchSetupType, PurchaseItemSetupType } from '@types'
+import { PurchaseItemSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 
@@ -14,7 +14,10 @@ export const getPurchaseItemList = async (params?: { page?: number; per_page?: n
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -29,7 +32,10 @@ export const createPurchaseItem = async (formData: PurchaseItemSetupType, path?:
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -42,6 +48,9 @@ export const deletePurchaseItem = async (insertKey: any, productUniqueId: any) =
     revalidatePath('/loan-processing/purchase-item')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

@@ -1,6 +1,5 @@
 'use server'
 
-import { CreateNewUserType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
 
@@ -11,7 +10,10 @@ export const getPermissionUserList = async () => {
     const { data } = await apiObj.get('/user-and-security/user-permission-setup/get-user-list')
     return data.data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -24,7 +26,10 @@ export const getUserMenuList = async (user_key_code: any) => {
     )
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -39,6 +44,9 @@ export const userMenuPermissionUpdate = async (formData: any, path?: string) => 
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

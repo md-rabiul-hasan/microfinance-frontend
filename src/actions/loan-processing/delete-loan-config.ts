@@ -10,7 +10,10 @@ export const getMemberLoanListForDelete = async (memberKeyCode: any) => {
     const { data } = await apiObj.get(`/loan-processing/delete-loan/member-loan-list?memberKeyCode=${memberKeyCode}`)
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -24,7 +27,10 @@ export const deleteLoanRequest = async (loan_id: any) => {
     revalidatePath('/loan-processing/delete-loan')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -38,7 +44,10 @@ export const getLoanDeletePendingList = async (params?: { page?: number; per_pag
 
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -53,7 +62,10 @@ export const authorizeDeleteLoanRequest = async (keyCode: any, loan_id: any) => 
     revalidatePath('/loan-processing/delete-loan-auth')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -68,6 +80,9 @@ export const rejectDeleteLoanRequest = async (keyCode: any, loan_id: any) => {
     revalidatePath('/loan-processing/delete-loan-auth')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

@@ -10,7 +10,10 @@ export const getKarzEHasanLoanAccountList = async () => {
     const { data } = await apiObj.get('/loan-processing/karz-e-hasanah/get-loan-accounts')
     return data.data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -21,7 +24,10 @@ export const getKarzEHasanLoanApprovarComitteeList = async () => {
     const { data } = await apiObj.get('/loan-processing/karz-e-hasanah/get-loan-approval-committees')
     return data.data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -35,7 +41,10 @@ export const createKarzEHasanahLoan = async (formData: any) => {
     revalidatePath('/loan-processing/karz-e-hasanah')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -59,6 +68,9 @@ export const updateKarzEHasanahLoan = async (insertKey: any, formData: any) => {
     revalidatePath('/loan-processing/karz-e-hasanah')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

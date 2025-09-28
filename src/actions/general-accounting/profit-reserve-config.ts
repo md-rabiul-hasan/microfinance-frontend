@@ -13,6 +13,9 @@ export const createProfitEntry = async (formData: any, path?: string) => {
     revalidatePath('/general-accounting/profit-reserve')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }

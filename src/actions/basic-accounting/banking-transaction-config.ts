@@ -34,7 +34,10 @@ export const addBasicBankingTransaction = async (formData: any, path?: string) =
     revalidatePath('/basic-accounting/banking-transaction')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
 
@@ -48,6 +51,9 @@ export const deleteBankingTransaction = async (insert_key: string) => {
     revalidatePath('/basic-accounting/banking-transaction')
     return data
   } catch (error) {
-    return error.response?.data
+    return {
+      status: StatusMsg.BAD_REQUEST,
+      message: error instanceof AxiosError ? error.response?.data.message : 'An unknown error occurred'
+    }
   }
 }
