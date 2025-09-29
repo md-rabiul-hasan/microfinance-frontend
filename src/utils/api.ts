@@ -16,7 +16,7 @@ const api = async () => {
 
   const headers: Record<string, string> = {}
 
-  if (session) headers['Authorization'] = `Bearer ${session.user.accessToken}`
+  if (session) headers['Authorization'] = `Bearer ${(session?.user as any)?.accessToken}`
 
   return axios.create({
     baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,

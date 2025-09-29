@@ -282,7 +282,6 @@ const WithdrawalPageUi = ({ accounts }: any) => {
 
               <NumberInput
                 label="Available Balance"
-                value={accountBalance || 0}
                 decimalScale={2}
                 fixedDecimalScale
                 disabled
@@ -290,7 +289,7 @@ const WithdrawalPageUi = ({ accounts }: any) => {
                 mb="xs"
                 withAsterisk
                 leftSection={isBalanceLoading ? <Loader size="xs" /> : <TbCoinTaka />}
-                formatter={(value) => formatAsTaka(parseFloat(value))}
+                value={formatAsTaka(accountBalance || 0)}
               />
 
               <NumberInput
@@ -302,7 +301,6 @@ const WithdrawalPageUi = ({ accounts }: any) => {
                 withAsterisk
                 {...form.getInputProps('amount')}
                 leftSection={<TbCoinTaka />}
-                formatter={(value) => formatAsTaka(parseFloat(value))}
               />
 
               <TextInput
@@ -434,7 +432,9 @@ const WithdrawalPageUi = ({ accounts }: any) => {
                     ) : (
                       <Table.Tr>
                         <Table.Td colSpan={4} style={{ textAlign: 'center' }}>
-                          {memberData ? 'No withdrawal history found' : 'Search for a member to view withdrawal history'}
+                          {memberData
+                            ? 'No withdrawal history found'
+                            : 'Search for a member to view withdrawal history'}
                         </Table.Td>
                       </Table.Tr>
                     )}

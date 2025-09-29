@@ -114,13 +114,14 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
     if (values.payment_frequency && values.loan_tenure && values.loan_date) {
       const totalLoan = Number(values.total_selling_price) || 0
       const tenure = Number(values.loan_tenure) || 0
-      const frequency = values.payment_frequency as 'W' | 'M'
+      const frequency = values.payment_frequency as 'W' | 'M' | 'F'
 
       // Calculate completion date
       const date = new Date(values.loan_date)
       if (frequency === 'W') {
         date.setDate(date.getDate() + tenure * 7)
-      } if (frequency === 'F') {
+      }
+      if (frequency === 'F') {
         date.setDate(date.getDate() + tenure * 15)
       } else {
         date.setMonth(date.getMonth() + tenure)
@@ -251,7 +252,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
       <Grid>
         <Grid.Col span={{ base: 12, md: 8 }}>
           <form onSubmit={onSubmit(submitHandler)}>
-            <div shadow="xs" p="xs" className="responsive-form">
+            <div className="responsive-form">
               <Paper shadow="xs" p="xs" mt="xs">
                 {/* Loan Details */}
                 <Grid gutter="xs" align="flex-end">
@@ -602,12 +603,11 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                 </Grid>
               </Paper>
 
-              {
-                canCreate ? <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
+              {canCreate ? (
+                <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
                   Submit
-                </Button> : null
-              }
-
+                </Button>
+              ) : null}
             </div>
           </form>
         </Grid.Col>
@@ -719,9 +719,7 @@ const SaleMudarabaPageUi = ({ accounts, approvars }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                {
-                                  canUpdate ? <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item> : null
-                                }
+                                {canUpdate ? <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item> : null}
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>

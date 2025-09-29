@@ -248,8 +248,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
       <Grid>
         <Grid.Col span={{ base: 12, md: 8 }}>
           <form onSubmit={onSubmit(submitHandler)}>
-            <div shadow="xs" p="xs" className="responsive-form">
-
+            <div className="responsive-form">
               {/* Member ID Search */}
               <Paper shadow="xs" p="xs" mt="xs">
                 <Grid gutter="xs" align="flex-end">
@@ -559,12 +558,11 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                 </Grid>
               </Paper>
 
-              {
-                canCreate ? <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
+              {canCreate ? (
+                <Button mt="xs" type="submit" leftSection={<BiSave />} loading={isLoading}>
                   Submit
-                </Button> : null
-              }
-
+                </Button>
+              ) : null}
             </div>
           </form>
         </Grid.Col>
@@ -676,9 +674,7 @@ const KarzEHasanahPageUi = ({ accounts, approvars }: any) => {
                                 </ActionIcon>
                               </Menu.Target>
                               <Menu.Dropdown>
-                                {
-                                  canUpdate ? <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item> : null
-                                }
+                                {canUpdate ? <Menu.Item onClick={() => editHandler(loan)}>Edit</Menu.Item> : null}
                               </Menu.Dropdown>
                             </Menu>
                           </Table.Td>

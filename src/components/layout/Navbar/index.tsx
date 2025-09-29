@@ -18,7 +18,7 @@ const AppNavbar = () => {
       setMenus(data)
     }
     fetchMenus()
-  }, [session?.user.user_type])
+  }, [(session?.user as any)?.user_type])
 
   const renderMenuItems = (items: any[], level = 0) => {
     return items.map((item, index) => {

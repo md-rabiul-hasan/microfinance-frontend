@@ -2,6 +2,8 @@
 
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
 
 export const getDifferentProjectAccountList = async () => {
   try {
@@ -16,13 +18,14 @@ export const getDifferentProjectAccountList = async () => {
 export const getDifferentProjectTransactions = async (account_key_code: any) => {
   try {
     const apiObj = await api()
-    const { data } = await apiObj.get(`/basic-accounting/different-project-transaction/get-project-investment-transactions?account_key_code=${account_key_code}`)
+    const { data } = await apiObj.get(
+      `/basic-accounting/different-project-transaction/get-project-investment-transactions?account_key_code=${account_key_code}`
+    )
     return data
   } catch (error) {
     return []
   }
 }
-
 
 export const addDifferentProjectTransactionsTransaction = async (formData: any, path?: string) => {
   try {
@@ -41,12 +44,11 @@ export const addDifferentProjectTransactionsTransaction = async (formData: any, 
   }
 }
 
-
 export const deleteDifferentProjectTransactionsTransaction = async (insert_key: string) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.post('/basic-accounting/different-project-transaction/delete-transaction', {
-      'insert_key': insert_key
+      insert_key: insert_key
     })
     revalidatePath('/basic-accounting/different-project-transaction')
     return data

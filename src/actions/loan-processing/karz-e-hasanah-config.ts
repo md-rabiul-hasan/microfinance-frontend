@@ -2,6 +2,8 @@
 
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
 
 export const getKarzEHasanLoanAccountList = async () => {
   try {
@@ -48,7 +50,7 @@ export const createKarzEHasanahLoan = async (formData: any) => {
   }
 }
 
-export const getMemberLoanList = async (memberKeyCode: string) => {
+export const getMemberLoanList = async (memberKeyCode: string | number) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.get(`/loan-processing/karz-e-hasanah/member-loan-list?memberKeyCode=${memberKeyCode}`)

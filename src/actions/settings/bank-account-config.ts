@@ -3,6 +3,8 @@
 import { BankAccountSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
 
 export const getBankAccountList = async (params?: { page?: number; per_page?: number; search?: string }) => {
   try {

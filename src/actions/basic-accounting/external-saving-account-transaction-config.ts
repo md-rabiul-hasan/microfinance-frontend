@@ -2,6 +2,8 @@
 
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
 
 export const getExternalSavingAccountList = async () => {
   try {
@@ -23,7 +25,6 @@ export const getExternalSavingAccountTransactions = async () => {
   }
 }
 
-
 export const addExternalSavingAccountTransaction = async (formData: any, path?: string) => {
   try {
     const apiObj = await api()
@@ -41,12 +42,11 @@ export const addExternalSavingAccountTransaction = async (formData: any, path?: 
   }
 }
 
-
 export const deleteExternalSavingAccountTransaction = async (insert_key: string) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.post('/basic-accounting/external-saving-account-transaction/delete-transaction', {
-      'insert_key': insert_key
+      insert_key: insert_key
     })
     revalidatePath('/basic-accounting/external-saving-account-transaction')
     return data

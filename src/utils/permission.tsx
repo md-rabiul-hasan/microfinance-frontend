@@ -17,7 +17,7 @@ export const USER_TYPES = {
 // Hook for checking permissions
 export const usePermissions = () => {
   const { data: session } = useSession()
-  const userType = session?.user?.user_type || 0
+  const userType = (session?.user as any)?.user_type || 0
 
   const hasPermission = (permission: PermissionType): boolean => {
     switch (userType) {

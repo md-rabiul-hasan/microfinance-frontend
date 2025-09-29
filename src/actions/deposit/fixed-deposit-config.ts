@@ -3,8 +3,10 @@
 import { FixedDepositSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
 
-export const getMemberFdrList = async (memberKeyCode: string) => {
+export const getMemberFdrList = async (memberKeyCode: string | number) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.get(`/deposit/fixed-deposit/member-fdr-list?memberKeyCode=${memberKeyCode}`)
@@ -31,7 +33,6 @@ export const createFdrDeposit = async (formData: FixedDepositSetupType, path?: s
     }
   }
 }
-
 
 export const updateFdrDeposit = async (insertKey: any, formData: FixedDepositSetupType, path?: string) => {
   try {

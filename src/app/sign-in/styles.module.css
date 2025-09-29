@@ -12,15 +12,42 @@
 }
 
 .container {
-  width: 100%;
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 80%;
   transform: translate(-50%, -50%);
 }
 
+
+/* .container:before {
+  position: absolute;
+    background: var(--bs-primary);
+    block-size: 233px;
+    content: " ";
+    inline-size: 238px;
+    inset-block-start: -35px;
+    inset-inline-start: -45px;
+    mask-image: url(data:image/svg+xml,%3Csvg width='238' height='233' viewBox='0 0 238 233' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='88.5605' y='0.700195' width='149' height='149' rx='19.5' stroke='%237367F0' stroke-opacity='0.16'/%3E%3Crect x='0.621094' y='33.761' width='200' height='200' rx='10' fill='%237367F0' fill-opacity='0.08'/%3E%3C/svg%3E%0A);
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
+} */
+
+.container:before {
+  position: absolute;
+  background: var(--bs-primary);
+  block-size: 233px;
+  content: " ";
+  inline-size: 238px;
+  inset-block-start: -35px;
+  inset-inline-start: -45px;
+  mask-repeat: no-repeat;
+  mask-size: 100% 100%;
+}
+
+
+
 .paper {
-  background: linear-gradient(360deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.75) 100%);
+  background: white;
   backdrop-filter: blur(10px);
 }
 

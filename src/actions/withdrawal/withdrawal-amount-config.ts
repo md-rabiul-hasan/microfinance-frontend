@@ -3,6 +3,8 @@
 import { WithdrawalAmountSetupType } from '@types'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
 
 export const getWithdrawalGeneralAccounts = async () => {
   try {
@@ -14,7 +16,7 @@ export const getWithdrawalGeneralAccounts = async () => {
   }
 }
 
-export const getMemberWithdrawList = async (memberKeyCode: string) => {
+export const getMemberWithdrawList = async (memberKeyCode: string | number) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.get(`/withdrawal/member-withdraw-list?memberKeyCode=${memberKeyCode}`)
@@ -24,7 +26,7 @@ export const getMemberWithdrawList = async (memberKeyCode: string) => {
   }
 }
 
-export const getAccountBalance = async (memberKeyCode: string, accountCode: string) => {
+export const getAccountBalance = async (memberKeyCode: string | number, accountCode: string) => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.get(

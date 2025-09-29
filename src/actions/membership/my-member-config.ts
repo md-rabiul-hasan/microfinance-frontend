@@ -1,8 +1,10 @@
 'use server'
 
-import { MyMemberSetupType } from '@types/mymember'
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
+import { MyMemberSetupType } from '@types'
 
 export const getMyMemberList = async (params?: { page?: number; per_page?: number; search?: string }) => {
   try {

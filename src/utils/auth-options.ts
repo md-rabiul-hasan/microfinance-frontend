@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
         username: { label: 'Username', type: 'string' },
         password: { label: 'Password', type: 'password' }
       },
-      authorize: async (credentials) => {
+      authorize: async (credentials): Promise<any> => {
         try {
           if (!credentials?.username || !credentials?.password) throw new Error('Username and password are required')
 
@@ -46,21 +46,21 @@ export const authOptions: NextAuthOptions = {
         // First-time login: Store tokens in JWT
         return {
           ...token,
-          user_key: user.user_key,
-          fullname: user.fullname,
-          user_id: user.user_id,
-          user_type: user.user_type,
-          assignedBr: user.assignedBr,
-          branch_name: user.branch_name,
-          accessToken: user.accessToken,
-          refreshToken: user.refreshToken,
-          accessTokenExpires: user.accessTokenExpires
+          user_key: (user as any).user_key,
+          fullname: (user as any).fullname,
+          user_id: (user as any).user_id,
+          user_type: (user as any).user_type,
+          assignedBr: (user as any).assignedBr,
+          branch_name: (user as any).branch_name,
+          accessToken: (user as any).accessToken,
+          refreshToken: (user as any).refreshToken,
+          accessTokenExpires: (user as any).accessTokenExpires
         }
       }
 
       // Check if the token is expired
       const now = Date.now()
-      if (now < token.accessTokenExpires) {
+      if (now < (token as any).accessTokenExpires) {
         return token // Token is still valid
       }
 
@@ -70,7 +70,10 @@ export const authOptions: NextAuthOptions = {
 
     session: async ({ session, token }) => {
       if (token) {
-        session.user = token as SessionUser
+        session.user = {
+          ...session.user,
+          ...(token as any)
+        } as any
       }
       return session
     }
@@ -78,12 +81,12 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: 'jwt',
-    maxAge: 4 * 60 * 60, // 4 hours
-    updateAge: 30 * 60 // Refresh session every 30 minutes
+    maxAge: 60 * 60, // 1 hour (changed from 4 hours)
+    updateAge: 15 * 60 // Refresh session every 15 minutes (optional: you can adjust this too)
   },
 
   jwt: {
-    maxAge: 4 * 60 * 60 // 4 hours
+    maxAge: 60 * 60 // 1 hour (changed from 4 hours)
   },
 
   pages: {

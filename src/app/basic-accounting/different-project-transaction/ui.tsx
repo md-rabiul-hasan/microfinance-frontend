@@ -1,6 +1,10 @@
 'use client'
 
-import { addDifferentProjectTransactionsTransaction, deleteDifferentProjectTransactionsTransaction, getDifferentProjectTransactions } from '@actions/basic-accounting/different-project-transaction-config'
+import {
+  addDifferentProjectTransactionsTransaction,
+  deleteDifferentProjectTransactionsTransaction,
+  getDifferentProjectTransactions
+} from '@actions/basic-accounting/different-project-transaction-config'
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
@@ -65,7 +69,7 @@ const DifferentProjectTransactionPageUi = ({ accounts }: any) => {
         showNotification(getErrorMessage(transactionsRes?.message))
         setTransactions([])
       }
-    } catch (error) {
+    } catch (error: any) {
       showNotification(getErrorMessage(error?.message || 'Failed to load transactions'))
       setTransactions([])
     } finally {
@@ -175,7 +179,7 @@ const DifferentProjectTransactionPageUi = ({ accounts }: any) => {
               <Select
                 label="Account List"
                 placeholder="Select account"
-                data={accounts.map((data) => ({
+                data={accounts.map((data: any) => ({
                   value: String(data.value),
                   label: `${data.label}`
                 }))}
@@ -207,16 +211,14 @@ const DifferentProjectTransactionPageUi = ({ accounts }: any) => {
                 mb="xs"
                 {...form.getInputProps('transaction_type')}
               />
-              {
-                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+              {canCreate ? (
+                <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
                   Submit
-                </Button> : null
-              }
-
+                </Button>
+              ) : null}
             </form>
           </Paper>
         </Grid.Col>
-
 
         <Grid.Col span={{ base: 12, md: 8 }}>
           <Paper shadow="xs" p="xs">
@@ -236,7 +238,7 @@ const DifferentProjectTransactionPageUi = ({ accounts }: any) => {
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    {transactions.map((transaction, index) => (
+                    {transactions.map((transaction: any, index) => (
                       <Table.Tr key={index}>
                         <Table.Td>{transaction.trDate}</Table.Td>
                         <Table.Td>{transaction.account_details}</Table.Td>
@@ -250,9 +252,9 @@ const DifferentProjectTransactionPageUi = ({ accounts }: any) => {
                               </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                              {
-                                canDelete ? <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item> : null
-                              }
+                              {canDelete ? (
+                                <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item>
+                              ) : null}
                             </Menu.Dropdown>
                           </Menu>
                         </Table.Td>
@@ -264,7 +266,6 @@ const DifferentProjectTransactionPageUi = ({ accounts }: any) => {
             )}
           </Paper>
         </Grid.Col>
-
       </Grid>
     </Container>
   )

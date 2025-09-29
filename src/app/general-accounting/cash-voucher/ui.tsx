@@ -34,7 +34,7 @@ const CashVoucherPageUi = ({ accounts }: any) => {
   const { canCreate, canUpdate, canDelete } = usePermissions()
   const initialDate = formatToYMD(getSessionTransactionDate())
   const [isLoading, startTransition] = useTransition()
-  const [transactionGrid, setTransactionGrid] = useState([])
+  const [transactionGrid, setTransactionGrid] = useState<any[]>([])
 
   const form = useForm({
     initialValues: {
@@ -124,7 +124,7 @@ const CashVoucherPageUi = ({ accounts }: any) => {
     })
   }
 
-  const totalAmount = transactionGrid.reduce((sum, item) => sum + item.amount, 0)
+  const totalAmount = transactionGrid.reduce((sum, item: any) => sum + item.amount, 0)
 
   return (
     <Container fluid>
@@ -179,12 +179,11 @@ const CashVoucherPageUi = ({ accounts }: any) => {
 
               <Textarea label="Narration (if any)" {...form.getInputProps('narration')} mb="xs" />
 
-              {
-                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+              {canCreate ? (
+                <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
                   Add To Transaction Grid
-                </Button> : null
-              }
-
+                </Button>
+              ) : null}
             </form>
           </Paper>
         </Grid.Col>
@@ -211,7 +210,7 @@ const CashVoucherPageUi = ({ accounts }: any) => {
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    {transactionGrid.map((transaction) => (
+                    {transactionGrid.map((transaction: any) => (
                       <Table.Tr key={transaction.id}>
                         <Table.Td>{transaction.account_name}</Table.Td>
                         <Table.Td>{transaction.narration}</Table.Td>
@@ -235,12 +234,11 @@ const CashVoucherPageUi = ({ accounts }: any) => {
                   </Text>
                 </Group>
 
-                {
-                  canCreate ? <Button fullWidth mt="md" onClick={submitAllTransactions} loading={isLoading}>
+                {canCreate ? (
+                  <Button fullWidth mt="md" onClick={submitAllTransactions} loading={isLoading}>
                     Process Cash Voucher
-                  </Button> : null
-                }
-
+                  </Button>
+                ) : null}
               </>
             )}
           </Paper>

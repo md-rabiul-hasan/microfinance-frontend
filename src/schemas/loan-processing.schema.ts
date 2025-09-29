@@ -37,6 +37,5 @@ export const saleMurabahaValidationSchema = yup.object().shape({
   loan_tenure: yup.string().required('Loan tenure is required'),
   payment_completion_date: yup.string().required('Payment completion date is required'),
   installment_amount: yup.string().required('Installment amount is required'),
-  approved_by: yup.string().required('Approver is required'),
-  remarks: yup.string().required('Remarks are required') // Added remarks field
+  approved_by: yup.string().required('Approver is required')
 })

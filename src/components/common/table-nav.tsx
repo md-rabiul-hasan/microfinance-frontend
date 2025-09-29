@@ -21,7 +21,7 @@ const TableNav = ({ listName, limit, limitHandler, page, pageHandler, totalPages
       size="xs"
     />
 
-    <Pagination size="sm" value={page} onChange={pageHandler} total={totalPages} color="#C93D76" />
+    <Pagination size="sm" value={page} onChange={pageHandler} total={totalPages} color="#7367f0" />
 
     <Text size="xs">
       Total: {totalRecords ?? 0} {listName}

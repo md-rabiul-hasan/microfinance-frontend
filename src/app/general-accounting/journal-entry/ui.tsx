@@ -41,7 +41,7 @@ const JournalEntryPageUi = ({ accounts }: any) => {
   const [subAccountList, setSubAccountList] = useState([])
   const [hasSubAccountHead, setHasSubAccountHead] = useState(false)
   const [subHeadTable, setSubHeadTable] = useState('')
-  const [transactionGrid, setTransactionGrid] = useState([])
+  const [transactionGrid, setTransactionGrid] = useState<any[]>([])
 
   const form = useForm({
     initialValues: {
@@ -77,7 +77,7 @@ const JournalEntryPageUi = ({ accounts }: any) => {
           } else {
             showNotification(getErrorMessage(res?.message))
           }
-        } catch (error) {
+        } catch (error: any) {
           showNotification(getErrorMessage(error?.message || 'Failed to load account details'))
         } finally {
           setIsLoadingDetails(false)
@@ -98,7 +98,7 @@ const JournalEntryPageUi = ({ accounts }: any) => {
 
   const getSubAccountName = (accountType: any) => {
     if (accountType === '0') return 'Not Applicable'
-    const subAccount = subAccountList.find((acc: any) => String(acc.keyCode) === accountType)
+    const subAccount = (subAccountList as any[]).find((acc: any) => String(acc.keyCode) === accountType)
     return subAccount ? subAccount?.details : 'Unknown Sub Account'
   }
 
@@ -231,7 +231,7 @@ const JournalEntryPageUi = ({ accounts }: any) => {
               <Select
                 label="Transaction Account"
                 placeholder="Please Select Account"
-                data={accounts.map((data) => ({
+                data={accounts.map((data: any) => ({
                   value: String(data.acc_code),
                   label: `${data.acc_name} || ${data.acc_code}`
                 }))}
@@ -246,7 +246,7 @@ const JournalEntryPageUi = ({ accounts }: any) => {
                   <Select
                     label="Sub Account"
                     placeholder={isLoadingDetails ? 'Loading options...' : 'Select sub account'}
-                    data={subAccountList.map((data) => ({
+                    data={subAccountList.map((data: any) => ({
                       value: String(data.keyCode),
                       label: `${data.details}`
                     }))}
@@ -284,13 +284,11 @@ const JournalEntryPageUi = ({ accounts }: any) => {
               />
 
               <Textarea label="Narration (if any)" {...form.getInputProps('narration')} mb="xs" />
-              {
-                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+              {canCreate ? (
+                <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
                   Add To Transaction Grid
-                </Button> : null
-              }
-
-
+                </Button>
+              ) : null}
             </form>
           </Paper>
         </Grid.Col>
@@ -349,8 +347,8 @@ const JournalEntryPageUi = ({ accounts }: any) => {
                   <Text fw={500}>Total Debit: {totalDebit.toFixed(2)}</Text>
                   <Text fw={500}>Total Credit: {totalCredit.toFixed(2)}</Text>
                 </Group>
-                {
-                  canCreate ? <Button
+                {canCreate ? (
+                  <Button
                     fullWidth
                     mt="md"
                     onClick={submitAllTransactions}
@@ -361,10 +359,8 @@ const JournalEntryPageUi = ({ accounts }: any) => {
                     {totalDebit === totalCredit
                       ? `Submit All Transactions (${transactionGrid.length})`
                       : 'Debit and Credit must be equal'}
-                  </Button> : null
-                }
-
-
+                  </Button>
+                ) : null}
               </>
             )}
           </Paper>

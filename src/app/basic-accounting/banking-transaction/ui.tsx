@@ -1,6 +1,11 @@
 'use client'
 
-import { addBasicBankingTransaction, deleteBankingTransaction, getBankingAccountCategoryTransactionList, getBankingTransactionAccountList } from '@actions/basic-accounting/banking-transaction-config'
+import {
+  addBasicBankingTransaction,
+  deleteBankingTransaction,
+  getBankingAccountCategoryTransactionList,
+  getBankingTransactionAccountList
+} from '@actions/basic-accounting/banking-transaction-config'
 import TitleBar from '@components/common/title-bar'
 import {
   ActionIcon,
@@ -67,7 +72,7 @@ const BankingTransactionPageUi = () => {
           } else {
             showNotification(getErrorMessage(res?.message))
           }
-        } catch (error) {
+        } catch (error: any) {
           showNotification(getErrorMessage(error?.message || 'Failed to load account details'))
         } finally {
           setIsLoadingDetails(false)
@@ -166,9 +171,9 @@ const BankingTransactionPageUi = () => {
                 label="Account Category"
                 placeholder="Please Select"
                 data={[
-                  { value: "", label: "-Select-" },
-                  { value: "1", label: "Current or Savings Account" },
-                  { value: "2", label: "FDR Account" }
+                  { value: '', label: '-Select-' },
+                  { value: '1', label: 'Current or Savings Account' },
+                  { value: '2', label: 'FDR Account' }
                 ]}
                 searchable
                 withAsterisk
@@ -180,7 +185,7 @@ const BankingTransactionPageUi = () => {
                 <Select
                   label="Account List"
                   placeholder={isLoadingDetails ? 'Loading options...' : 'Select account'}
-                  data={accountList.map((data) => ({
+                  data={accountList.map((data: any) => ({
                     value: String(data.keyCode),
                     label: `${data.bank_name} - ${data.acc_name} - A/C: ${data.acc_number}`
                   }))}
@@ -210,19 +215,18 @@ const BankingTransactionPageUi = () => {
                   { value: '1', label: 'Regular Deposit' },
                   { value: '2', label: 'Regular Withdrawal' },
                   { value: '3', label: 'Profit Receive' },
-                  { value: '4', label: 'Charge Payment' },
+                  { value: '4', label: 'Charge Payment' }
                 ]}
                 withAsterisk
                 mb="xs"
                 {...form.getInputProps('transaction_type')}
               />
 
-              {
-                canCreate ? <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
+              {canCreate ? (
+                <Button type="submit" leftSection={<BiSave />} loading={isLoading}>
                   Submit
-                </Button> : null
-              }
-
+                </Button>
+              ) : null}
             </form>
           </Paper>
         </Grid.Col>
@@ -245,7 +249,7 @@ const BankingTransactionPageUi = () => {
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    {transactions.map((transaction, index) => (
+                    {transactions.map((transaction: any, index) => (
                       <Table.Tr key={index}>
                         <Table.Td>{transaction.trDate}</Table.Td>
                         <Table.Td>{transaction.account_details}</Table.Td>
@@ -259,10 +263,9 @@ const BankingTransactionPageUi = () => {
                               </ActionIcon>
                             </Menu.Target>
                             <Menu.Dropdown>
-                              {
-                                canDelete ? <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item> : null
-                              }
-
+                              {canDelete ? (
+                                <Menu.Item onClick={() => deleteHandler(transaction.insertKey)}>Delete</Menu.Item>
+                              ) : null}
                             </Menu.Dropdown>
                           </Menu>
                         </Table.Td>

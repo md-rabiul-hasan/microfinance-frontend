@@ -2,8 +2,10 @@
 
 import api from '@utils/api'
 import { revalidatePath } from 'next/cache'
+import { StatusMsg } from '@config/constants'
+import { AxiosError } from 'axios'
 
-export const getChartOfAccountList = async (formData: any, path?: string) => {
+export const getChartOfAccountList = async () => {
   try {
     const apiObj = await api()
     const { data } = await apiObj.get('/general-accounting/account-setup/get-account-list')

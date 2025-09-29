@@ -25,7 +25,7 @@ export const formatDateTimeGMT = (dateStr: Date) => {
   return date.toISOString().slice(0, 19).replace('T', ' ')
 }
 
-export const formatDate = (dateString: string): string => {
+export const formatDate = (dateString: any): string => {
   const months: string[] = [
     'January',
     'February',
@@ -55,12 +55,11 @@ export const formatDate = (dateString: string): string => {
   return `${day}-${month}-${year}`
 }
 
-
 // Format date as DD-MM-YYYY
 
 export const formatToYMD = (date: Date): string => {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  return `${year}-${month}-${day}`;
-};
+  const day = String(date.getDate()).padStart(2, '0')
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const year = date.getFullYear()
+  return `${year}-${month}-${day}`
+}

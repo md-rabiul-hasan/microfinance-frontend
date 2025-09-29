@@ -12,10 +12,10 @@ import { BiErrorCircle as ErrorIcon } from 'react-icons/bi'
 import { CgPassword as PasswordIcon, CgLogIn as SignInIcon } from 'react-icons/cg'
 
 import { signInSchema } from '@schemas/auth.schema'
-import { SignInValues } from '@types'
 import { setSessionTransactionDate } from '@utils/transaction-date'
-import { FaUserTie } from "react-icons/fa"
+import { FaUserTie } from 'react-icons/fa'
 import classes from './styles.module.css'
+import { SignInValues } from '@types'
 
 const SignInUI = () => {
   const [isLoading, setIsLoading] = useState(false)
@@ -24,7 +24,7 @@ const SignInUI = () => {
   const { onSubmit, getInputProps } = useForm<SignInValues>({
     validate: yupResolver(signInSchema),
     initialValues: {
-      username: undefined,
+      username: '',
       password: ''
     }
   })
@@ -33,7 +33,6 @@ const SignInUI = () => {
     setIsLoading(true)
 
     const response: SignInResponse | undefined = await signIn('credentials', { ...values, redirect: false })
-
 
     if (response?.error) {
       showNotification({
@@ -55,7 +54,6 @@ const SignInUI = () => {
 
   return (
     <div className={classes.root}>
-
       <Container size="xs" className={classes.container}>
         <Paper p={28} shadow="sm" radius="md" className={classes.paper}>
           <Group justify="center" gap="xs" mb="xl">
@@ -64,36 +62,36 @@ const SignInUI = () => {
           </Group>
 
           <form onSubmit={onSubmit(submitHandler)}>
-            <Title size={25} mb={4} tt="uppercase" c="gray.1">
-              Sign In
+            <Title size={18} mb={6} c="black">
+              Welcome to Karzbook! 👋
             </Title>
 
-            <Text size="sm" mb="md" c="gray.3">
-              Welcome back
+            <Text size="xs" mb="md" c="black">
+              Sign in to access your account and manage your journey in ethical, interest-free finance
             </Text>
 
             <TextInput
               label="Username"
-              c="gray.3"
+              size="xs"
+              c="black"
               leftSectionPointerEvents="none"
               leftSection={<FaUserTie />} // Use an appropriate icon for username
               placeholder="Enter your username"
               {...getInputProps('username')}
             />
 
-
-
             <PasswordInput
               label="Password"
+              size="xs"
               placeholder="Enter your password"
               leftSection={<PasswordIcon />}
-              c="gray.3"
+              c="black"
               withAsterisk
               mt="xs"
               {...getInputProps('password')}
             />
 
-            <Button type="submit" leftSection={<SignInIcon />} mt="md" loading={isLoading} fullWidth>
+            <Button size="xs" type="submit" leftSection={<SignInIcon />} mt="md" loading={isLoading} fullWidth>
               Sign In
             </Button>
           </form>

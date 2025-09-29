@@ -18,23 +18,31 @@ import { FiHelpCircle as HelpIcon } from 'react-icons/fi'
 import { IoIosArrowDown as DownArrow } from 'react-icons/io'
 import { MdLogout as LogoutIcon } from 'react-icons/md'
 
+interface User {
+  avatar?: string | null
+  fullname?: string | null
+  branch_name?: string
+  user_type?: string
+}
+
+interface Session {
+  user?: User
+}
+
 const AppHeader = () => {
   const { status, data: session } = useSession()
   const pathname = usePathname()
   const computedColorScheme = useComputedColorScheme('light', { getInitialValueInEffect: true })
   const { setColorScheme } = useMantineColorScheme()
 
+  // Use with type assertion
+  const user = (session as Session)?.user
+
   return (
     <Group justify="space-between" align="center" px="md" h="100%">
-
       <Group justify="center" gap="xs">
         <Link href="/">
-          <Image
-            src={`/images/logo.png`}
-            alt=""
-            width="auto"
-            height={32}
-          />
+          <Image src={`/images/logo.png`} alt="" width="auto" height={32} />
         </Link>
         {/* <Title order={3} color="dark">KARZBOOK</Title> */}
       </Group>
@@ -56,12 +64,12 @@ const AppHeader = () => {
           <Menu.Target>
             {status === 'authenticated' ? (
               <Group className="profile-menu" gap="xs">
-                <Avatar src={session.user.avatar} alt={session.user.fullname} />
+                <Avatar src={user?.avatar || undefined} alt={user?.fullname || 'User'} />
 
                 <div>
-                  <Text>{session.user.fullname}</Text>
+                  <Text>{user?.fullname || 'Unknown User'}</Text>
                   <Text c="dimmed" size="xs">
-                    {`${session.user.branch_name} (${session.user.user_type})`}
+                    {user?.branch_name && user?.user_type ? `${user.branch_name} (${user.user_type})` : 'Loading...'}
                   </Text>
                 </div>
 
